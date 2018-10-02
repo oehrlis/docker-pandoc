@@ -44,7 +44,7 @@ COPY texlive.profile /tmp/texlive.profile
 # - clean up tlmgr, yum and other stuff
 RUN echo "%_install_langs   en" >/etc/rpm/macros.lang && \
     yum -y upgrade && \
-    yum -y install wget perl tar gzip perl-core && \
+    yum -y install wget perl tar gzip zip unzip perl-core && \
     mkdir /tmp/texlive && \
     curl -Lsf http://www.pirbot.com/mirrors/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
@@ -53,12 +53,18 @@ RUN echo "%_install_langs   en" >/etc/rpm/macros.lang && \
                 lm ec listings times mweights \
                 sourcecodepro titling setspace \
                 xcolor csquotes etoolbox caption \
-                mdframed l3packages l3kernel \
+                mdframed l3packages l3kernel draftwatermark \
+                everypage minitoc breakurl lastpage \ 
+                datetime fmtcount blindtext fourier textpos \
                 needspace sourcesanspro xkeyval && \
     tlmgr backup --clean --all && \
-    yum -y erase wget perl perl-core && \
+    curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
+        -o /tmp/install-getnonfreefonts && \
+    texlua /tmp/install-getnonfreefonts && \
+    getnonfreefonts --sys -a && \
+    yum -y erase wget zip unzip perl perl-core && \
     yum clean all && \
-    rm -rv /tmp/texlive /tmp/texlive.profile && \
+    rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
     rm -rf /var/cache/yum && \
     rm /usr/local/texlive/*/tlpkg/texlive.tlpdb.*
 
