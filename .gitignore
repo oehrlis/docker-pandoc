@@ -1,3 +1,19 @@
+# ignore binary packages and files
+**/*.rpm
+**/*.jar
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+
+# ignore mac OS resource forks
+**/*.DS_Store
+
+# Eclipse and VSC stuff
+/.pydevproject
+/.project
+/.vscode
+**/*.code-workspace
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -240,3 +256,4 @@ TSWLatexianTemp*
 
 # generated if using elsarticle.cls
 *.spl
+/.DS_Store
