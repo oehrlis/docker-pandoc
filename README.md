@@ -1,11 +1,54 @@
 # Pandoc Docker Images
-Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation to support simple PDF transformations.
-
-## Build
+Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation to support simple PDF transformations. Additional texlive packages have to be installed be extending this images. 
 
 ## Run
 
-## Adding new packages
+The pre build image is availabe via [Dockerhub](https://hub.docker.com/r/oehrlis/pandoc/). The installation and use is straightforward. Install [Docker](https://www.docker.com/get-started) and pull the image.
+
+```bash
+docker pull oehrlis/pandoc
+```
+
+Either you copy the files into the container, which is obviously not really handy, or you mount your local document folder as volume.
+
+```bash
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc pandoc <OPTIONS>
+```
+
+Conversion of the sample Markdown file into a PDF.
+
+```bash
+cd sample
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc pandoc \
+    sample.md -o sample.pdf -f gfm --template sample.tex \
+    --toc -N --listings
+```
+
+Since the container includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation, you may also use a bunch of latex tools.
+
+```bash
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+    pdflatex <TEX_FILE> 
+    --t
+```
+
+alternatively you can open a shell in the container and use the miscellanies tex tools interactively.
+
+```bash
+docker run -it --rm -v $PWD:/workdir:z oehrlis/pandoc bash
+```
+
+## Build and add new packages
+
+If you plan to alter or extend this Docker image you could get the corresonding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
+
+```bash
+git clone git@github.com:oehrlis/docker-pandoc.git
+$ cd docker-pandoc
+$ docker build -t oehrlis/pandoc .
+```
+
+Optionaly you can add additional texlive package to the tlmgr command in the Dockerfile.
 
 ## Issues
 Please file your bug reports, enhancement requests, questions and other support requests within [Github's issue tracker](https://help.github.com/articles/about-issues/):
@@ -14,3 +57,6 @@ Please file your bug reports, enhancement requests, questions and other support 
 * [submit new issue](https://github.com/oehrlis/docker-pandoc/issues/new)
 
 ## References
+
+* [pandoc](https://pandoc.org)
+* [texlive 2018](https://www.tug.org/texlive/)

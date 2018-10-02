@@ -48,9 +48,12 @@ Reset all passwords using *IDENTIFIED BY VALUES* to explicitly set a particular 
 
 ``` SQL
 ALTER USER user_10g IDENTIFIED BY VALUES '808E79166793CFD1';
-ALTER USER user_11g IDENTIFIED BY VALUES 'S:22D8239017006EBDE054108BF367F225B5E731D12C91A3BEB31FA28D4A38';
-ALTER USER user_12c IDENTIFIED BY VALUES 'T:C6CE7A88CC5D0E048F32A564D2B6A7BDC78A2092184F28D13A90FC071F80
-4E5EA09D4D2A3749AA79BFD0A90D18DEC5788D2B8754AE20EE5C309DBA87550E8AA15EAF2746ED431BF4543D2ABE33E22678';
+ALTER USER user_11g IDENTIFIED BY VALUES 'S:22D8239017006EBDE054
+    108BF367F225B5E731D12C91A3BEB31FA28D4A38';
+ALTER USER user_12c IDENTIFIED BY VALUES 'T:C6CE7A88CC5D0E048F32
+    A564D2B6A7BDC78A2092184F28D13A90FC071F804E5EA09D4D2A3749AA79
+    BFD0A90D18DEC5788D2B8754AE20EE5C309DBA87550E8AA15EAF2746ED43
+    1BF4543D2ABE33E22678';
 ```
 
 See what we do have in *dba_users*.
@@ -77,17 +80,22 @@ col spare4 for a65
 SELECT name,password,spare4 FROM user$ WHERE name LIKE 'USER_%' ORDER BY 1;
 
 NAME       PASSWORD          SPARE4
----------- ----------------- -----------------------------------------------------------------
+---------- ----------------- --------------------------------------
 USER_10G   808E79166793CFD1
-USER_11G                     S:22D8239017006EBDE054108BF367F225B5E731D12C91A3BEB31FA28D4A38
-USER_12C                     T:C6CE7A88CC5D0E048F32A564D2B6A7BDC78A2092184F28D13A90FC071F804E5
-                             EA09D4D2A3749AA79BFD0A90D18DEC5788D2B8754AE20EE5C309DBA87550E8AA1
-                             5EAF2746ED431BF4543D2ABE33E22678
+USER_11G                     S:22D8239017006EBDE054108BF367F225B5E7
+                             31D12C91A3BEB31FA28D4A38
+USER_12C                     T:C6CE7A88CC5D0E048F32A564D2B6A7BDC78A
+                             2092184F28D13A90FC071F804E5EA09D4D2A37
+                             49AA79BFD0A90D18DEC5788D2B8754AE20EE5C
+                             309DBA87550E8AA15EAF2746ED431BF4543D2A
+                             BE33E22678
 
-USER_ALL   BFD595809B6149CB  S:804A87EA761505458FDED9B057A77FCF53DA3DDBD6EDB168501EDF5C0B10;T:
-                             7950DF0D54DEA24F1764EBC34A262D784E18F4292510B8A2E0D0F7ADFEC1C6F1E
-                             22D841A9D91BAF0B9B05632F6D4898C6F4AE1EEF1509339EBCE261A1F36E834A5
-                             E2DD9F1E772AB2D6413CCAB5EB0B23
+USER_ALL   BFD595809B6149CB  S:804A87EA761505458FDED9B057A77FCF53DA
+                             3DDBD6EDB168501EDF5C0B10;T:7950DF0D54D
+                             EA24F1764EBC34A262D784E18F4292510B8A2E
+                             0D0F7ADFEC1C6F1E22D841A9D91BAF0B9B0563
+                             2F6D4898C6F4AE1EEF1509339EBCE261A1F36E
+                             834A5E2DD9F1E772AB2D6413CCAB5EB0B23
 ```
 
 Check what we do have in *sqlnet.ora*.
@@ -124,11 +132,10 @@ Check the configuration scripts in *sqlnet.ora*.
 ``` bash
 grep -i -A 11 -B 2 "Kerberos Configuration" $TNS_ADMIN/sqlnet.ora
 
-##########################################################################
+################################################################
 # Kerberos Configuration
-##########################################################################
+################################################################
 SQLNET.AUTHENTICATION_SERVICES = (BEQ,KERBEROS5)
-#SQLNET.AUTHENTICATION_SERVICES = (ALL)
 SQLNET.FALLBACK_AUTHENTICATION = TRUE
 SQLNET.KERBEROS5_KEYTAB = /u00/app/oracle/network/admin/urania.keytab
 SQLNET.KERBEROS5_REALMS = /u00/app/oracle/network/admin/krb.realms
@@ -302,7 +309,8 @@ docker logs -f $MY_CONTAINER
 <!-- Register an Oracle Database using DBCA -->
 
 ``` bash
-dbca -configureDatabase -sourceDB $ORACLE_SID -registerWithDirService true \
+dbca -configureDatabase -sourceDB $ORACLE_SID \
+    -registerWithDirService true \
     -dirServiceUserName "cn=eusadmin" -dirServicePassword manager \
     -walletPassword TVD04manager -silent
 ```
@@ -321,14 +329,16 @@ Define a EUS mapping to the shared schema created before
 eusm createMapping database_name="$ORACLE_SID" \
     realm_dn="dc=postgasse,dc=org" map_type=SUBTREE \
     map_dn="ou=People,dc=postgasse,dc=org" schema=EUS_USERS \
-    ldap_host="te2018_oud.postgasse.org" ldap_port=1389 ldap_user_dn="cn=eusadmin" \
+    ldap_host="te2018_oud.postgasse.org" ldap_port=1389 \
+    ldap_user_dn="cn=eusadmin" \
     ldap_user_password="manager"  
 ```
 
 ``` bash
 eusm listMappings database_name="$ORACLE_SID" \
     realm_dn="dc=postgasse,dc=org" \
-    ldap_host="te2018_oud.postgasse.org" ldap_port=1389 ldap_user_dn="cn=eusadmin" \
+    ldap_host="te2018_oud.postgasse.org" ldap_port=1389 \
+    ldap_user_dn="cn=eusadmin" \
     ldap_user_password="manager"
 ```
 
