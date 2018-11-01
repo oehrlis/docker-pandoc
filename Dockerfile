@@ -28,7 +28,9 @@ LABEL maintainer="stefan.oehrli@trivadis.com"
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
 ENV WORKDIR=/workdir \
-    PATH=/usr/local/texlive/2018/bin/x86_64-linux:$PATH
+    PATH=/usr/local/texlive/2018/bin/x86_64-linux:$PATH \
+    USER_TEMPLATES=$HOME/.pandoc/templates/ \
+    TRIVADIS_TEMPLATE="trivadis.latex"
 
 # copy the texlife profile
 COPY texlive.profile /tmp/texlive.profile
@@ -44,7 +46,7 @@ COPY texlive.profile /tmp/texlive.profile
 # - clean up tlmgr, yum and other stuff
 RUN echo "%_install_langs   en" >/etc/rpm/macros.lang && \
     yum -y upgrade && \
-    yum -y install wget perl tar gzip zip unzip perl-core && \
+    yum -y install wget ghostscript perl tar gzip zip unzip perl-core && \
     mkdir /tmp/texlive && \
     curl -Lsf http://www.pirbot.com/mirrors/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
@@ -56,7 +58,8 @@ RUN echo "%_install_langs   en" >/etc/rpm/macros.lang && \
                 mdframed l3packages l3kernel draftwatermark \
                 everypage minitoc breakurl lastpage \ 
                 datetime fmtcount blindtext fourier textpos \
-                needspace sourcesanspro xkeyval && \
+                needspace sourcesanspro xkeyval pagecolor epstopdf \
+                adjustbox collectbox && \
     tlmgr backup --clean --all && \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
@@ -76,6 +79,11 @@ RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest
         | tar zxvf - --strip-components 2 -C /usr/local/bin && \
     rm -rf /usr/local/bin/man && \
     mkdir ${WORKDIR}
+
+# install the trivadis LaTeX template from github
+RUN mkdir -p $USER_TEMPLATES && \
+    GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/trivadis.tex" && \
+    curl -Lsf ${GITHUB_URL} -o ${USER_TEMPLATES}/${TRIVADIS_TEMPLATE}
 
 # Define /texlive as volume
 VOLUME ["${WORKDIR}"]

@@ -1,3 +1,17 @@
+---
+title: "EUS, Kerberos, SSL and OUD a guideline"
+subtitle: "Demo Scripts, Examples and Exercises"
+author: [Stefan Oehrli]
+date: "2018 November 01"
+tvddocversion: 0.9
+papersize: a4 
+listings-disable-line-numbers: true
+titlepage: true
+toc: true
+toc-own-page: true
+logo: "logo.eps"
+...
+
 # Demos EUS, Kerberos, SSL and OUD a guideline
 
 A couple of demo's for the TechEvent presentation *EUS, Kerberos, SSL and OUD a guideline*. Be aware, that the code can not be used copy/past in all environments due to limitations on the line breaks.
