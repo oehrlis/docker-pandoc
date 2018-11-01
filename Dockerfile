@@ -65,11 +65,11 @@ RUN echo "%_install_langs   en" >/etc/rpm/macros.lang && \
         -o /tmp/install-getnonfreefonts && \
     texlua /tmp/install-getnonfreefonts && \
     getnonfreefonts --sys -a && \
-    yum -y erase wget zip unzip perl perl-core && \
     yum clean all && \
     rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
     rm -rf /var/cache/yum && \
     rm /usr/local/texlive/*/tlpkg/texlive.tlpdb.*
+    # keep perl installation ...#yum -y erase wget zip unzip perl perl-core && \
 
 # install pandoc from github
 RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest \
