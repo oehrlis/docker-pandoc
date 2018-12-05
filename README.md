@@ -9,19 +9,26 @@ The pre build image is availabe via [Dockerhub](https://hub.docker.com/r/oehrlis
 docker pull oehrlis/pandoc
 ```
 
-Either you copy the files into the container, which is obviously not really handy, or you mount your local document folder as volume.
+Either you copy the files into the container, which is obviously not really handy, or you mount your local document folder as volume and run it.
 
 ```bash
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc pandoc <OPTIONS>
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc <OPTIONS>
 ```
 
-Conversion of the sample Markdown file into a PDF.
+Conversion of the sample Markdown file into a PDF using the default LaTeX template.
 
 ```bash
 cd sample
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc pandoc \
-    sample.md -o sample.pdf -f gfm --template sample.tex \
-    --toc -N --listings
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
+    -o sample.pdf --toc -N --listings
+```
+
+Conversion of the sample Markdown file into a PDF using the Trivadis LaTeX template.
+
+```bash
+cd sample
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
+    -o sample.pdf --template trivadis --toc -N --listings
 ```
 
 Since the container includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation, you may also use a bunch of latex tools.
@@ -35,7 +42,7 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 alternatively you can open a shell in the container and use the miscellanies tex tools interactively.
 
 ```bash
-docker run -it --rm -v $PWD:/workdir:z oehrlis/pandoc bash
+docker run -it --rm -v $PWD:/workdir:z --entrypoint bash oehrlis/pandoc
 ```
 
 ## Build and add new packages
@@ -48,9 +55,10 @@ $ cd docker-pandoc
 $ docker build -t oehrlis/pandoc .
 ```
 
-Optionaly you can add additional texlive package to the tlmgr command in the Dockerfile.
+Optionally you can add additional texlive package to the `tlmgr` command in the Dockerfile.
 
 ## Issues
+
 Please file your bug reports, enhancement requests, questions and other support requests within [Github's issue tracker](https://help.github.com/articles/about-issues/):
 
 * [Existing issues](https://github.com/oehrlis/docker-pandoc/issues)
