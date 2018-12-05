@@ -28,18 +28,10 @@ Conversion of the sample Markdown file into a PDF using the Trivadis LaTeX templ
 ```bash
 cd sample
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
-    -o sample.pdf --template trivadis --toc -N --listings
+    -o sample_trivadis.pdf --template trivadis --toc -N --listings
 ```
 
-Since the container includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation, you may also use a bunch of latex tools.
-
-```bash
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
-    pdflatex <TEX_FILE> 
-    --t
-```
-
-alternatively you can open a shell in the container and use the miscellanies tex tools interactively.
+Alternatively you can open a shell in the container and use the miscellanies pandoc and tex tools interactively.
 
 ```bash
 docker run -it --rm -v $PWD:/workdir:z --entrypoint bash oehrlis/pandoc
