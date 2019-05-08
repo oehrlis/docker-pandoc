@@ -23,11 +23,11 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
     -o sample.pdf --toc -N --listings
 ```
 
-Conversion of the sample Markdown file into a PDF using the Trivadis LaTeX template.
+Conversion of the sample Markdown file into a PDF using the Trivadis LaTeX template and XeLaTeX for include custom TTF fonts.
 
 ```bash
 cd sample
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc --pdf-engine=xelatex sample.md \
     -o sample_trivadis.pdf --template trivadis --toc -N --listings
 ```
 
@@ -60,3 +60,6 @@ Please file your bug reports, enhancement requests, questions and other support 
 
 * [pandoc](https://pandoc.org)
 * [texlive 2018](https://www.tug.org/texlive/)
+* GitHub [google/fonts](https://github.com/google/fonts)
+* GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
+* Get Microsoft's Core Fonts for the Web and Cleartype Fonts (http://mscorefonts2.sourceforge.net/)

@@ -8,7 +8,10 @@ papersize: a4
 listings-disable-line-numbers: true
 titlepage: true
 toc: true
+numbersections: true
 toc-own-page: true
+mainfont: Nunito Sans SemiBold
+monofont: Courier New
 ---
 
 # Demos EUS, Kerberos, SSL and OUD a guideline
