@@ -55,11 +55,11 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
         times helvetic symbol zapfding ly1 lm-math \
         titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
-        mdframed draftwatermark \
+        mdframed draftwatermark mdwtools \
         everypage minitoc breakurl lastpage \ 
         datetime fmtcount blindtext fourier textpos \
         needspace sourcesanspro pagecolor epstopdf \
-        adjustbox collectbox && \
+        adjustbox collectbox ulem bidi upquote xecjk xurl && \
     tlmgr backup --clean --all && \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
