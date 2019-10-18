@@ -19,7 +19,7 @@
 
 # Pull base image
 # ----------------------------------------------------------------------
-FROM alpine
+FROM alpine:3.9.4
 
 # Maintainer
 # ----------------------------------------------------------------------
@@ -50,9 +50,9 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
     mkdir /tmp/texlive && \
     curl -Lsf http://www.pirbot.com/mirrors/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
-    /tmp/texlive/install-tl --profile=/tmp/texlive.profile  && \
+    /tmp/texlive/install-tl --profile /tmp/texlive.profile && \
     tlmgr install \
-        times helvetic symbol zapfding ly1 lm-math \
+        fvextra footnotebackref times helvetic symbol zapfding ly1 lm-math \
         titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
         mdframed draftwatermark mdwtools \
@@ -89,16 +89,22 @@ ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
     PANDOC_IMAGES="/root/.pandoc/images" \
     TRIVADIS_TEX="trivadis.tex" \
     TRIVADIS_DOCX="trivadis.docx" \
+    TRIVADIS_PPTX="trivadis.pptx" \
     TRIVADIS_LATEX="trivadis.latex" \
     TRIVADIS_LOGO="TVDLogo2019.eps"
 
 # install the trivadis LaTeX template from github and adjust the default logo
 RUN mkdir -p ${PANDOC_DATA} ${PANDOC_TEMPLATES} ${PANDOC_IMAGES} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX} -o ${PANDOC_TEMPLATES}/${TRIVADIS_LATEX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${PANDOC_TEMPLATES}/${TRIVADIS_DOCX} && \
-    curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO} -o ${PANDOC_IMAGES}/${TRIVADIS_LOGO} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX} -o ${PANDOC_DATA}/${TRIVADIS_TEX} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${PANDOC_DATA}/${TRIVADIS_DOCX} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${PANDOC_DATA}/${TRIVADIS_PPTX} 
+RUN curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO} -o ${PANDOC_IMAGES}/${TRIVADIS_LOGO} && \
     curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${PANDOC_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
-    sed -i "s|images/${TRIVADIS_LOGO}|${PANDOC_IMAGES}/${TRIVADIS_LOGO}|" ${PANDOC_TEMPLATES}/${TRIVADIS_LATEX}
+    ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_DATA}/${TRIVADIS_LATEX} && \
+    ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_DATA}/default.latex && \
+    ln ${PANDOC_DATA}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
+    ln ${PANDOC_DATA}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
+    ln ${PANDOC_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
 
 # Define /texlive as volume
 VOLUME ["${WORKDIR}"]
