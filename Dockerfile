@@ -39,7 +39,8 @@ COPY texlive.profile /tmp/texlive.profile
 # - ugrade system
 # - install wget tar gzip perl perl-core
 RUN apk update && apk upgrade && apk add --update --no-cache \
-        wget msttcorefonts-installer curl ghostscript perl tar gzip zip unzip fontconfig && \
+        wget msttcorefonts-installer xz curl ghostscript perl \
+        tar gzip zip unzip fontconfig && \
     rm -rf /var/cache/apk/*
 
 # RUN as user root
@@ -55,11 +56,12 @@ RUN mkdir /tmp/texlive && \
     /tmp/texlive/install-tl --profile /tmp/texlive.profile && \
     tlmgr install \
         ttfutils fontinst \
-        fvextra footnotebackref times helvetic symbol zapfding ly1 lm-math \
+        fvextra footnotebackref times \
+        helvetic symbol zapfding ly1 lm-math \
         titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
         mdframed draftwatermark mdwtools \
-        everypage minitoc breakurl lastpage \ 
+        everypage minitoc breakurl lastpage \
         datetime fmtcount blindtext fourier textpos \
         needspace sourcesanspro pagecolor epstopdf \
         adjustbox collectbox ulem bidi upquote xecjk xurl && \
@@ -99,6 +101,8 @@ ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
     PANDOC_DATA="/root/.pandoc" \
     PANDOC_TEMPLATES="/root/.pandoc/templates" \
     PANDOC_IMAGES="/root/.pandoc/images" \
+    TRIVADIS_TEMPLATES="/trivadis/templates"  \
+    TRIVADIS_IMAGES="/trivadis/images" \
     TRIVADIS_TEX="trivadis.tex" \
     TRIVADIS_DOCX="trivadis.docx" \
     TRIVADIS_PPTX="trivadis.pptx" \
@@ -106,17 +110,18 @@ ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
     TRIVADIS_LOGO="TVDLogo2019.eps"
 
 # install the trivadis LaTeX template from github and adjust the default logo
-RUN mkdir -p ${PANDOC_DATA} ${PANDOC_TEMPLATES} ${PANDOC_IMAGES} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX} -o ${PANDOC_DATA}/${TRIVADIS_TEX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${PANDOC_DATA}/${TRIVADIS_DOCX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${PANDOC_DATA}/${TRIVADIS_PPTX} && \
-    curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO} -o ${PANDOC_IMAGES}/${TRIVADIS_LOGO} && \
-    curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${PANDOC_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
-    ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_DATA}/${TRIVADIS_LATEX} && \
-    ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/default.latex && \
-    ln ${PANDOC_DATA}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
-    ln ${PANDOC_DATA}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
-    ln ${PANDOC_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
+RUN mkdir -p ${TRIVADIS_TEMPLATES} ${TRIVADIS_IMAGES} ${PANDOC_DATA} \
+        ${PANDOC_TEMPLATES} ${PANDOC_IMAGES} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX}  -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} && \
+    curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO}    -o ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} && \
+    curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${TRIVADIS_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/default.latex && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
+    ln ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
 
 # Define /texlive as volume
 VOLUME ["${WORKDIR}"]
