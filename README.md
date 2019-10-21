@@ -49,6 +49,14 @@ $ docker build -t oehrlis/pandoc .
 
 Optionally you can add additional texlive package to the `tlmgr` command in the Dockerfile.
 
+Alternatively you can use the `build.sh` script.
+
+```bash
+git clone git@github.com:oehrlis/docker-pandoc.git
+$ cd docker-pandoc
+$ build.sh
+```
+
 ## Issues
 
 Please file your bug reports, enhancement requests, questions and other support requests within [Github's issue tracker](https://help.github.com/articles/about-issues/):
@@ -59,7 +67,9 @@ Please file your bug reports, enhancement requests, questions and other support 
 ## References
 
 * [pandoc](https://pandoc.org)
-* [texlive 2018](https://www.tug.org/texlive/)
+* [texlive 2019](https://www.tug.org/texlive/)
 * GitHub [google/fonts](https://github.com/google/fonts)
 * GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
+* GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
+* [Google Fonts](https://fonts.google.com/) Nunito and Nunito Sans
 * Get Microsoft's Core Fonts for the Web and Cleartype Fonts (http://mscorefonts2.sourceforge.net/)
