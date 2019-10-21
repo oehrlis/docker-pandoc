@@ -33,25 +33,28 @@ ENV WORKDIR="/workdir" \
 # copy the texlife profile
 COPY texlive.profile /tmp/texlive.profile
 
-# copy custom fonts
-COPY fonts/* /usr/share/fonts/custom/
+# RUN as user root
+# ----------------------------------------------------------------------
+# install additional alpine packages 
+# - ugrade system
+# - install wget tar gzip perl perl-core
+RUN apk update && apk upgrade && apk add --update --no-cache \
+        wget msttcorefonts-installer curl ghostscript perl tar gzip zip unzip fontconfig && \
+    rm -rf /var/cache/apk/*
 
 # RUN as user root
 # ----------------------------------------------------------------------
-# install packages used to run texlive install stuff
-# - ugrade system
-# - install wget tar gzip perl perl-core
+# install basic texlive and additonal packages
 # - download texlive installer
 # - initiate basic texlive installation
 # - add a couple of custom package via tlmgr
 # - clean up tlmgr, apk and other stuff
-RUN apk update && apk upgrade && apk add --update --no-cache \
-        wget curl ghostscript perl tar gzip zip unzip fontconfig && \
-    mkdir /tmp/texlive && \
+RUN mkdir /tmp/texlive && \
     curl -Lsf http://www.pirbot.com/mirrors/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
     /tmp/texlive/install-tl --profile /tmp/texlive.profile && \
     tlmgr install \
+        ttfutils fontinst \
         fvextra footnotebackref times helvetic symbol zapfding ly1 lm-math \
         titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
@@ -64,11 +67,20 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
     texlua /tmp/install-getnonfreefonts && \
-    getnonfreefonts --sys arial-urw && \
-    fc-cache -fv && \ 
+    getnonfreefonts --sys arial-urw && \ 
     rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
-    rm -rf /var/cache/apk/* && \
     rm /usr/local/texlive/*/tlpkg/texlive.tlpdb.*
+
+# RUN as user root
+# ----------------------------------------------------------------------
+# google fonts and update font cache
+RUN curl -Lsf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito && \
+    curl -Lsf -o /tmp/nunito_sans.zip https://fonts.google.com/download?family=Nunito%20Sans && \
+    unzip -o -d /usr/share/fonts/custom/ /tmp/nunito.zip && \
+    unzip -o -d /usr/share/fonts/custom/ /tmp/nunito_sans.zip && \
+    update-ms-fonts && \
+    fc-cache -fv && \
+    rm -rv /tmp/*.zip
 
 # RUN as user root
 # ----------------------------------------------------------------------
@@ -97,11 +109,11 @@ ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
 RUN mkdir -p ${PANDOC_DATA} ${PANDOC_TEMPLATES} ${PANDOC_IMAGES} && \
     curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX} -o ${PANDOC_DATA}/${TRIVADIS_TEX} && \
     curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${PANDOC_DATA}/${TRIVADIS_DOCX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${PANDOC_DATA}/${TRIVADIS_PPTX} 
-RUN curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO} -o ${PANDOC_IMAGES}/${TRIVADIS_LOGO} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${PANDOC_DATA}/${TRIVADIS_PPTX} && \
+    curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO} -o ${PANDOC_IMAGES}/${TRIVADIS_LOGO} && \
     curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${PANDOC_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
     ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_DATA}/${TRIVADIS_LATEX} && \
-    ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_DATA}/default.latex && \
+    ln ${PANDOC_DATA}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/default.latex && \
     ln ${PANDOC_DATA}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
     ln ${PANDOC_DATA}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
     ln ${PANDOC_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
