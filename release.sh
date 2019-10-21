@@ -3,12 +3,12 @@
 # Trivadis AG, Infrastructure Managed Services
 # Saegereistrasse 29, 8152 Glattbrugg, Switzerland
 # ---------------------------------------------------------------------------
-# Name.......: build.sh 
+# Name.......: relase.sh 
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
 # Editor.....: Stefan Oehrli
 # Date.......: 2019.10.21
 # Revision...: 
-# Purpose....: Script to build Docker image.
+# Purpose....: Script to release Docker image.
 # Notes......: --
 # Reference..: --
 # License....: Licensed under the Universal Permissive License v 1.0 as 
