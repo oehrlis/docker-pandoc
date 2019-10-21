@@ -2,16 +2,21 @@
 title: "EUS, Kerberos, SSL and OUD a guideline"
 subtitle: "Demo Scripts, Examples and Exercises"
 author: [Stefan Oehrli]
-date: "2018 November 01"
-tvddocversion: 0.9
+date: "2019 October 16"
+tvddocversion: 1.0
 papersize: a4 
 listings-disable-line-numbers: true
-titlepage: true
-toc: true
-numbersections: true
-toc-own-page: true
+titlepage: false
+toc: false
+numbersections: false
 mainfont: Nunito Sans SemiBold
 monofont: Courier New
+logo: /TVDLogo2019.eps
+lang: en-US
+colorlinks: true
+geometry:
+- top=15mm
+- bottom=15mm
 ---
 
 # Demos EUS, Kerberos, SSL and OUD a guideline
@@ -232,6 +237,7 @@ ktpass.exe -princ oracle/te2018_eusdb.postgasse.org@POSTGASSE.ORG \
 ```
 
 Connect as kerberos User
+
 ## Setup OUD AD Proxy
 
 ### Requirements
