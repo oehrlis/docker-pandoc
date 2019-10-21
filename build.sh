@@ -19,7 +19,7 @@
 # ---------------------------------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------
-export DOCKER_USER="oehrli"
+export DOCKER_USER="oehrlis"
 export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
