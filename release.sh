@@ -19,7 +19,7 @@
 # ---------------------------------------------------------------------------
 
 # - Environment Variables ---------------------------------------------------
-export DOCKER_USER="oehrli"
+export DOCKER_USER="oehrlis"
 export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
@@ -31,36 +31,27 @@ CURRENT_PATH=$(pwd)
 # change to build context
 cd ${BUILD_CONTEXT}
 
-# build docker image
-docker build -t ${DOCKER_USER}/${IMAGE}:latest .
-
-
-# SET THE FOLLOWING VARIABLES
-# docker hub username
-USERNAME=treeder
-# image name
-IMAGE=helloworld
 # ensure we're up to date
 git pull
+
 # bump version
 docker run --rm -v "$PWD":/app treeder/bump patch
 version=`cat VERSION`
 echo "version: $version"
+
 # run build
-# ./build.sh
-# # tag it
-# git add -A
-# git commit -m "version $version"
-# git tag -a "$version" -m "version $version"
-# git push
-# git push --tags
-# docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$version
-# # push it
-# docker push $USERNAME/$IMAGE:latest
-# docker push $USERNAME/$IMAGE:$version
+./build.sh
 
-
-
+# tag it
+git add -A
+git commit -m "version $version"
+git tag -a "$version" -m "version $version"
+git push
+git push --tags
+docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$version
+# push it
+docker push $USERNAME/$IMAGE:latest
+docker push $USERNAME/$IMAGE:$version
 
 # change back to working directory
 cd ${CURRENT_PATH}
