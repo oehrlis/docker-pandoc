@@ -31,8 +31,9 @@ CURRENT_PATH=$(pwd)
 # change to build context
 cd ${BUILD_CONTEXT}
 
+#export DOCKER_BUILDKIT=1
 # build docker image
-docker build -t ${DOCKER_USER}/${IMAGE}:latest .
+docker build --no-cache -t ${DOCKER_USER}/${IMAGE}:latest .
 
 # generate PDF
 echo "generate PDF sample file"

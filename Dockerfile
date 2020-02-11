@@ -40,7 +40,7 @@ COPY texlive.profile /tmp/texlive.profile
 # - install wget tar gzip perl perl-core
 RUN apk update && apk upgrade && apk add --update --no-cache \
         wget msttcorefonts-installer xz curl ghostscript perl \
-        tar gzip zip unzip fontconfig && \
+        tar gzip zip unzip fontconfig python py-pip && \
     rm -rf /var/cache/apk/*
 
 # RUN as user root
@@ -50,20 +50,22 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
 # - initiate basic texlive installation
 # - add a couple of custom package via tlmgr
 # - clean up tlmgr, apk and other stuff
+# search for package tlmgr search --global --file
 RUN mkdir /tmp/texlive && \
-    curl -Lsf http://www.pirbot.com/mirrors/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
+    curl -Lsf http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
     /tmp/texlive/install-tl --profile /tmp/texlive.profile && \
     tlmgr install \
         ttfutils fontinst \
-        fvextra footnotebackref times \
-        helvetic symbol zapfding ly1 lm-math \
-        titlesec xetex ec mweights \
+        fvextra footnotebackref times pdftexcmds \
+        helvetic symbol grffile zapfding ly1 lm-math \
+        soul titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
         mdframed draftwatermark mdwtools \
         everypage minitoc breakurl lastpage \
         datetime fmtcount blindtext fourier textpos \
         needspace sourcesanspro pagecolor epstopdf \
+        letltxmacro zref \
         adjustbox collectbox ulem bidi upquote xecjk xurl && \
     tlmgr backup --clean --all && \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
@@ -88,11 +90,12 @@ RUN curl -Lsf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito
 # ----------------------------------------------------------------------
 # install pandoc from github
 RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest \
-        | grep 'browser_download.*pandoc-.*-linux.tar.gz' \
+        | grep 'browser_download.*pandoc-.*-linux.*.tar.gz' \
         | cut -d: -f 2,3 | tr -d '"' ) && \
     curl -Lsf ${PANDOC_URL} \
         | tar zxvf - --strip-components 2 -C /usr/local/bin && \
     rm -rf /usr/local/bin/man /usr/local/bin//pandoc-citeproc && \
+    pip install pandoc-latex-color && \
     mkdir -p ${WORKDIR}
 
 # Environment variables required for this build (do NOT change)

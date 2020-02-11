@@ -1,0 +1,17 @@
+https://fonts.google.com/?download&selection.family=Nunito|Nunito+Sans
+
+https://fonts.google.com/?selection.family=Nunito
+
+https://fonts.google.com/download?family=Open%20Sans)
+
+wget -O Open_Sans.zip https://fonts.google.com/download?family=Open%20Sans
+
+wget -O Open_Sans.zip https://fonts.google.com/download?family=Nunito
+wget -O Nunito_Sans.zip https://fonts.google.com/download?family=Nunito%20Sans|Nunito
+
+curl -Lsf -o nunito.zip https://fonts.google.com/download?family=Nunito 
+curl -Lsf -o nunito_sans.zip https://fonts.google.com/download?family=Nunito%20Sans
+curl -Lsf -o impact.ttf https://www.wfonts.com/download/data/2014/05/29/impact/impact.ttf
+curl -Lsf -o calibri-font-sv.zip https://www.downloadfonts.io/4bmd
+
+DownloadCHARMAP

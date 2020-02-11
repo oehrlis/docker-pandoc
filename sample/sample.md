@@ -11,12 +11,17 @@ toc: false
 numbersections: false
 mainfont: Nunito Sans SemiBold
 monofont: Courier New
-logo: /TVDLogo2019.eps
-lang: en-US
 colorlinks: true
 geometry:
 - top=15mm
 - bottom=15mm
+pandoc-latex-color:
+- classes: [risk_high]
+  color: red
+- classes: [risk_medium]
+  color: orange
+- classes: [risk_low]
+  color: green
 ---
 
 # Demos EUS, Kerberos, SSL and OUD a guideline
@@ -237,6 +242,14 @@ ktpass.exe -princ oracle/te2018_eusdb.postgasse.org@POSTGASSE.ORG \
 ```
 
 Connect as kerberos User
+
+Table: Vulnerability
+
+Vulnerability    Risk [^1]
+--------------- ----------
+V01               high [^99]
+V02               gelb
+
 
 ## Setup OUD AD Proxy
 

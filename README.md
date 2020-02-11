@@ -31,10 +31,16 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc --pdf-engine=xelatex sample.md
     -o sample_trivadis.pdf --template trivadis --toc -N --listings
 ```
 
+```bash
+cd sample
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
+    -o sample_trivadis.pdf --template trivadis --toc -N --listings
+```
+
 Alternatively you can open a shell in the container and use the miscellanies pandoc and tex tools interactively.
 
 ```bash
-docker run -it --rm -v $PWD:/workdir:z --entrypoint bash oehrlis/pandoc
+docker run -it --rm -v $PWD:/workdir:z --entrypoint sh oehrlis/pandoc
 ```
 
 ## Build and add new packages
