@@ -113,6 +113,7 @@ ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
     TRIVADIS_DOCX="trivadis.docx" \
     TRIVADIS_PPTX="trivadis.pptx" \
     TRIVADIS_LATEX="trivadis.latex" \
+    TRIVADIS_HTML="GitHub.html5" \
     TRIVADIS_LOGO="TVDLogo2019.eps"
 
 # install the trivadis LaTeX template from github and adjust the default logo
@@ -121,6 +122,7 @@ RUN mkdir -p ${TRIVADIS_TEMPLATES} ${TRIVADIS_IMAGES} ${PANDOC_DATA} \
     curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX}  -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} && \
     curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} && \
     curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} && \
+    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_HTML} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} && \
     curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO}    -o ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} && \
     curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${TRIVADIS_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} && \
@@ -129,6 +131,7 @@ RUN mkdir -p ${TRIVADIS_TEMPLATES} ${TRIVADIS_IMAGES} ${PANDOC_DATA} \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} ${PANDOC_TEMPLATES}/${TRIVADIS_LATEX} && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_TEMPLATES}/${TRIVADIS_DOCX} && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_TEMPLATES}/${TRIVADIS_PPTX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} ${PANDOC_TEMPLATES}/${TRIVADIS_HTML} && \
     ln ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
 
 # Define /texlive as volume
