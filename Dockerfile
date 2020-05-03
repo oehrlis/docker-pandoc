@@ -19,7 +19,7 @@
 
 # Pull base image
 # ----------------------------------------------------------------------
-FROM alpine:3.9.4
+FROM alpine
 
 # Maintainer
 # ----------------------------------------------------------------------
@@ -28,7 +28,7 @@ LABEL maintainer="stefan.oehrli@trivadis.com"
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
 ENV WORKDIR="/workdir" \
-    PATH=/usr/local/texlive/2019/bin/x86_64-linuxmusl:$PATH
+    PATH=/usr/local/texlive/2020/bin/x86_64-linuxmusl:$PATH
 
 # copy the texlife profile
 COPY texlive.profile /tmp/texlive.profile
@@ -48,7 +48,7 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
 # install basic texlive and additonal packages
 # - download texlive installer
 # - initiate basic texlive installation
-# - add a couple of custom package via tlmgr
+# - add a couple of custom package via tlmgr 
 # - clean up tlmgr, apk and other stuff
 # search for package tlmgr search --global --file
 RUN mkdir /tmp/texlive && \
@@ -73,7 +73,10 @@ RUN mkdir /tmp/texlive && \
     texlua /tmp/install-getnonfreefonts && \
     getnonfreefonts --sys arial-urw && \ 
     rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
-    rm /usr/local/texlive/*/tlpkg/texlive.tlpdb.*
+    rm -rv /usr/local/texlive/*/tlpkg/texlive.tlpdb.* && \
+    rm -rv /usr/local/texlive/2020/bin/x86_64-linux && \
+    find / -name *.exe -exec rm -rv {} \; && \
+    find / -name *.log -exec rm -rv {} \;
 
 # RUN as user root
 # ----------------------------------------------------------------------
@@ -122,8 +125,10 @@ RUN mkdir -p ${TRIVADIS_TEMPLATES} ${TRIVADIS_IMAGES} ${PANDOC_DATA} \
     curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${TRIVADIS_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/default.latex && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/${TRIVADIS_TEX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} ${PANDOC_TEMPLATES}/${TRIVADIS_LATEX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_TEMPLATES}/${TRIVADIS_DOCX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_TEMPLATES}/${TRIVADIS_PPTX} && \
     ln ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
 
 # Define /texlive as volume
