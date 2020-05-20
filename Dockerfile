@@ -52,14 +52,14 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
 # - clean up tlmgr, apk and other stuff
 # search for package tlmgr search --global --file
 RUN mkdir /tmp/texlive && \
-    curl -Lsf http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
+    curl -Lf http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
     /tmp/texlive/install-tl --profile /tmp/texlive.profile && \
     tlmgr install \
         ttfutils fontinst \
         fvextra footnotebackref times pdftexcmds \
         helvetic symbol grffile zapfding ly1 lm-math \
-        soul titlesec xetex ec mweights \
+        soul sectsty titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
         mdframed draftwatermark mdwtools \
         everypage minitoc breakurl lastpage \
@@ -81,8 +81,8 @@ RUN mkdir /tmp/texlive && \
 # RUN as user root
 # ----------------------------------------------------------------------
 # google fonts and update font cache
-RUN curl -Lsf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito && \
-    curl -Lsf -o /tmp/nunito_sans.zip https://fonts.google.com/download?family=Nunito%20Sans && \
+RUN curl -Lf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito && \
+    curl -Lf -o /tmp/nunito_sans.zip https://fonts.google.com/download?family=Nunito%20Sans && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/nunito.zip && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/nunito_sans.zip && \
     update-ms-fonts && \
@@ -95,7 +95,7 @@ RUN curl -Lsf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito
 RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest \
         | grep 'browser_download.*pandoc-.*-linux.*.tar.gz' \
         | cut -d: -f 2,3 | tr -d '"' ) && \
-    curl -Lsf ${PANDOC_URL} \
+    curl -Lf ${PANDOC_URL} \
         | tar zxvf - --strip-components 2 -C /usr/local/bin && \
     rm -rf /usr/local/bin/man /usr/local/bin//pandoc-citeproc && \
     pip install pandoc-latex-color && \
@@ -104,9 +104,10 @@ RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
 ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
-    PANDOC_DATA="/root/.pandoc" \
-    PANDOC_TEMPLATES="/root/.pandoc/templates" \
-    PANDOC_IMAGES="/root/.pandoc/images" \
+    PANDOC_DATA="/root/.local/share/pandoc" \
+    XDG_DATA_HOME="/root/.local/share" \
+    PANDOC_TEMPLATES="/root/.local/share/pandoc/templates" \
+    PANDOC_IMAGES="/root/.local/share/pandoc/images" \
     TRIVADIS_TEMPLATES="/trivadis/templates"  \
     TRIVADIS_IMAGES="/trivadis/images" \
     TRIVADIS_TEX="trivadis.tex" \
@@ -114,23 +115,29 @@ ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
     TRIVADIS_PPTX="trivadis.pptx" \
     TRIVADIS_LATEX="trivadis.latex" \
     TRIVADIS_HTML="GitHub.html5" \
-    TRIVADIS_LOGO="TVDLogo2019.eps"
+    TRIVADIS_LOGO="TVDLogo2019.eps" \
+    TEST="eesdf"
 
 # install the trivadis LaTeX template from github and adjust the default logo
 RUN mkdir -p ${TRIVADIS_TEMPLATES} ${TRIVADIS_IMAGES} ${PANDOC_DATA} \
         ${PANDOC_TEMPLATES} ${PANDOC_IMAGES} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_TEX}  -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} && \
-    curl -Lsf ${GITHUB_URL}/templates/${TRIVADIS_HTML} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} && \
-    curl -Lsf ${GITHUB_URL}/images/${TRIVADIS_LOGO}    -o ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} && \
-    curl -Lsf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${TRIVADIS_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
+    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_TEX}  -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} && \
+    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} && \
+    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} && \
+    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_HTML} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} && \
+    curl -Lf ${GITHUB_URL}/images/${TRIVADIS_LOGO}    -o ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} && \
+    curl -Lf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${TRIVADIS_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/default.latex && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/${TRIVADIS_TEX} && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} ${PANDOC_TEMPLATES}/${TRIVADIS_LATEX} && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_TEMPLATES}/${TRIVADIS_DOCX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_TEMPLATES}/default.docx && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_DATA}/${TRIVADIS_DOCX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_TEMPLATES}/${TRIVADIS_PPTX} && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_TEMPLATES}/default.pptx && \
+    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
     ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} ${PANDOC_TEMPLATES}/${TRIVADIS_HTML} && \
     ln ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
 
