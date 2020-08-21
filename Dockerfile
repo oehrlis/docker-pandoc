@@ -40,7 +40,7 @@ COPY texlive.profile /tmp/texlive.profile
 # - install wget tar gzip perl perl-core
 RUN apk update && apk upgrade && apk add --update --no-cache \
         wget msttcorefonts-installer xz curl ghostscript perl \
-        tar gzip zip unzip fontconfig python py-pip && \
+        tar gzip zip unzip fontconfig python3 py-pip && \
     rm -rf /var/cache/apk/*
 
 # RUN as user root
@@ -99,6 +99,7 @@ RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest
         | tar zxvf - --strip-components 2 -C /usr/local/bin && \
     rm -rf /usr/local/bin/man /usr/local/bin//pandoc-citeproc && \
     pip install pandoc-latex-color && \
+    pip install pandoc-include && \
     mkdir -p ${WORKDIR}
 
 # Environment variables required for this build (do NOT change)
