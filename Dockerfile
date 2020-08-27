@@ -62,11 +62,12 @@ RUN mkdir /tmp/texlive && \
         soul sectsty titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
         mdframed draftwatermark mdwtools \
-        everypage minitoc breakurl lastpage \
+        everypage awesomebox minitoc fontawesome5 breakurl lastpage \
         datetime fmtcount blindtext fourier textpos \
         needspace sourcesanspro pagecolor epstopdf \
-        letltxmacro zref \
-        adjustbox collectbox ulem bidi upquote xecjk xurl && \
+        letltxmacro zref background filehook ucharcat \
+        adjustbox collectbox ulem bidi upquote xecjk xurl \
+        framed babel-german footmisc unicode-math && \
     tlmgr backup --clean --all && \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
@@ -100,6 +101,7 @@ RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest
     rm -rf /usr/local/bin/man /usr/local/bin//pandoc-citeproc && \
     pip install pandoc-latex-color && \
     pip install pandoc-include && \
+    pip install pandoc-latex-environment && \
     mkdir -p ${WORKDIR}
 
 # Environment variables required for this build (do NOT change)
