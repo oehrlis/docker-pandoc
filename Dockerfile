@@ -19,7 +19,7 @@
 
 # Pull base image
 # ----------------------------------------------------------------------
-FROM alpine
+FROM alpine:3.12.0
 
 # Maintainer
 # ----------------------------------------------------------------------
@@ -28,7 +28,7 @@ LABEL maintainer="stefan.oehrli@trivadis.com"
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
 ENV WORKDIR="/workdir" \
-    PATH=/usr/local/texlive/2020/bin/x86_64-linuxmusl:$PATH
+    PATH=/usr/local/texlive/bin/x86_64-linuxmusl:$PATH
 
 # copy the texlife profile
 COPY texlive.profile /tmp/texlive.profile
@@ -39,8 +39,8 @@ COPY texlive.profile /tmp/texlive.profile
 # - ugrade system
 # - install wget tar gzip perl perl-core
 RUN apk update && apk upgrade && apk add --update --no-cache \
-        wget msttcorefonts-installer xz curl ghostscript perl \
-        tar gzip zip unzip fontconfig python3 py-pip && \
+        wget msttcorefonts-installer xz musl curl ghostscript perl \
+        tar gzip zip unzip freetype lua fontconfig python3 py-pip && \
     rm -rf /var/cache/apk/*
 
 # RUN as user root
@@ -54,7 +54,7 @@ RUN apk update && apk upgrade && apk add --update --no-cache \
 RUN mkdir /tmp/texlive && \
     curl -Lf http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
-    /tmp/texlive/install-tl --profile /tmp/texlive.profile && \
+    /tmp/texlive/install-tl --profile /tmp/texlive.profile -repository http://mirror.ctan.org/systems/texlive/tlnet && \
     tlmgr install \
         ttfutils fontinst \
         fvextra footnotebackref times pdftexcmds \
@@ -72,12 +72,13 @@ RUN mkdir /tmp/texlive && \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
     texlua /tmp/install-getnonfreefonts && \
-    getnonfreefonts --sys arial-urw && \ 
-    rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
-    rm -rv /usr/local/texlive/*/tlpkg/texlive.tlpdb.* && \
-    rm -rv /usr/local/texlive/2020/bin/x86_64-linux && \
-    find / -name *.exe -exec rm -rv {} \; && \
-    find / -name *.log -exec rm -rv {} \;
+    getnonfreefonts --sys arial-urw 
+    # && \ 
+    # rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
+    # rm -rv /usr/local/texlive/*/tlpkg/texlive.tlpdb.* && \
+    # rm -rv /usr/local/texlive/bin/x86_64-linux && \
+    # find / -name *.exe -exec rm -rv {} \; && \
+    # find / -name *.log -exec rm -rv {} \;
 
 # RUN as user root
 # ----------------------------------------------------------------------

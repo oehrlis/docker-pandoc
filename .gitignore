@@ -257,3 +257,11 @@ TSWLatexianTemp*
 # generated if using elsarticle.cls
 *.spl
 /.DS_Store
+fonts/TheSansSwisscom33_TT.ttf
+fonts/TheSansSwisscom33iTT.ttf
+fonts/TheSansSwisscom37_TT.ttf
+fonts/TheSansSwisscom37iTT.ttf
+fonts/TheSansSwisscom55_TT.ttf
+fonts/TheSansSwisscom55iTT.ttf
+fonts/TheSansSwisscom57_TT.ttf
+fonts/TheSansSwisscom57iTT.ttf
