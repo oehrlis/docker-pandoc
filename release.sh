@@ -39,7 +39,7 @@ git pull
 # bump version
 docker run --rm -v "$PWD":/app treeder/bump $REL_TYPE
 
-version=`cat VERSION`
+version=$(cat VERSION)
 echo "version: $version"
 
 # run build
