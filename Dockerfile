@@ -62,7 +62,7 @@ RUN mkdir /tmp/texlive && \
         soul sectsty titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
         mdframed draftwatermark mdwtools \
-        everypage awesomebox minitoc fontawesome5 breakurl lastpage \
+        everypage awesomebox tcolorbox environ minitoc fontawesome5 breakurl lastpage \
         datetime fmtcount blindtext fourier textpos \
         needspace sourcesanspro pagecolor epstopdf \
         letltxmacro zref background filehook ucharcat \
