@@ -1,4 +1,5 @@
 # Pandoc Docker Images
+
 Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation to support simple PDF transformations. Additional texlive packages have to be installed be extending this images. 
 
 ## Run
@@ -78,4 +79,4 @@ Please file your bug reports, enhancement requests, questions and other support 
 * GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
 * GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
 * [Google Fonts](https://fonts.google.com/) Nunito and Nunito Sans
-* Get Microsoft's Core Fonts for the Web and Cleartype Fonts (http://mscorefonts2.sourceforge.net/)
+* Get Microsoft's Core Fonts for the Web and Cleartype Fonts (<http://mscorefonts2.sourceforge.net/>)
