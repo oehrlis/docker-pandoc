@@ -24,6 +24,8 @@ export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
 # - EOF Environment Variables -----------------------------------------------
+REL_TYPE=${1:-"patch"}  # could be also minor or major
+REL_TYPE=$(echo "$REL_TYPE" | tr '[:upper:]' '[:lower:]')
 
 # save current path
 CURRENT_PATH=$(pwd)
@@ -35,7 +37,8 @@ cd ${BUILD_CONTEXT}
 git pull
 
 # bump version
-docker run --rm -v "$PWD":/app treeder/bump patch
+docker run --rm -v "$PWD":/app treeder/bump $REL_TYPE
+
 version=`cat VERSION`
 echo "version: $version"
 
