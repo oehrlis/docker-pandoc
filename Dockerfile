@@ -85,8 +85,12 @@ RUN mkdir /tmp/texlive && \
 # google fonts and update font cache
 RUN curl -Lf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito && \
     curl -Lf -o /tmp/nunito_sans.zip https://fonts.google.com/download?family=Nunito%20Sans && \
+    curl -Lf -o /tmp/Open_Sans.zip https://fonts.google.com/download?family=Open+Sans && \
+    curl -Lf -o /tmp/Montserrat.zip https://fonts.google.com/download?family=Montserrat && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/nunito.zip && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/nunito_sans.zip && \
+    unzip -o -d /usr/share/fonts/custom/ /tmp/Open_Sans.zip && \
+    unzip -o -d /usr/share/fonts/custom/ /tmp/Montserrat.zip && \
     update-ms-fonts && \
     fc-cache -fv && \
     rm -rv /tmp/*.zip
