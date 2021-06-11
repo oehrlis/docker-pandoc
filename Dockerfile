@@ -72,23 +72,18 @@ RUN mkdir /tmp/texlive && \
     curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
     texlua /tmp/install-getnonfreefonts && \
-    getnonfreefonts --sys arial-urw 
-    # && \ 
-    # rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
+    getnonfreefonts --sys arial-urw && \ 
+    rm -rv /tmp/texlive /tmp/texlive.profile /tmp/install* && \
     # rm -rv /usr/local/texlive/*/tlpkg/texlive.tlpdb.* && \
-    # rm -rv /usr/local/texlive/bin/x86_64-linux && \
-    # find / -name *.exe -exec rm -rv {} \; && \
-    # find / -name *.log -exec rm -rv {} \;
+    rm -rv /usr/local/texlive/bin/x86_64-linux && \
+    find / -name *.exe -exec rm -rv {} \; && \
+    find / -name *.log -exec rm -rv {} \;
 
 # RUN as user root
 # ----------------------------------------------------------------------
 # google fonts and update font cache
-RUN curl -Lf -o /tmp/nunito.zip https://fonts.google.com/download?family=Nunito && \
-    curl -Lf -o /tmp/nunito_sans.zip https://fonts.google.com/download?family=Nunito%20Sans && \
-    curl -Lf -o /tmp/Open_Sans.zip https://fonts.google.com/download?family=Open+Sans && \
+RUN curl -Lf -o /tmp/Open_Sans.zip https://fonts.google.com/download?family=Open+Sans && \
     curl -Lf -o /tmp/Montserrat.zip https://fonts.google.com/download?family=Montserrat && \
-    unzip -o -d /usr/share/fonts/custom/ /tmp/nunito.zip && \
-    unzip -o -d /usr/share/fonts/custom/ /tmp/nunito_sans.zip && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/Open_Sans.zip && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/Montserrat.zip && \
     update-ms-fonts && \
@@ -111,43 +106,21 @@ RUN PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest
 
 # Environment variables required for this build (do NOT change)
 # -------------------------------------------------------------
-ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/raw/master/" \
+ENV GITHUB_URL="https://github.com/oehrlis/pandoc_template/archive/refs/heads/master.tar.gz" \
     PANDOC_DATA="/root/.local/share/pandoc" \
     XDG_DATA_HOME="/root/.local/share" \
-    PANDOC_TEMPLATES="/root/.local/share/pandoc/templates" \
-    PANDOC_IMAGES="/root/.local/share/pandoc/images" \
-    TRIVADIS_TEMPLATES="/trivadis/templates"  \
-    TRIVADIS_IMAGES="/trivadis/images" \
-    TRIVADIS_TEX="trivadis.tex" \
-    TRIVADIS_DOCX="trivadis.docx" \
-    TRIVADIS_PPTX="trivadis.pptx" \
-    TRIVADIS_LATEX="trivadis.latex" \
-    TRIVADIS_HTML="GitHub.html5" \
-    TRIVADIS_LOGO="TVDLogo2019.eps" \
-    TEST="eesdf"
+    TRIVADIS="/trivadis"
 
 # install the trivadis LaTeX template from github and adjust the default logo
-RUN mkdir -p ${TRIVADIS_TEMPLATES} ${TRIVADIS_IMAGES} ${PANDOC_DATA} \
-        ${PANDOC_TEMPLATES} ${PANDOC_IMAGES} && \
-    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_TEX}  -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} && \
-    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_DOCX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} && \
-    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_PPTX} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} && \
-    curl -Lf ${GITHUB_URL}/templates/${TRIVADIS_HTML} -o ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} && \
-    curl -Lf ${GITHUB_URL}/images/${TRIVADIS_LOGO}    -o ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} && \
-    curl -Lf ${GITHUB_URL}/images/TVDLogo2019-eps-converted-to.pdf -o ${TRIVADIS_IMAGES}/TVDLogo2019-eps-converted-to.pdf && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/default.latex && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_TEX} ${PANDOC_TEMPLATES}/${TRIVADIS_TEX} && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_LATEX} ${PANDOC_TEMPLATES}/${TRIVADIS_LATEX} && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_TEMPLATES}/${TRIVADIS_DOCX} && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_TEMPLATES}/default.docx && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_DATA}/${TRIVADIS_DOCX} && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_DOCX} ${PANDOC_DATA}/reference.docx && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_TEMPLATES}/${TRIVADIS_PPTX} && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_TEMPLATES}/default.pptx && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_PPTX} ${PANDOC_DATA}/reference.pptx && \
-    ln ${TRIVADIS_TEMPLATES}/${TRIVADIS_HTML} ${PANDOC_TEMPLATES}/${TRIVADIS_HTML} && \
-    ln ${TRIVADIS_IMAGES}/${TRIVADIS_LOGO} /${TRIVADIS_LOGO}
+RUN mkdir -p ${TRIVADIS} ${PANDOC_DATA} ${PANDOC_DATA}/templates ${PANDOC_DATA}/themes && \
+    curl -Lf ${GITHUB_URL}  |tar zxv --strip-components=1 -C ${TRIVADIS}  && \
+    rm -rf ${TRIVADIS}/examples ${TRIVADIS}/.gitignore ${TRIVADIS}/LICENSE ${TRIVADIS}/README.md  && \
+    ln -sf ${TRIVADIS}/templates/trivadis.tex ${TRIVADIS}/templates/trivadis.latex  && \
+    for i in ${TRIVADIS}/templates/*; do ln -sf $i ${PANDOC_DATA}/templates/$(basename $i); done  && \
+    for i in ${TRIVADIS}/templates/trivadis.*; do ln -sf $i ${PANDOC_DATA}/templates/default.${i##*.}; done  && \
+    for i in ${TRIVADIS}/themes/*; do ln -sf $i ${PANDOC_DATA}/themes/$(basename $i); done  && \
+    ln -sf ${TRIVADIS}/templates/trivadis.pptx ${PANDOC_DATA}/reference.pptx  && \
+    ln -sf ${TRIVADIS}/templates/trivadis.docx ${PANDOC_DATA}/reference.docx
 
 # Define /texlive as volume
 VOLUME ["${WORKDIR}"]
