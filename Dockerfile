@@ -57,7 +57,7 @@ RUN mkdir /tmp/texlive && \
     /tmp/texlive/install-tl --profile /tmp/texlive.profile -repository http://mirror.ctan.org/systems/texlive/tlnet && \
     tlmgr install \
         ttfutils fontinst \
-        fvextra footnotebackref times pdftexcmds \
+        fvextra enumitem footnotebackref times pdftexcmds \
         helvetic symbol grffile zapfding ly1 lm-math \
         soul sectsty titlesec xetex ec mweights \
         sourcecodepro titling csquotes  \
