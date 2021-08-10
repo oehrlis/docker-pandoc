@@ -77,6 +77,15 @@ header-includes: |
   \newenvironment{trivadisblock}%
   {\begin{awesomeblock}[tvdcolor]{\aweboxrulewidth}{\faDownload}{tvdcolor}}
     {\end{awesomeblock}}
+
+  \usepackage{tcolorbox}
+  \tcbuselibrary{skins}
+  \usetikzlibrary{shadows}
+  \newtcolorbox{info-box}{colback=cyan!5!white,arc=0pt,outer arc=0pt,colframe=cyan!60!black}
+  \newtcolorbox{warning-box}{colback=orange!5!white,arc=0pt,outer arc=0pt,colframe=orange!80!black}
+  \newtcolorbox{error-box}{colback=red!5!white,arc=0pt,outer arc=0pt,colframe=red!75!black}
+  \newtcolorbox{tvdinfo-box}{skin=enhanced,colback=white!5!white,arc=8pt,outer arc=8pt,colframe=white!80!white, fuzzy halo=2mm with gray}
+  
 # - Pandoc Environment ---------------------------------------------------------
 pandoc-latex-environment:
   noteblock:      [note]
@@ -85,7 +94,12 @@ pandoc-latex-environment:
   cautionblock:   [caution]
   importantblock: [important]
   trivadisblock:  [tvd]
-
+  tcolorbox:      [box]
+  info-box:       [info]
+  warning-box:    [warning]
+  error-box:      [error]
+  tvdinfo-box:    [tvdinfo]
+  
 # - Font settings --------------------------------------------------------------
 # due to an issue with XeLaTeX with images in docker container the font family
 # has to be set to a sanserif font like Helvetica (helvet)
