@@ -1,7 +1,6 @@
 # Formatting Examples
-
 <!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
-<!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
+<!-- markdownlint-configure-file { "MD024": {"allow_different_nesting": true}} -->
 <!-- markdownlint-configure-file { "MD036": } -->
 
 ## Basic Syntax
@@ -223,27 +222,10 @@ Fusce aliquet augue sapien, non efficitur mi ornare sed. Morbi at dictum
 felis. Pellentesque tortor lacus, semper et neque vitae, egestas commodo nisl.
 :::
 
-## Custom Box
+::: tvd2
+**Trivadis** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
+aliquet libero quis lectus elementum fermentum.
 
-One can define custom boxes in the LaTeX preamble with the variable
-`header-includes` at the top of this document.
-
-::: info
-**Info**: This is a custom box that may be used to show info messages in your
-document.
-:::
-
-::: warning
-**Warning**: This is a custom box that may be used to show warning messages in
-your document.
-:::
-
-::: error
-**Error**: This is a custom box that may be used to show error messages in your
-document.
-:::
-
-::: tvdinfo
-**Error**: This is a custom box that may be used to show error messages in your
-document.
+Fusce aliquet augue sapien, non efficitur mi ornare sed. Morbi at dictum
+felis. Pellentesque tortor lacus, semper et neque vitae, egestas commodo nisl.
 :::

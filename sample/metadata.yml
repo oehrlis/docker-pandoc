@@ -15,14 +15,26 @@
 # Modified...:
 # see git revision history for more information on changes/updates
 # ------------------------------------------------------------------------------
-title: "Trivadis Sample File"
-subtitle: A example file to verify Pandoc 
+title: "Trivadis Markdown Doc Template"
+subtitle: A template for markdown based documentation 
 author: 
 - Stefan Oehrli
 # date is set by pandoc, uncomment the date line to explicitly set a date
 #date: 2020 November 06
-tvddocversion: 0.0.1
+tvddocversion: 0.0.3
 lang: en
+
+# - TVD Variables --------------------------------------------------------------
+# Mainly used to customize the cover page
+# tvdlocname:     Trivadis part of Accenture
+# tvdlocstreet:   Sägereistrasse 29
+# tvdlocplz:      8152
+# tvdloccity:     Glattbrugg
+# tvdloccountry:  Switzerland
+# tvdcontact:
+# tvdtitle:
+# tvdmail:        info@trivadis.com
+# tvdphone:       +41 58 459 55 55
 
 # - Book settings --------------------------------------------------------------
 #book: true
@@ -50,15 +62,16 @@ toc-depth: 2
 
 # - List of Tables / Figures ---------------------------------------------------
 lof: true
-lof-own-page: false
+lof-own-page: true
 lot: true
-lot-own-page: false
+lot-own-page: true
 
 numbersections: true
 links-as-notes: false
-linkcolor:  tvdcolor
-urlcolor:   tvdcolor
-filecolor:  tvdcolor
+linkcolor:    tvdcolor
+urlcolor:     tvdcolor
+filecolor:    tvdcolor
+bulletcolor:  tvdcolor
 
 # - Listings -------------------------------------------------------------------
 listings: true
@@ -72,20 +85,7 @@ header-includes: |
   \sectionfont{\clearpage}
   \usepackage{awesomebox}
   \definecolor{tvdcolor}{HTML}{9600FF}
-  \newcommand{\trivadisbox}[1]{%
-    \awesomebox[tvdcolor]{\aweboxrulewidth}{\faDownload}{abcaution}{#1}}
-  \newenvironment{trivadisblock}%
-  {\begin{awesomeblock}[tvdcolor]{\aweboxrulewidth}{\faDownload}{tvdcolor}}
-    {\end{awesomeblock}}
 
-  \usepackage{tcolorbox}
-  \tcbuselibrary{skins}
-  \usetikzlibrary{shadows}
-  \newtcolorbox{info-box}{colback=cyan!5!white,arc=0pt,outer arc=0pt,colframe=cyan!60!black}
-  \newtcolorbox{warning-box}{colback=orange!5!white,arc=0pt,outer arc=0pt,colframe=orange!80!black}
-  \newtcolorbox{error-box}{colback=red!5!white,arc=0pt,outer arc=0pt,colframe=red!75!black}
-  \newtcolorbox{tvdinfo-box}{skin=enhanced,colback=white!5!white,arc=8pt,outer arc=8pt,colframe=white!80!white, fuzzy halo=2mm with gray}
-  
 # - Pandoc Environment ---------------------------------------------------------
 pandoc-latex-environment:
   noteblock:      [note]
@@ -93,12 +93,6 @@ pandoc-latex-environment:
   warningblock:   [warning]
   cautionblock:   [caution]
   importantblock: [important]
-  trivadisblock:  [tvd]
-  tcolorbox:      [box]
-  info-box:       [info]
-  warning-box:    [warning]
-  error-box:      [error]
-  tvdinfo-box:    [tvdinfo]
   
 # - Font settings --------------------------------------------------------------
 # due to an issue with XeLaTeX with images in docker container the font family
@@ -116,4 +110,5 @@ monofont: Courier New     # Code Text
 logo: /trivadis/images/TVDLogo2021blue.eps
 footer-logo: /trivadis/images/TVDLogo2021blue.eps
 titlepage-logo: /trivadis/images/TVDLogo2021white.eps
+# titlepage-logo: /trivadis/images/TVDLogo2021blue.eps
 # --- EOF ----------------------------------------------------------------------    
