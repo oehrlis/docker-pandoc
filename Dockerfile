@@ -86,6 +86,7 @@ RUN curl -Lf -o /tmp/Open_Sans.zip https://fonts.google.com/download?family=Open
     curl -Lf -o /tmp/Montserrat.zip https://fonts.google.com/download?family=Montserrat && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/Open_Sans.zip && \
     unzip -o -d /usr/share/fonts/custom/ /tmp/Montserrat.zip && \
+    rm /usr/share/fonts/custom/*wdth* && \
     update-ms-fonts && \
     fc-cache -fv && \
     rm -rv /tmp/*.zip

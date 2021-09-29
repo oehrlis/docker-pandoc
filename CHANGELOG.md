@@ -16,6 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.3.0] - 2021-08-29
+
+### Changed
+
+- update to latest pandoc 2.14.2
+- Update Trivadis CI layout / templates
+- update LateX installation
+
+### Fixed
+
+- add workaround to fix LaTeX issue with Open+Sans. Somehow Open Sans contains
+  fonts with commas. It seams that xelatex can not handle this.
+
 ## [1.2.2] - 2021-06-12
 
 ### Added
@@ -24,3 +37,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]: https://github.com/oehrlis/docker-pandoc
 [1.2.2]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.2.2
+[1.3.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.0
