@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.3.1] - 2021-10-13
+
+### Changed
+
+- Update PPTX reference doc to latest Trivadis CI layout / templates
+
 ## [1.3.0] - 2021-08-29
 
 ### Changed
@@ -38,3 +44,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [unreleased]: https://github.com/oehrlis/docker-pandoc
 [1.2.2]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.2.2
 [1.3.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.0
+[1.3.1]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.1
