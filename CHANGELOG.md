@@ -16,6 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.4.1] - 2021-11-10
+
+### Changed
+
+- update to latest [oehrlis/pandoc_template](https://github.com/oehrlis/pandoc_template)
+
+### Fixed
+
+- fix download url for getnonfreefonts install script
+
 ## [1.3.1] - 2021-10-13
 
 ### Changed
@@ -45,3 +55,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.2]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.2.2
 [1.3.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.0
 [1.3.1]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.1
+[1.4.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.4.04

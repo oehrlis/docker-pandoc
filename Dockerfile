@@ -60,7 +60,7 @@ RUN mkdir /tmp/texlive && \
         fvextra enumitem footnotebackref times pdftexcmds \
         helvetic symbol grffile zapfding ly1 lm-math \
         soul sectsty titlesec xetex ec mweights \
-        sourcecodepro titling csquotes  \
+        sourcecodepro titling csquotes \
         mdframed draftwatermark mdwtools \
         everypage awesomebox tcolorbox environ minitoc fontawesome5 breakurl lastpage \
         datetime fmtcount blindtext fourier textpos \
@@ -69,7 +69,7 @@ RUN mkdir /tmp/texlive && \
         adjustbox collectbox ulem bidi upquote xecjk xurl \
         framed babel-german footmisc unicode-math && \
     tlmgr backup --clean --all && \
-    curl -f http://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
+    curl -f https://tug.org/fonts/getnonfreefonts/install-getnonfreefonts \
         -o /tmp/install-getnonfreefonts && \
     texlua /tmp/install-getnonfreefonts && \
     getnonfreefonts --sys arial-urw && \ 
