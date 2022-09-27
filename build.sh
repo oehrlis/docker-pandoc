@@ -33,12 +33,16 @@ cd ${BUILD_CONTEXT}
 
 #export DOCKER_BUILDKIT=1
 # build docker image
-docker build --no-cache -t ${DOCKER_USER}/${IMAGE}:latest .
-# docker build -t ${DOCKER_USER}/${IMAGE}:latest .
+echo "Start multiplatform build"
+docker buildx build --no-cache --output=type=registry \
+    -t ${DOCKER_USER}/${IMAGE}:latest \
+    --platform=linux/amd64,linux/arm64 .
 
+echo "Pull the image from the registry"
+docker pull ${DOCKER_USER}/${IMAGE}:latest
 # generate PDF
 echo "generate PDF sample file"
-docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:latest  \
+docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:beta  \
 --metadata-file sample/metadata.yml --filter pandoc-latex-environment \
 --resource-path=sample --pdf-engine=xelatex \
 --listings -o sample/sample.pdf sample/sample.md
