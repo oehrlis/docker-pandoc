@@ -23,6 +23,7 @@ export DOCKER_USER="oehrlis"
 export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
+RELEASE=${1:-"beta"} 
 # - EOF Environment Variables -----------------------------------------------
 
 # save current path
@@ -31,31 +32,39 @@ CURRENT_PATH=$(pwd)
 # change to build context
 cd ${BUILD_CONTEXT}
 
-#export DOCKER_BUILDKIT=1
 # build docker image
-echo "Start multiplatform build"
+echo "Start multiplatform build $RELEASE"
+
+# get release tags
+if [ $RELEASE == "beta" ] ; then
+    RELEASE_TAGS="-t ${DOCKER_USER}/${IMAGE}:$RELEASE"
+else
+    RELEASE_TAGS="-t ${DOCKER_USER}/${IMAGE}:$RELEASE -t ${DOCKER_USER}/${IMAGE}:latest"
+fi
+
+# start to build 
 docker buildx build --no-cache --output=type=registry \
-    -t ${DOCKER_USER}/${IMAGE}:latest \
+    ${RELEASE_TAGS} \
     --platform=linux/amd64,linux/arm64 .
 
-echo "Pull the image from the registry"
-docker pull ${DOCKER_USER}/${IMAGE}:latest
+echo "Pull the image $RELEASE from the registry"
+docker pull ${DOCKER_USER}/${IMAGE}:$RELEASE
 # generate PDF
 echo "generate PDF sample file"
-docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:beta  \
+docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:$RELEASE  \
 --metadata-file sample/metadata.yml --filter pandoc-latex-environment \
 --resource-path=sample --pdf-engine=xelatex \
 --listings -o sample/sample.pdf sample/sample.md
 
 # generate DOCX
 echo "generate DOCX sample file"
-docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:latest  \
+docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:$RELEASE  \
 --metadata-file sample/metadata.yml --resource-path=sample \
 --listings -o sample/sample.docx sample/sample.md
 
 # generate PPTX
 echo "generate PPTX sample file"
-docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:latest  \
+docker run --rm -v "$PWD":/workdir:z ${DOCKER_USER}/${IMAGE}:$RELEASE  \
 --metadata-file sample/metadata.yml --resource-path=sample \
 --listings -o sample/sample.pptx sample/sample.md
 
