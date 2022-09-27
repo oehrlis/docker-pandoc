@@ -12,9 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Introduce multi platform build using *buildx* for *arm64* and *amd64*.
+- Change base image to ubuntu in Dockerfile
+- Create platform specific *texlive.profile* files.
+
 ### Fixed
 
+- Fix font name in metadata.xml
+
 ### Removed
+
+- Remove unused files e.g. texlive.profile, font folder, etc.
 
 ## [1.4.1] - 2021-11-10
 
@@ -55,4 +63,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.2]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.2.2
 [1.3.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.0
 [1.3.1]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.3.1
-[1.4.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.4.04
+[1.4.1]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.4.1
