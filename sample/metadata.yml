@@ -100,7 +100,7 @@ pandoc-latex-environment:
 # fontfamily: helvet
 # For regular pandoc pdf generation with XeLaTeX mainfont is set to Open Sans
 sansfont: Montserrat      # Title font
-mainfont: Open Sans       # Copy text font
+mainfont: Open Sans Light # Copy text font
 monofont: Courier New     # Code Text
 
 # - Logo settings --------------------------------------------------------------
