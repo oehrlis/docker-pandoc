@@ -35,16 +35,9 @@ cd ${BUILD_CONTEXT}
 # build docker image
 echo "Start multiplatform build $RELEASE"
 
-# get release tags
-if [ $RELEASE == "beta" ] ; then
-    RELEASE_TAGS="-t ${DOCKER_USER}/${IMAGE}:$RELEASE"
-else
-    RELEASE_TAGS="-t ${DOCKER_USER}/${IMAGE}:$RELEASE -t ${DOCKER_USER}/${IMAGE}:latest"
-fi
-
 # start to build 
 docker buildx build --no-cache --output=type=registry \
-    ${RELEASE_TAGS} \
+    -t ${DOCKER_USER}/${IMAGE}:$RELEASE \
     --platform=linux/amd64,linux/arm64 .
 
 echo "Pull the image $RELEASE from the registry"
