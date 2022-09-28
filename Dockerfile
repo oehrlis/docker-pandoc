@@ -317,5 +317,3 @@ ENTRYPOINT ["/usr/local/bin/pandoc"]
 # Define default command for pandoc
 CMD ["--help"]
 # --- EOF --------------------------------------------------------------
-
-#  /tmp/texlive.profile
