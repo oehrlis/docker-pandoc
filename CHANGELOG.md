@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.1.1] - 2022.09.28
+
+### Fixed
+
+- Fix version number in *CHANGELOG.md*
+
 ## [2.1.0] - 2022.09.28
 
 ### Added
@@ -103,3 +109,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.4.1]: https://github.com/oehrlis/docker-pandoc/releases/tag/v1.4.1
 [2.0.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v2.0.0
 [2.1.0]: https://github.com/oehrlis/docker-pandoc/releases/tag/v2.1.0
+[2.1.1]: https://github.com/oehrlis/docker-pandoc/releases/tag/v2.1.1
