@@ -1,10 +1,10 @@
 # Pandoc Docker Images
 
-Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [texlive 2018](https://www.tug.org/texlive/) installation to support simple PDF transformations. Additional texlive packages have to be installed be extending this images. 
+Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations. Additional TexLive packages have to be installed be extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
 
 ## Run
 
-The pre build image is availabe via [Dockerhub](https://hub.docker.com/r/oehrlis/pandoc/). The installation and use is straightforward. Install [Docker](https://www.docker.com/get-started) and pull the image.
+The pre build image is available via [Dockerhub](https://hub.docker.com/r/oehrlis/pandoc/). The installation and use is straightforward. Install [Docker](https://www.docker.com/get-started) and pull the image.
 
 ```bash
 docker pull oehrlis/pandoc
@@ -68,15 +68,16 @@ $ build.sh
 
 Please file your bug reports, enhancement requests, questions and other support requests within [Github's issue tracker](https://help.github.com/articles/about-issues/):
 
-* [Existing issues](https://github.com/oehrlis/docker-pandoc/issues)
-* [submit new issue](https://github.com/oehrlis/docker-pandoc/issues/new)
+- [Existing issues](https://github.com/oehrlis/docker-pandoc/issues)
+- [submit new issue](https://github.com/oehrlis/docker-pandoc/issues/new)
 
 ## References
 
-* [pandoc](https://pandoc.org)
-* [texlive 2019](https://www.tug.org/texlive/)
-* GitHub [google/fonts](https://github.com/google/fonts)
-* GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
-* GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
-* [Google Fonts](https://fonts.google.com/) Nunito and Nunito Sans
-* Get Microsoft's Core Fonts for the Web and Cleartype Fonts (<http://mscorefonts2.sourceforge.net/>)
+- GitHub Project [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc) related to this container.
+- [pandoc](https://pandoc.org)
+- [TexLive 2022](https://www.tug.org/texlive/)
+- GitHub [google/fonts](https://github.com/google/fonts)
+- GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
+- GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
+- [Google Fonts](https://fonts.google.com/) Montserrat and Open Sans Light
+- Get Microsoft's Core Fonts for the Web and ClearType Fonts (<http://mscorefonts2.sourceforge.net/>)
