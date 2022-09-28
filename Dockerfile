@@ -65,8 +65,9 @@ RUN echo "Performing initial clean-up and updates." && \
     echo "Installing additional utilities." && \
     apt-get install -f -y --no-install-recommends \
           python3-pip \
+          libtest-pod-perl \
           curl \
-          zip unzip \
+          unzip \
           fontconfig \
           xz-utils && \
 # - install the microsoft core fonts
@@ -86,17 +87,20 @@ RUN echo "Performing initial clean-up and updates." && \
     curl -Lf -o /tmp/Montserrat.zip https://fonts.google.com/download?family=Montserrat && \
     unzip -o -d /usr/share/fonts/googlefonts/ /tmp/Open_Sans.zip && \
     unzip -o -d /usr/share/fonts/googlefonts/ /tmp/Montserrat.zip && \
-    # not sure if fontspec use static or variable ttf 
-    # rm -rfv /usr/share/fonts/googlefonts/static && \
     rm -rv /tmp/Open_Sans.zip /tmp/Montserrat.zip && \
 # - install ghostscript as well as other tools
     echo "Installing ghostscript and other tools." && \
     apt-get install -f -y --no-install-recommends \
-          dvipng \
-          ghostscript \
-          make && \
+          ghostscript && \
+    # - clean up all temporary files
+    echo "Cleaning up temporary files." && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -f /etc/ssh/ssh_host_* && \
+    rm -rf /var/cache/apt/archives
+
 # - install TeX Live via install-tl
-    echo "install TeX Live via install-tl" && \
+RUN echo "install TeX Live via install-tl" && \
     mkdir /tmp/texlive && \
     curl -Lf http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
         | tar zxvf - --strip-components 1 -C /tmp/texlive/ && \
@@ -114,64 +118,70 @@ RUN echo "Performing initial clean-up and updates." && \
     updmap-sys && \
 # - install Tex
     echo "Installing TeXLive packages." && \
-    tlmgr --verify-repo=none install    ttfutils \
-                                        fontinst \
-                                        fvextra \
-                                        enumitem \
-                                        footnotebackref \
-                                        times \
-                                        pdftexcmds \
-                                        helvetic \
-                                        symbol \
-                                        grffile \
-                                        zapfding \
-                                        ly1 \
-                                        lm-math \
-                                        soul \
-                                        sectsty \
-                                        titlesec \
-                                        xetex \
-                                        ec \
-                                        mweights \
-                                        sourcecodepro \
-                                        titling \
-                                        csquotes \
-                                        mdframed \
-                                        draftwatermark \
-                                        mdwtools \
-                                        everypage \
-                                        awesomebox \
-                                        tcolorbox \
-                                        environ \
-                                        minitoc \
-                                        fontawesome5 \
-                                        breakurl \
-                                        lastpage \
-                                        datetime \
-                                        fmtcount \
-                                        blindtext \
-                                        fourier \
-                                        textpos \
-                                        needspace \
-                                        sourcesanspro \
-                                        pagecolor \
-                                        epstopdf \
-                                        letltxmacro \
-                                        zref \
-                                        background \
-                                        filehook \
-                                        ucharcat \
-                                        adjustbox \
-                                        collectbox \
-                                        ulem \
-                                        bidi \
-                                        upquote \
-                                        xecjk \
-                                        xurl \
-                                        framed \
-                                        babel-german \
-                                        footmisc \
-                                        unicode-math && \
+    tlmgr --verify-repo=none install \
+        adjustbox \
+        awesomebox \
+        babel-german \
+        background \
+        bidi \
+        booktabs \
+        blindtext \
+        breakurl \
+        caption \
+        collectbox \
+        csquotes \
+        datetime \
+        draftwatermark \
+        ec \
+        enumitem \
+        environ \
+        epstopdf \
+        everypage \
+        filehook \
+        fmtcount \
+        fontawesome5 \
+        fontinst \
+        footmisc \
+        footnotebackref \
+        fourier \
+        framed \
+        fvextra \
+        grffile \
+        helvetic \
+        koma-script \
+        lastpage \
+        listings \
+        letltxmacro \
+        lm-math \
+        ly1 \
+        mdframed \
+        mdwtools \
+        minitoc \
+        mweights \
+        needspace \
+        pagecolor \
+        pdftexcmds \
+        pgf \
+        sectsty \
+        setspace \
+        soul \
+        symbol \
+        tcolorbox \
+        textpos \
+        times \
+        titlesec \
+        titling \
+        ttfutils \
+        ucharcat \
+        ulem \
+        unicode-math \
+        upquote \
+        xcolor \
+        xkeyval \
+        xetex \
+        xurl \
+        zapfding \
+        zref && \
     (rm -rf /root/texmf || true) && \
     echo "/root/texmf deleted" && \
     echo "deleting useless packages" &&\
@@ -263,15 +273,8 @@ RUN echo "Performing initial clean-up and updates." && \
     mkdir -p /usr/share/doc && \
     find / -name *.exe -exec rm -rv {} \; && \
     find / -name *.log -exec rm -rv {} \; && \
-# - clean up all temporary files
-    echo "Cleaning up temporary files." && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -f /etc/ssh/ssh_host_* && \
-    rm -rf /var/cache/apt/archives && \
 # - final cleanup
     echo "Performing final clean-up." && \
-    mkdir -p /var/cache/apt/archives && \
     rm -rf /tmp/* /var/tmp/*
 
 # RUN as user root
@@ -314,3 +317,5 @@ ENTRYPOINT ["/usr/local/bin/pandoc"]
 # Define default command for pandoc
 CMD ["--help"]
 # --- EOF --------------------------------------------------------------
+
+#  /tmp/texlive.profile
