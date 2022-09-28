@@ -14,9 +14,9 @@ collection-basic 1
 collection-langenglish 1
 collection-langgerman 1
 collection-latex 1
-#collection-latexextra 1
+collection-latexextra 0
 collection-fontsrecommended 0
-collection-latexrecommended 1
+collection-latexrecommended 0
 instopt_adjustpath 0
 instopt_adjustrepo 1
 instopt_letter 0
