@@ -12,6 +12,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Fixed
+
+### Removed
+
+## [2.2.0] - 2022.09.28
+
+### Added
+
+### Changed
+
+- Split basic container setup and *TexLive* installation in two *RUN* blocks
+- Remove *no-cache* from build
+
+### Fixed
+
+- Add missing *TexLive* package *koma-script*
+- Add missing *TexLive* package *setspace*
+- Add missing *TexLive* package *xcolor*
+- Add missing *TexLive* package *xkeyval*
+- Add missing *TexLive* package *listings*
+- Add missing *TexLive* package *booktabs*
+- Add missing *TexLive* package *pgf*
+- Add missing *TexLive* package *caption*
+
+### Removed
+
+- Remove *zip* from OS package installation
+- Remove *divpng* from OS package installation
+- Remove *make* from OS package installation
+- Remove asian languages and fonts
+- Remove *TexLive* package *sourcecodepro*
+- Remove *TexLive* package *sourcesanspro*
+
+## [2.0.0] - 2022-09-27
+
+### Changed
+
 - Introduce multi platform build using *buildx* for *arm64* and *amd64*.
 - Change base image to ubuntu in Dockerfile
 - Create platform specific *texlive.profile* files.
