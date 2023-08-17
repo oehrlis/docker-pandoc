@@ -1,33 +1,29 @@
-# ----------------------------------------------------------------------
-# Trivadis - Part of Accenture, Platform Factory - Transactional Data Platform
-# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# OraDBA - Oracle Database Infrastructure and Security, 5630 Muri, Switzerland
+# ------------------------------------------------------------------------------
 # Name.......: Dockerfile
-# Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
+# Author.....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 # Editor.....: Stefan Oehrli
-# Date.......: 2018.03.19
-# Revision...: 1.0
-# Purpose....: Dockerfile to build a JSON utilities image
+# Date.......: 2023.08.17
+# Revision...: --
+# Purpose....: Dockerfile to build the pandoc image
 # Notes......: --
 # Reference..: --
-# License....: Licensed under the Universal Permissive License v 1.0 as
-#              shown at http://oss.oracle.com/licenses/upl.
-# ----------------------------------------------------------------------
-# Modified...:
-# see git revision history for more information on changes/updates
-# ----------------------------------------------------------------------
+# License....: Apache License Version 2.0, January 2004 as shown
+#              at http://www.apache.org/licenses/
+# ------------------------------------------------------------------------------
 
 # Pull base image
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 FROM ubuntu
 ARG TARGETPLATFORM
 ARG TARGETARCH
 # Maintainer
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 LABEL maintainer="stefan.oehrli@accenture.com"
 
 # Environment variables required for this build (do NOT change)
-# -------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ENV PATH=/usr/local/texlive/bin/aarch64-linux:$PATH
 ENV PATH=/usr/local/texlive/bin/x86_64-linux:$PATH
 ENV WORKDIR="/workdir" \
@@ -35,7 +31,7 @@ ENV WORKDIR="/workdir" \
     GITHUB_URL="https://github.com/oehrlis/pandoc_template/archive/refs/heads/master.tar.gz" \
     PANDOC_DATA="/root/.local/share/pandoc" \
     XDG_DATA_HOME="/root/.local/share" \
-    TRIVADIS="/trivadis"
+    ORADBA="/oradba"
 
 # copy the texlife profile
 RUN echo "I'm building for ${TARGETPLATFORM} using ${TARGETARCH}"
@@ -43,10 +39,10 @@ RUN echo "I'm building for ${TARGETPLATFORM} using ${TARGETARCH}"
 COPY texlive.$TARGETARCH.profile /tmp/texlive.profile
 
 # RUN as user root
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # install additional alpine packages 
 # - ugrade system
-RUN echo "Performing initial clean-up and updates." && \
+RUN echo "Performing initial clean-up and updates for base image." && \
     apt-get -y update && \
     apt-get -y --fix-missing --no-install-recommends install && \
     apt-get -y --with-new-pkgs --no-install-recommends upgrade && \
@@ -142,6 +138,7 @@ RUN echo "install TeX Live via install-tl" && \
         fontawesome5 \
         fontinst \
         footmisc \
+        float \
         footnotebackref \
         fourier \
         framed \
@@ -278,7 +275,7 @@ RUN echo "install TeX Live via install-tl" && \
     rm -rf /tmp/* /var/tmp/*
 
 # RUN as user root
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # install pandoc from github
 RUN echo "Install latest pandoc from beta." && \
     PANDOC_URL=$(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest \
@@ -293,17 +290,17 @@ RUN echo "Install latest pandoc from beta." && \
     rm -rf ~/.cache/pip/* /tmp/* /var/tmp/* && \
     mkdir -p ${WORKDIR}
 
-# - install the trivadis LaTeX template from github and adjust the default logo
-RUN echo "Install latest Trivadis Templates from GitHub." && \
-    mkdir -p ${TRIVADIS} ${PANDOC_DATA} ${PANDOC_DATA}/templates ${PANDOC_DATA}/themes && \
-    curl -Lf ${GITHUB_URL}  |tar zxv --strip-components=1 -C ${TRIVADIS}  && \
-    rm -rf ${TRIVADIS}/examples ${TRIVADIS}/.gitignore ${TRIVADIS}/LICENSE ${TRIVADIS}/README.md  && \
-    ln -sf ${TRIVADIS}/templates/trivadis.tex ${TRIVADIS}/templates/trivadis.latex  && \
-    for i in ${TRIVADIS}/templates/*; do ln -sf $i ${PANDOC_DATA}/templates/$(basename $i); done  && \
-    for i in ${TRIVADIS}/templates/trivadis.*; do ln -sf $i ${PANDOC_DATA}/templates/default.${i##*.}; done  && \
-    for i in ${TRIVADIS}/themes/*; do ln -sf $i ${PANDOC_DATA}/themes/$(basename $i); done  && \
-    ln -sf ${TRIVADIS}/templates/trivadis.pptx ${PANDOC_DATA}/reference.pptx  && \
-    ln -sf ${TRIVADIS}/templates/trivadis.docx ${PANDOC_DATA}/reference.docx
+# - install the oradba LaTeX template from github and adjust the default logo
+RUN echo "Install latest OraDBA Templates from GitHub." && \
+    mkdir -p ${ORADBA} ${PANDOC_DATA} ${PANDOC_DATA}/templates ${PANDOC_DATA}/themes && \
+    curl -Lf ${GITHUB_URL}  |tar zxv --strip-components=1 -C ${ORADBA}  && \
+    rm -rf ${ORADBA}/examples ${ORADBA}/.gitignore ${ORADBA}/LICENSE ${ORADBA}/README.md  && \
+    ln -sf ${ORADBA}/templates/oradba.tex ${ORADBA}/templates/oradba.latex  && \
+    for i in ${ORADBA}/templates/*; do ln -sf $i ${PANDOC_DATA}/templates/$(basename $i); done  && \
+    for i in ${ORADBA}/templates/oradba.*; do ln -sf $i ${PANDOC_DATA}/templates/default.${i##*.}; done  && \
+    for i in ${ORADBA}/themes/*; do ln -sf $i ${PANDOC_DATA}/themes/$(basename $i); done  && \
+    ln -sf ${ORADBA}/templates/oradba.pptx ${PANDOC_DATA}/reference.pptx  && \
+    ln -sf ${ORADBA}/templates/oradba.docx ${PANDOC_DATA}/reference.docx
 
 # Define /texlive as volume
 VOLUME ["${WORKDIR}"]
@@ -316,4 +313,4 @@ ENTRYPOINT ["/usr/local/bin/pandoc"]
 
 # Define default command for pandoc
 CMD ["--help"]
-# --- EOF --------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

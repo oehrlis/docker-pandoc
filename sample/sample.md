@@ -5,7 +5,7 @@
 
 ## Basic Syntax
 
-These are the elements outlined in John Gruber’s original design document. All
+These are the elements outlined in John Gruber's original design document. All
 Markdown applications support these elements.
 
 ### Heading
@@ -214,16 +214,16 @@ if(args.length < 2) {
 quis lectus elementum fermentum.*
 :::
 
-::: tvd
-**Trivadis** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
+::: important
+**OraDBA** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
 aliquet libero quis lectus elementum fermentum.
 
 Fusce aliquet augue sapien, non efficitur mi ornare sed. Morbi at dictum
 felis. Pellentesque tortor lacus, semper et neque vitae, egestas commodo nisl.
 :::
 
-::: tvd2
-**Trivadis** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
+::: important
+**OraDBA** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
 aliquet libero quis lectus elementum fermentum.
 
 Fusce aliquet augue sapien, non efficitur mi ornare sed. Morbi at dictum

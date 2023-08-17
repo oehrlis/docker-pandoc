@@ -1,29 +1,25 @@
 #!/bin/bash
-# ---------------------------------------------------------------------------
-# Trivadis - Part of Accenture, Platform Factory - Transactional Data Platform
-# Saegereistrasse 29, 8152 Glattbrugg, Switzerland
-# ---------------------------------------------------------------------------
-# Name.......: relase.sh 
-# Author.....: Stefan Oehrli (oes) stefan.oehrli@trivadis.com
+# ------------------------------------------------------------------------------
+# OraDBA - Oracle Database Infrastructure and Security, 5630 Muri, Switzerland
+# ------------------------------------------------------------------------------
+# Name.......: relase.sh
+# Author.....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 # Editor.....: Stefan Oehrli
-# Date.......: 2019.10.21
-# Revision...: 
-# Purpose....: Script to release Docker image.
+# Date.......: 2023.08.17
+# Revision...: --
+# Purpose....: Script to release Docker image
 # Notes......: --
 # Reference..: --
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
-# ---------------------------------------------------------------------------
-# Modified...:
-# see git revision history for more information on changes/updates
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# - Environment Variables ---------------------------------------------------
+# - Environment Variables ------------------------------------------------------
 export DOCKER_USER="oehrlis"
 export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
-# - EOF Environment Variables -----------------------------------------------
+# - EOF Environment Variables --------------------------------------------------
 REL_TYPE=${1:-"patch"}  # could be also minor or major
 REL_TYPE=$(echo "$REL_TYPE" | tr '[:upper:]' '[:lower:]')
 
@@ -55,4 +51,4 @@ git push --tags
 
 # change back to working directory
 cd ${CURRENT_PATH}
-# --- EOF --------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------

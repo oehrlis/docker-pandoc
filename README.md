@@ -24,18 +24,18 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
     -o sample.pdf --toc -N --listings
 ```
 
-Conversion of the sample Markdown file into a PDF using the Trivadis LaTeX template and XeLaTeX for include custom TTF fonts.
+Conversion of the sample Markdown file into a PDF using the OraDBA LaTeX template and XeLaTeX for include custom TTF fonts.
 
 ```bash
 cd sample
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc --pdf-engine=xelatex sample.md \
-    -o sample_trivadis.pdf --template trivadis --toc -N --listings
+    -o sample_oradba.pdf --template oradba --toc -N --listings
 ```
 
 ```bash
 cd sample
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc sample.md \
-    -o sample_trivadis.pdf --template trivadis --toc -N --listings
+    -o sample_oradba.pdf --template oradba --toc -N --listings
 ```
 
 Alternatively you can open a shell in the container and use the miscellanies pandoc and tex tools interactively.

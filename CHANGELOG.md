@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.0] - 2023-08-17
+
+### Changed
+
+- Remove reference to *Trivadis*
+- Change to new Template based on *OraDBA*
+
 ## [2.1.1] - 2022.09.28
 
 ### Fixed
@@ -79,14 +86,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update PPTX reference doc to latest Trivadis CI layout / templates
+- Update PPTX reference doc to latest OraDBA CI layout / templates
 
 ## [1.3.0] - 2021-08-29
 
 ### Changed
 
 - update to latest pandoc 2.14.2
-- Update Trivadis CI layout / templates
+- Update OraDBA CI layout / templates
 - update LateX installation
 
 ### Fixed
