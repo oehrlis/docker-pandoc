@@ -39,7 +39,7 @@ else
 fi
 
 # start to build 
-docker buildx build --push \
+docker buildx build --no-cache --push \
     ${RELEASE_TAGS} \
     --platform=linux/amd64,linux/arm64 .
 
