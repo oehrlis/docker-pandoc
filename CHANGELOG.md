@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.1.0] - 2023-08-18
+
+### Add
+
+- Add a cache flag to the Build script *build.sh*
+
 ## [3.0.1] - 2023-08-17
 
 ### Fixed
