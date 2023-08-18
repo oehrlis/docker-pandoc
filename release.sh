@@ -21,6 +21,7 @@ export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
 # - EOF Environment Variables --------------------------------------------------
 REL_TYPE=${1:-"patch"}  # could be also minor or major
+NOCACHE=${2:-""}
 REL_TYPE=$(echo "$REL_TYPE" | tr '[:upper:]' '[:lower:]')
 
 # save current path
@@ -40,7 +41,7 @@ version=$(cat VERSION)
 echo "version: $version"
 
 # run build
-./build.sh $version
+./build.sh $version $NOCACHE
 
 # tag it
 git add -A
