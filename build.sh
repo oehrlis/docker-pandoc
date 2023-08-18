@@ -19,7 +19,8 @@ export DOCKER_USER="oehrlis"
 export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
 export PROJECT=$(basename ${BUILD_CONTEXT})
 export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
-RELEASE=${1:-"beta"} 
+RELEASE=${1:-"beta"}
+NOCACHE=${2:-""}
 # - EOF Environment Variables -----------------------------------------------
 
 # save current path
@@ -39,8 +40,8 @@ else
 fi
 
 # start to build 
-docker buildx build --no-cache --push \
-    ${RELEASE_TAGS} \
+docker buildx build --push \
+    ${NOCACHE} ${RELEASE_TAGS} \
     --platform=linux/amd64,linux/arm64 .
 
 echo "Pull the image $RELEASE from the registry"
