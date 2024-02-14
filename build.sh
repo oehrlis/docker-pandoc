@@ -39,6 +39,7 @@ else
     RELEASE_TAGS="-t ${DOCKER_USER}/${IMAGE}:$RELEASE -t ${DOCKER_USER}/${IMAGE}:latest"
 fi
 
+echo "build ----"
 # start to build 
 docker buildx build --push \
     ${NOCACHE} ${RELEASE_TAGS} \
