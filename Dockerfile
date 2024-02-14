@@ -88,6 +88,8 @@ RUN echo "Performing initial clean-up and updates for base image." && \
     echo "Installing ghostscript and other tools." && \
     apt-get install -f -y --no-install-recommends \
           ghostscript && \
+    apt-get -y update && \
+    apt-get -y upgrade && \
     # - clean up all temporary files
     echo "Cleaning up temporary files." && \
     apt-get clean -y && \
@@ -284,9 +286,13 @@ RUN echo "Install latest pandoc from beta." && \
     curl -Lf ${PANDOC_URL} \
         | tar zxvf - --strip-components 2 -C /usr/local/bin && \
     rm -rf /usr/local/bin/man /usr/local/bin/pandoc-citeproc && \
+    pip install --upgrade pip 2>&1 |grep -v "Running pip as the" && \
+    export PIP_ROOT_USER_ACTION=ignore && \
+    pip install --upgrade setuptools wheel --root-user-action=ignore && \
     pip install pandoc-latex-color && \
     pip install pandoc-include && \
     pip install pandoc-latex-environment && \
+    pip cache purge && \
     rm -rf ~/.cache/pip/* /tmp/* /var/tmp/* && \
     mkdir -p ${WORKDIR}
 
