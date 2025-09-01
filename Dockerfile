@@ -135,6 +135,7 @@ RUN echo "install TeX Live via install-tl" && \
         environ \
         epstopdf \
         everypage \
+        fancyvrb \
         filehook \
         fmtcount \
         fontawesome5 \
@@ -151,6 +152,7 @@ RUN echo "install TeX Live via install-tl" && \
         lastpage \
         listings \
         letltxmacro \
+        lineno \
         lm-math \
         ly1 \
         mdframed \
@@ -162,6 +164,8 @@ RUN echo "install TeX Live via install-tl" && \
         pdftexcmds \
         pgf \
         sectsty \
+        sourcesanspro \
+        sourcecodepro \
         setspace \
         soul \
         symbol \
@@ -180,6 +184,8 @@ RUN echo "install TeX Live via install-tl" && \
         xetex \
         xurl \
         zapfding \
+        ragged2e \
+        tabularx \
         zref && \
     (rm -rf /root/texmf || true) && \
     echo "/root/texmf deleted" && \

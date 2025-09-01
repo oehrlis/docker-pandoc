@@ -1,5 +1,6 @@
 # Changelog
 <!-- markdownlint-disable MD013 -->
+<!-- markdownlint-disable MD024 -->
 <!-- markdownlint-configure-file { "MD024":{"allow_different_nesting": true }} -->
 All notable changes to this project will be documented in this file.
 
@@ -15,6 +16,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Removed
+
+## [3.2.2] - 2021-09-01
+
+### Fixed
+
+- add missing TeX module *ragged2e*
+- add missing TeX module *sotabularxurcesanspro*
+
+## [3.2.1] - 2024-03-08
+
+### Fixed
+
+- add missing TeX module *fancyvrb*
+- add missing TeX module *sourcesanspro*
+- add missing TeX module *lineno*
+- add missing Tex moduel *sourcecodepro*
+- update to latest version of *oehrlis/pandoc_templates*
 
 ## [3.2.0] - 2024-02-14
 
