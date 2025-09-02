@@ -43,7 +43,7 @@ ARG PRUNE_MS_FONTS=0
 ARG PANDOC_VERSION=latest
 ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
 
-# --- Install base build tools --------------------------------------------------
+# --- Install base build tools -------------------------------------------------
 RUN set -eux; \
   apt-get update; \
   apt-get install -y --no-install-recommends \
@@ -51,29 +51,25 @@ RUN set -eux; \
     file perl rsync gnupg binutils; \
   rm -rf /var/lib/apt/lists/*
 
-# --- Copy helper scripts into image --------------------------------------------
+# --- Copy helper scripts into image -------------------------------------------
 COPY scripts/ /usr/local/src/scripts/
 RUN chmod +x /usr/local/src/scripts/*.sh
 
-# --- Install Pandoc (latest, per arch) -----------------------------------------
+# --- Install Pandoc (latest, per arch) ----------------------------------------
 RUN set -eux; \
   /usr/local/src/scripts/install_pandoc.sh "${TARGETARCH}"
 
-# --- Install TeX Live (minimal profile) ----------------------------------------
+# --- Install TeX Live (minimal profile) ---------------------------------------
 RUN set -eux; \
   /usr/local/src/scripts/install_texlive.sh
 
-# --- Optionally slim the TeX tree and fonts ------------------------------------
+# --- Optionally slim the TeX tree and fonts -----------------------------------
 RUN set -eux; \
   if [ "${SLIM_TEX:-0}" = "1" ]; then \
     /usr/local/src/scripts/slim_tex_tree.sh; \
   else \
     echo "SLIM_TEX disabled (pass --build-arg SLIM_TEX=1 to enable)"; \
   fi
-
-# --- Install fonts + runtime deps ----------------------------------------------
-RUN set -eux; \
-  /usr/local/src/scripts/install_fonts_runtime.sh
 
 # ==============================================================================
 # Final stage: runtime image with fonts, pandoc, TeX Live, and filters
@@ -96,7 +92,7 @@ LABEL maintainer="stefan.oehrli@oradba.ch" \
       volume.templates="/opt/pandoc-data/pandoc/templates" \
       volume.themes="/opt/pandoc-data/pandoc/themes"
 
-# --- Environment ---------------------------------------------------------------
+# --- Environment --------------------------------------------------------------
 ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     XDG_DATA_HOME="/opt/pandoc-data" \
     PANDOC_DATA="/opt/pandoc-data/pandoc" \
@@ -106,14 +102,14 @@ ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     ORADBA="/oradba" \
     WORKDIR="/workdir"
 
-# --- Copy runtime artifacts from builder ---------------------------------------
+# --- Copy runtime artifacts from builder --------------------------------------
 COPY --from=builder /usr/local/bin/pandoc /usr/local/bin/pandoc
 COPY --from=builder /usr/local/texlive /usr/local/texlive
 COPY --from=builder /etc/profile.d/texlive.sh /etc/profile.d/texlive.sh
 COPY --from=builder /usr/share/fonts /usr/share/fonts
 COPY --from=builder /etc/fonts /etc/fonts
 
-# --- Setup PATH for TeX Live + symlinks ----------------------------------------
+# --- Setup PATH for TeX Live + symlinks ---------------------------------------
 RUN set -eux; \
   ARCH="$(dpkg --print-architecture)"; \
   case "$ARCH" in  \
@@ -129,11 +125,11 @@ RUN set -eux; \
   ln -sf /usr/local/bin/pandoc /usr/local/bin/pandoc-server; \
   fc-cache -fv || true
 
-# --- Install Pandoc filters in venv (PEP-668 safe) -----------------------------
+# --- Install Pandoc filters in venv (PEP-668 safe) ----------------------------
 COPY scripts/install_pandoc_filters.sh /usr/local/src/scripts/install_pandoc_filters.sh
 RUN set -eux; \
   apt-get update; \
-  apt-get install -y --no-install-recommends python3 python3-venv python3-pip ca-certificates; \
+  apt-get install -y --no-install-recommends python3 python3-venv python3-pip curl ca-certificates; \
   chmod +x /usr/local/src/scripts/install_pandoc_filters.sh; \
   FILTER_VENV_DIR=/opt/pandoc-filters \
   FILTERS="pandoc-latex-color pandoc-include pandoc-latex-environment" \
@@ -142,7 +138,12 @@ RUN set -eux; \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# --- Install OraDBA Pandoc templates from GitHub -------------------------------
+# --- Install fonts + runtime deps ---------------------------------------------
+COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
+RUN set -eux; chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
+    /usr/local/src/scripts/install_fonts_runtime.sh
+
+# --- Install OraDBA Pandoc templates from GitHub ------------------------------
 RUN echo "Install latest OraDBA Templates from GitHub." && \
     mkdir -p ${WORKDIR} ${ORADBA} ${XDG_DATA_HOME} \
              ${PANDOC_DATA} ${PANDOC_TEMPLATES} ${PANDOC_THEMES} && \
@@ -162,11 +163,11 @@ RUN echo "Install latest OraDBA Templates from GitHub." && \
     ln -sf ${ORADBA}/templates/oradba.pptx ${PANDOC_DATA}/reference.pptx && \
     ln -sf ${ORADBA}/templates/oradba.docx ${PANDOC_DATA}/reference.docx
 
-# --- Define volume, workdir, entrypoint ----------------------------------------
+# --- Define volume, workdir, entrypoint ---------------------------------------
 VOLUME ["${WORKDIR}"]
 WORKDIR "${WORKDIR}"
 
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 CMD ["--help"]
 
-# --- EOF -----------------------------------------------------------------------
+# --- EOF ----------------------------------------------------------------------
