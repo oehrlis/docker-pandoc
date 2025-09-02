@@ -17,6 +17,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [Unreleased] -
+
+### Added
+
+- Introduce script folder for different installation scripts see [README](./scripts/REAMDE.md)
+- Add script *install_fonts_runtime.sh* Install minimal runtime deps (Python/venv, curl, fontconfig) and fonts (MS core, Open Sans, Montserrat) in a single layer.
+- Add script *install_filters_runtime.sh* Install Pandoc filters into a dedicated venv (PEP 668 safe), symlink entry points, and prune unused packages for a small runtime.
+- Add script *install_pandoc.sh* Install a specific (or latest) pandoc binary (amd64/arm64) from GitHub Releases and strip ELF symbols to reduce size.
+- Add script *install_texlive.sh* Install a minimal, yearless TeX Live into /usr/local/texlive with just the packages needed for our Pandoc/XeLaTeX templates.
+- Add script *slim_tex_tree.sh* Aggressively slim a TeX Live tree and (optionally) selected system fonts to reduce image size.
+
+### Changed
+
+### Fixed
+
+### Removed
+
 ## [3.2.2] - 2021-09-01
 
 ### Fixed
