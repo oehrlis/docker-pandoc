@@ -50,7 +50,7 @@ PKGS="adjustbox afterpage amsmath amssymb array awesomebox babel background
       parskip pgfpages ragged2e scrlayer-scrpage sectsty selnolig setspace
       soul sourcecodepro sourcesanspro subcaption svg tabularx textcomp tikz
       titling unicode-math ulem upquote xcolor needspace zref xeCJK xurl
-      fontawesome5"
+      fontawesome5 polyglossia"
 
 # --- Functions -----------------------------------------------------------------
 usage() {
