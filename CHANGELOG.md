@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-## [Unreleased] -
+## [4.0.0] -
 
 ### Added
 
@@ -30,9 +30,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- rework *Dockerfile* to use new install scripts rather than everthing in RUN commands
+- change base image to *debian:bookworm-slim* rather than *ubuntu*
+  
 ### Fixed
 
+- add *ulem* to the initial version of *install_texlive.sh*
+
 ### Removed
+
+- remove *texlive.amd64.profile* local profile is not required anymore. Adhoc profile will be generated in *install_texlive.sh*
+- remove *texlive.arm64.profile* local profile is not required anymore. Adhoc profile will be generated in *install_texlive.sh*
 
 ## [3.2.2] - 2021-09-01
 
