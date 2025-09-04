@@ -119,7 +119,7 @@ if [[ ${TEST} -eq 1 ]]; then
   RUN_OPTS=(-v "${PWD}:/workdir:z" "${DOCKER_USER}/${IMAGE}:${RELEASE}")
 
   echo "   -> PDF"
-  echo docker run --rm "${RUN_OPTS[@]}" \
+  docker run --rm "${RUN_OPTS[@]}" \
     --metadata-file sample/metadata.yml --filter pandoc-latex-environment \
     --resource-path=sample --pdf-engine=xelatex \
     --listings -o sample/sample.pdf sample/sample.md
