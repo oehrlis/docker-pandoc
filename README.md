@@ -1,6 +1,6 @@
 # Pandoc Docker Images
 
-Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations and Mermaid diagram rendering support for generating diagrams in PDFs. Additional TexLive packages have to be installed be extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
+Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations and Mermaid diagram rendering support for generating diagrams in PDFs. Additional TexLive packages have to be installed by extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
 
 ## Run
 
@@ -81,7 +81,7 @@ The diagrams will be automatically rendered as images in the PDF output.
 
 ## Build and add new packages
 
-If you plan to alter or extend this Docker image you could get the corresonding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
+If you plan to alter or extend this Docker image you could get the corresponding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
 
 ```bash
 git clone git@github.com:oehrlis/docker-pandoc.git

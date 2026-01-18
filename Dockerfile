@@ -160,6 +160,7 @@ RUN set -eux; \
     libxrandr2 \
     libgbm1 \
     libasound2; \
+  apt-get clean; \
   rm -rf /var/lib/apt/lists/*
 
 # --- Install mermaid-cli and pandoc filter globally --------------------------
