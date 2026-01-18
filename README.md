@@ -1,6 +1,6 @@
 # Pandoc Docker Images
 
-Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations. Additional TexLive packages have to be installed be extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
+Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations and Mermaid diagram rendering support for generating diagrams in PDFs. Additional TexLive packages have to be installed by extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
 
 ## Run
 
@@ -44,9 +44,44 @@ Alternatively you can open a shell in the container and use the miscellanies pan
 docker run -it --rm -v $PWD:/workdir:z --entrypoint sh oehrlis/pandoc
 ```
 
+## Mermaid Diagram Support
+
+This image includes support for rendering Mermaid diagrams in PDF output.
+
+### Usage with Mermaid
+
+To convert Markdown files containing Mermaid diagrams to PDF:
+
+```bash
+docker run --rm \
+    -v $(pwd):/workdir \
+    oehrlis/pandoc:latest \
+    input.md \
+    -o output.pdf \
+    --filter mermaid-filter \
+    --pdf-engine=xelatex
+```
+
+### Mermaid Example
+
+Include Mermaid diagrams in your Markdown using code blocks:
+
+```mermaid
+graph TD
+    A[Start] --> B[End]
+```
+
+The diagrams will be automatically rendered as images in the PDF output.
+
+### Installed Components
+
+- **mermaid-cli**: Latest version from npm
+- **mermaid-filter**: Latest version from npm
+- **Chromium**: System chromium browser for rendering
+
 ## Build and add new packages
 
-If you plan to alter or extend this Docker image you could get the corresonding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
+If you plan to alter or extend this Docker image you could get the corresponding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
 
 ```bash
 git clone git@github.com:oehrlis/docker-pandoc.git
@@ -81,3 +116,6 @@ Please file your bug reports, enhancement requests, questions and other support 
 - GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
 - [Google Fonts](https://fonts.google.com/) Montserrat and Open Sans Light
 - Get Microsoft's Core Fonts for the Web and ClearType Fonts (<http://mscorefonts2.sourceforge.net/>)
+- [Mermaid CLI Documentation](https://github.com/mermaid-js/mermaid-cli)
+- [Pandoc Filters Documentation](https://pandoc.org/filters.html)
+- [mermaid-filter npm package](https://www.npmjs.com/package/mermaid-filter)

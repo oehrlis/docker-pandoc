@@ -133,6 +133,15 @@ if [[ ${TEST} -eq 1 ]]; then
   docker run --rm "${RUN_OPTS[@]}" \
     --metadata-file sample/metadata.yml --resource-path=sample \
     --listings -o sample/sample.pptx sample/sample.md
+
+  echo "   -> Mermaid PDF Test"
+  docker run --rm "${RUN_OPTS[@]}" \
+    examples/test-mermaid.md \
+    -o examples/test-output.pdf \
+    --filter mermaid-filter \
+    --pdf-engine=xelatex \
+    --toc
+  echo "      Test complete. Check examples/test-output.pdf"
 else
   echo "==> Skipping sample generation (--no-test)"
 fi
