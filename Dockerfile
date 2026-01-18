@@ -138,6 +138,42 @@ RUN set -eux; \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
+# --- Install Node.js and dependencies for Mermaid rendering ------------------
+RUN set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+    nodejs \
+    npm \
+    chromium \
+    chromium-sandbox \
+    fonts-liberation \
+    fonts-noto-color-emoji \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2; \
+  rm -rf /var/lib/apt/lists/*
+
+# --- Install mermaid-cli and pandoc filter globally --------------------------
+RUN set -eux; \
+  npm install -g \
+    @mermaid-js/mermaid-cli \
+    mermaid-filter; \
+  npm cache clean --force
+
+# --- Configure Puppeteer to use system Chromium (avoid download) -------------
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
+    CHROME_BIN=/usr/bin/chromium
+
 # --- Install fonts + runtime deps ---------------------------------------------
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
 RUN set -eux; chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
