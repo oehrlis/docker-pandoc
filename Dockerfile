@@ -117,7 +117,15 @@ RUN set -eux; \
     arm64) TLARCH="aarch64-linux" ;; \
     *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
   esac; \
-  TLYEAR="$(ls -1 /usr/local/texlive | grep -E '^[0-9]{4}$' | sort -nr | head -1)"; \
+  TLYEAR=""; \
+  for dir in /usr/local/texlive/[0-9][0-9][0-9][0-9]; do \
+    if [ -d "$dir" ]; then \
+      dirname=$(basename "$dir"); \
+      if [ -z "$TLYEAR" ] || [ "$dirname" -gt "$TLYEAR" ]; then \
+        TLYEAR="$dirname"; \
+      fi; \
+    fi; \
+  done; \
   TL_BINDIR="/usr/local/texlive/${TLYEAR}/bin/${TLARCH}"; \
   ln -sfn "${TL_BINDIR}" /usr/local/texlive/current-bin || true; \
   ln -sfn /usr/local/texlive/current-bin/* /usr/local/bin/ || true; \

@@ -37,7 +37,10 @@ Environment:
 EOF
 }
 
-err() { echo "Error: $*" >&2; exit 1; }
+err() {
+  echo "Error: $*" >&2
+  exit 1
+}
 
 need() { command -v "$1" >/dev/null 2>&1 || err "Missing: $1"; }
 
@@ -53,10 +56,17 @@ fmt_h() {
 }
 
 # --- Main Script Logic ---------------------------------------------------------
-[ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] && { usage; exit 0; }
+[ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] && {
+  usage
+  exit 0
+}
 
 # Pre-flight
-need dpkg; need du; need awk; need grep; need fc-cache || true
+need dpkg
+need du
+need awk
+need grep
+need fc-cache || true
 
 tex_before_kb=$(to_kb "$TEXROOT")
 fonts_before_kb=$(to_kb "$FONTSROOT")
@@ -71,14 +81,23 @@ echo
 # --- Determine TeX Live bin dir (year + arch) ---------------------------------
 DPKG_ARCH="$(dpkg --print-architecture)"
 case "$DPKG_ARCH" in
-  amd64) TLARCH="x86_64-linux"  ;;
+  amd64) TLARCH="x86_64-linux" ;;
   arm64) TLARCH="aarch64-linux" ;;
-  *)     err "Unsupported dpkg architecture: ${DPKG_ARCH}" ;;
+  *) err "Unsupported dpkg architecture: ${DPKG_ARCH}" ;;
 esac
 
 # If TL is yearful, use the newest year; otherwise allow yearless layouts
-if TLYEAR="$(ls -1 "$TEXROOT" 2>/dev/null | grep -E '^[0-9]{4}$' \
-              | sort -nr | head -1)"; then
+TLYEAR=""
+for dir in "$TEXROOT"/[0-9][0-9][0-9][0-9]; do
+  if [ -d "$dir" ]; then
+    dirname=$(basename "$dir")
+    if [ -z "$TLYEAR" ] || [ "$dirname" -gt "$TLYEAR" ]; then
+      TLYEAR="$dirname"
+    fi
+  fi
+done
+
+if [ -n "$TLYEAR" ]; then
   TL_BINDIR="$TEXROOT/${TLYEAR}/bin/${TLARCH}"
 else
   TL_BINDIR="$TEXROOT/bin/${TLARCH}"
@@ -134,23 +153,23 @@ if [ -d "$LATEX_DIR" ]; then
     verbasef verifiche versonotes vhistory vocaltract was \
     webquiz williams willowtreebook worksheet xbmks xcookybooky \
     xcpdftips xdoc xebaposter xtuthesis xwatermark xytree ya* \
-    ycbook ydoc yplan zebra-goodies zed-csp zhlipsum ziffer zw* \
-    || true
+    ycbook ydoc yplan zebra-goodies zed-csp zhlipsum ziffer zw* ||
+    true
 fi
 
 # --- 3) Remove CJK/legacy font trees not needed from TeX tree ------------------
 find "$TEXROOT" -type d -name "wadalab" -exec rm -rf {} + || true
-find "$TEXROOT" -type d -name "uhc"     -exec rm -rf {} + || true
-find "$TEXROOT" -type d -name "arphic"  -exec rm -rf {} + || true
+find "$TEXROOT" -type d -name "uhc" -exec rm -rf {} + || true
+find "$TEXROOT" -type d -name "arphic" -exec rm -rf {} + || true
 
 # --- 4) Optional: prune some Microsoft fonts from system -----------------------
 if [ "${PRUNE_MS_FONTS:-0}" = "1" ]; then
   echo "Pruning selected MS core fonts …"
-  rm -rf /usr/share/fonts/truetype/msttcorefonts/?erdana*  || true # Verdana
-  rm -rf /usr/share/fonts/truetype/msttcorefonts/?rebuc*   || true # Trebuchet
-  rm -rf /usr/share/fonts/truetype/msttcorefonts/?eorgia*  || true # Georgia
-  rm -rf /usr/share/fonts/truetype/msttcorefonts/?ndale*   || true # Andale
-  rm -rf /usr/share/fonts/truetype/msttcorefonts/?omic*    || true # Comic
+  rm -rf /usr/share/fonts/truetype/msttcorefonts/?erdana* || true # Verdana
+  rm -rf /usr/share/fonts/truetype/msttcorefonts/?rebuc* || true  # Trebuchet
+  rm -rf /usr/share/fonts/truetype/msttcorefonts/?eorgia* || true # Georgia
+  rm -rf /usr/share/fonts/truetype/msttcorefonts/?ndale* || true  # Andale
+  rm -rf /usr/share/fonts/truetype/msttcorefonts/?omic* || true   # Comic
 fi
 
 # --- 5) Rebuild caches / filename DB (best effort) -----------------------------
@@ -177,9 +196,9 @@ if [ "${SHOW_TOP:-0}" = "1" ] && [ -d "$TEXROOT/texmf-dist/tex" ]; then
   echo
   echo "--- Top remaining TeX directories (by size) ---"
   # Show top 20 heaviest dirs under texmf-dist/tex (2 levels deep)
-  du -k -d 2 "$TEXROOT/texmf-dist/tex" 2>/dev/null \
-    | sort -n | tail -n 20 \
-    | awk '{kb=$1; path=$2; mb=kb/1024.0; printf "%7.1f MB  %s\n", mb, path}'
+  du -k -d 2 "$TEXROOT/texmf-dist/tex" 2>/dev/null |
+    sort -n | tail -n 20 |
+    awk '{kb=$1; path=$2; mb=kb/1024.0; printf "%7.1f MB  %s\n", mb, path}'
 fi
 
 echo

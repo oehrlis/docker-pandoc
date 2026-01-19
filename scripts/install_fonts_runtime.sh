@@ -24,17 +24,20 @@ set -eu
 export DEBIAN_FRONTEND=noninteractive
 
 # --- Default Values ------------------------------------------------------------
-OPENSSL_CONF="${OPENSSL_CONF:-/etc/ssl/openssl.cnf}"  # keep curl happy in slim
+OPENSSL_CONF="${OPENSSL_CONF:-/etc/ssl/openssl.cnf}" # keep curl happy in slim
 
 # --- Functions -----------------------------------------------------------------
-err() { echo "Error: $*" >&2; exit 1; }
+err() {
+  echo "Error: $*" >&2
+  exit 1
+}
 
 need() { command -v "$1" >/dev/null 2>&1 || err "Missing: $1"; }
 
 enable_nonfree() {
   # Enable contrib, non-free, non-free-firmware for both classic and Deb822
-  if [ -f /etc/apt/sources.list ] && \
-     grep -q '^[[:space:]]*deb[[:space:]]' /etc/apt/sources.list; then
+  if [ -f /etc/apt/sources.list ] &&
+    grep -q '^[[:space:]]*deb[[:space:]]' /etc/apt/sources.list; then
     # Classic sources.list: append components if only 'main' is present
     sed -E -i \
       's/^(deb[[:space:]][^#]*[[:space:]]main)([[:space:]].*)?$/\1 contrib non-free non-free-firmware\2/' \
@@ -53,15 +56,15 @@ enable_nonfree() {
         }
         /^$/ { added=0 } { print }
       ' /etc/apt/sources.list.d/debian.sources \
-        > /etc/apt/sources.list.d/debian.sources.new
+        >/etc/apt/sources.list.d/debian.sources.new
       mv /etc/apt/sources.list.d/debian.sources.new \
-         /etc/apt/sources.list.d/debian.sources
+        /etc/apt/sources.list.d/debian.sources
     fi
   else
     # Construct a sensible default sources.list (e.g., bookworm)
     . /etc/os-release
     CODENAME="${VERSION_CODENAME:-bookworm}"
-    cat > /etc/apt/sources.list <<EOF
+    cat >/etc/apt/sources.list <<EOF
 deb http://deb.debian.org/debian ${CODENAME} main contrib non-free non-free-firmware
 deb http://security.debian.org/debian-security ${CODENAME}-security main contrib non-free non-free-firmware
 deb http://deb.debian.org/debian ${CODENAME}-updates main contrib non-free non-free-firmware
@@ -84,15 +87,18 @@ install_montserrat_fallback() {
 
 # --- Main Script Logic ---------------------------------------------------------
 # Pre-flight checks (tools commonly present in Debian images)
-need sed; need awk; need grep; need curl
+need sed
+need awk
+need grep
+need curl
 
 # Enable non-free repos so MS core fonts can be installed
 enable_nonfree
 apt-get update
 
 # Preseed EULA for MS core fonts to avoid interactive prompt
-echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
-  | debconf-set-selections || true
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" |
+  debconf-set-selections || true
 
 # Base runtime: certificate store, fontconfig, curl, Python venv tooling
 apt-get install -y --no-install-recommends \

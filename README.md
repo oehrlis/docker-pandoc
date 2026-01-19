@@ -6,17 +6,23 @@
 [![Docker Image Version](https://img.shields.io/docker/v/oehrlis/pandoc?sort=semver)](https://hub.docker.com/r/oehrlis/pandoc)
 [![License](https://img.shields.io/github/license/oehrlis/docker-pandoc)](LICENSE)
 
+<!-- markdownlint-disable MD013 -->
 Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations and Mermaid diagram rendering support for generating diagrams in PDFs. Additional TexLive packages have to be installed by extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
+<!-- markdownlint-enable MD013 -->
 
 ## Run
 
+<!-- markdownlint-disable MD013 -->
 The pre build image is available via [Dockerhub](https://hub.docker.com/r/oehrlis/pandoc/). The installation and use is straightforward. Install [Docker](https://www.docker.com/get-started) and pull the image.
+<!-- markdownlint-enable MD013 -->
 
 ```bash
 docker pull oehrlis/pandoc
 ```
 
+<!-- markdownlint-disable MD013 -->
 Either you copy the files into the container, which is obviously not really handy, or you mount your local document folder as volume and run it.
+<!-- markdownlint-enable MD013 -->
 
 ```bash
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc <OPTIONS>
@@ -87,7 +93,9 @@ The diagrams will be automatically rendered as images in the PDF output.
 
 ## Build and add new packages
 
+<!-- markdownlint-disable MD013 -->
 If you plan to alter or extend this Docker image you could get the corresponding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
+<!-- markdownlint-enable MD013 -->
 
 ```bash
 git clone git@github.com:oehrlis/docker-pandoc.git

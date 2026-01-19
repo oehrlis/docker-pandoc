@@ -28,7 +28,7 @@ REQ_VERSION="${2:-${PANDOC_VERSION:-latest}}"
 
 # --- Functions -----------------------------------------------------------------
 usage() {
-    cat <<EOF
+  cat <<EOF
 Usage: $(basename "$0") <amd64|arm64> [version]
 
 Install pandoc for the given architecture. If [version] is omitted or 'latest',
@@ -41,49 +41,63 @@ Examples:
 EOF
 }
 
-err() { echo "Error: $*" >&2; exit 1; }
+err() {
+  echo "Error: $*" >&2
+  exit 1
+}
 
 need() {
-    command -v "$1" >/dev/null 2>&1 || err "Missing dependency: $1"
+  command -v "$1" >/dev/null 2>&1 || err "Missing dependency: $1"
 }
 
 http_ok() {
-    # Returns 0 if URL returns HTTP 200; otherwise non-zero.
-    curl -fsSLI -o /dev/null -w '%{http_code}' "$1" 2>/dev/null | grep -qx 200
+  # Returns 0 if URL returns HTTP 200; otherwise non-zero.
+  curl -fsSLI -o /dev/null -w '%{http_code}' "$1" 2>/dev/null | grep -qx 200
 }
 
 # --- Main Script Logic ---------------------------------------------------------
 # Basic help
-[ "${ARCH:-}" = "-h" ] || [ "${ARCH:-}" = "--help" ] && { usage; exit 0; }
-[ -n "${ARCH}" ] || { usage; exit 1; }
+[ "${ARCH:-}" = "-h" ] || [ "${ARCH:-}" = "--help" ] && {
+  usage
+  exit 0
+}
+[ -n "${ARCH}" ] || {
+  usage
+  exit 1
+}
 
 # Verify required tools
-need curl; need tar; need file; need strip; need install; need grep
+need curl
+need tar
+need file
+need strip
+need install
+need grep
 
 # Map script argument to GitHub architecture string
 case "$ARCH" in
-    amd64) GH_ARCH="linux-amd64" ;;
-    arm64) GH_ARCH="linux-arm64" ;;
-    *)  err "Unsupported architecture: $ARCH (use amd64 or arm64)" ;;
+  amd64) GH_ARCH="linux-amd64" ;;
+  arm64) GH_ARCH="linux-arm64" ;;
+  *) err "Unsupported architecture: $ARCH (use amd64 or arm64)" ;;
 esac
 
 # Build the GitHub API endpoint based on requested version
 if [ "${REQ_VERSION}" = "latest" ]; then
-    API_URL="https://api.github.com/repos/jgm/pandoc/releases/latest"
+  API_URL="https://api.github.com/repos/jgm/pandoc/releases/latest"
 else
-    # Tag names are plain versions, e.g., 3.2.1 (no leading 'v').
-    API_URL="https://api.github.com/repos/jgm/pandoc/releases/tags/${REQ_VERSION}"
-    # Preflight: check the tag exists (fail fast with a clear message).
-    if ! http_ok "${API_URL}"; then
-        err "Pandoc release tag '${REQ_VERSION}' not found on GitHub. \
+  # Tag names are plain versions, e.g., 3.2.1 (no leading 'v').
+  API_URL="https://api.github.com/repos/jgm/pandoc/releases/tags/${REQ_VERSION}"
+  # Preflight: check the tag exists (fail fast with a clear message).
+  if ! http_ok "${API_URL}"; then
+    err "Pandoc release tag '${REQ_VERSION}' not found on GitHub. \
 Check spelling (e.g., 3.2.1) or use 'latest'."
-    fi
+  fi
 fi
 
 # Query release JSON and extract asset URL for the selected architecture
-URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" \
-    | grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" \
-    | head -n1 || true)"
+URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
+  grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" |
+  head -n1 || true)"
 
 [ -n "${URL}" ] || err "Cannot find pandoc tarball for ${GH_ARCH} (${REQ_VERSION})."
 
@@ -103,7 +117,7 @@ install -D -m 0755 "$PVERDIR/bin/pandoc" /usr/local/bin/pandoc
 
 # Strip ELF symbols to reduce size (only if binary is ELF)
 if file -b "/usr/local/bin/pandoc" | grep -q ELF; then
-    strip --strip-unneeded "/usr/local/bin/pandoc" || true
+  strip --strip-unneeded "/usr/local/bin/pandoc" || true
 fi
 
 # Create helper symlinks (pandoc-lua and pandoc-server are identical upstream)

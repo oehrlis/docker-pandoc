@@ -91,7 +91,7 @@ rm -rf \
 find "${FILTER_VENV_DIR}/bin" -maxdepth 1 -type f \( \
   -name 'Activate.ps1' -o -name 'activate' -o -name 'activate.csh' -o -name 'activate.fish' \
   -o -name 'pip' -o -name 'pip*' -o -name 'wheel' -o -name 'natsort' \
-\) -exec rm -f {} + || true
+  \) -exec rm -f {} + || true
 
 # Clean caches and bytecode/tests
 "${FILTER_VENV_DIR}/bin/python" - <<'PY'
