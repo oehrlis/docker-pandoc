@@ -354,6 +354,8 @@ $if(beamer)$
 \def\fnum@table{\tablename~\thetable}
 \makeatother
 $else$
+% Define 'none' counter for tables without captions (Pandoc compatibility)
+\newcounter{none}
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
 \makeatletter
