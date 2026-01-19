@@ -37,8 +37,14 @@ EOF
 
 # --- Defaults ---------------------------------------------------------------
 export DOCKER_USER="oehrlis"
-export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-export PROJECT="$(basename "${BUILD_CONTEXT}")"
+# Separate cd and assignment to avoid masking return values
+_build_dir="$(dirname "${BASH_SOURCE[0]}")"
+cd "$_build_dir" || exit 1
+export BUILD_CONTEXT
+BUILD_CONTEXT="$(pwd -P)"
+cd - >/dev/null || exit 1
+export PROJECT
+PROJECT="$(basename "${BUILD_CONTEXT}")"
 
 # Derive image name; fallback to folder name if no dash present
 if [[ "${PROJECT}" == *-* ]]; then
@@ -49,22 +55,35 @@ fi
 
 RELEASE="beta"
 USE_NO_CACHE=0
-LOCAL_BUILD=0          # 1 -> --load, 0 -> --push
-DO_PUSH=1              # explicitly toggled by --push/--local; LOCAL_BUILD wins
+LOCAL_BUILD=0 # 1 -> --load, 0 -> --push
+DO_PUSH=1     # explicitly toggled by --push/--local; LOCAL_BUILD wins
 TEST=1
 PLATFORM="linux/amd64,linux/arm64"
 
 # --- Parse arguments --------------------------------------------------------
 for arg in "$@"; do
   case "${arg}" in
-    -h|--help) usage; exit 0 ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
     --no-cache) USE_NO_CACHE=1 ;;
-    --local|--load) LOCAL_BUILD=1; DO_PUSH=0 ;;
-    --push) LOCAL_BUILD=0; DO_PUSH=1 ;;
+    --local | --load)
+      LOCAL_BUILD=1
+      DO_PUSH=0
+      ;;
+    --push)
+      LOCAL_BUILD=0
+      DO_PUSH=1
+      ;;
     --platform=*) PLATFORM="${arg#*=}" ;;
     --test) TEST=1 ;;
     --no-test) TEST=0 ;;
-    --*) echo "Unknown option: ${arg}"; usage; exit 1 ;;
+    --*)
+      echo "Unknown option: ${arg}"
+      usage
+      exit 1
+      ;;
     *) RELEASE="${arg}" ;;
   esac
 done
