@@ -189,17 +189,10 @@ RUN set -eux; \
     mermaid-filter@1.4.7; \
   npm cache clean --force
 
-# --- Configure Puppeteer and mermaid-cli for root execution ------------------
+# --- Configure Puppeteer to use system Chromium -------------------------------
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     CHROME_BIN=/usr/bin/chromium
-
-# Create Puppeteer config for mermaid-cli to run as root
-RUN set -eux; \
-  mkdir -p /root/.config/puppeteer; \
-  echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /root/.config/puppeteer/config.json; \
-  mkdir -p /.config/puppeteer; \
-  echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /.config/puppeteer/config.json
 
 # --- Install fonts + runtime deps ---------------------------------------------
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
@@ -228,9 +221,17 @@ RUN set -eux; \
     ln -sf "${ORADBA}/templates/oradba.pptx" "${PANDOC_DATA}/reference.pptx"; \
     ln -sf "${ORADBA}/templates/oradba.docx" "${PANDOC_DATA}/reference.docx"
 
-# --- Define volume, workdir, entrypoint ---------------------------------------
+# --- Create non-root user for running pandoc ----------------------------------
+RUN set -eux; \
+    groupadd -r pandoc --gid=1000; \
+    useradd -r -g pandoc --uid=1000 --home-dir=/workdir --shell=/bin/bash pandoc; \
+    chown -R pandoc:pandoc "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
+    chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"
+
+# --- Define volume, workdir, user, entrypoint ---------------------------------
 VOLUME ["${WORKDIR}"]
 WORKDIR "${WORKDIR}"
+USER pandoc
 
 ENTRYPOINT ["/usr/local/bin/pandoc"]
 CMD ["--help"]
