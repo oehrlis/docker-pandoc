@@ -17,7 +17,7 @@ Thank you for your interest in contributing to the docker-pandoc project! This d
 - [Docker](https://www.docker.com/get-started) and Docker Buildx
 - [Git](https://git-scm.com/)
 - [Make](https://www.gnu.org/software/make/)
-- Linting tools: shellcheck, shfmt, markdownlint-cli, hadolint (see README.md for installation)
+- Linting tools: shellcheck, shfmt, markdownlint-cli, hadolint (see [Linting Locally](README.md#linting-locally) in README)
 
 ### Clone and Build
 
@@ -107,7 +107,7 @@ make build
 make test
 
 # Test manually
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:latest \
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:4.0.0 \
   sample/sample.md -o test-output.pdf --toc --listings
 ```
 
