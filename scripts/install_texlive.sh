@@ -23,7 +23,8 @@ set -eu
 
 # --- Default Values ------------------------------------------------------------
 TLROOT="/usr/local/texlive"
-TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
 
 # Environment for the TeX Live installer (robust downloads)
 export TEXLIVE_DOWNLOADER=wget
@@ -63,33 +64,45 @@ Removes: docs, sources, tlmgr. Strips ELF binaries.
 EOF
 }
 
-err() { echo "Error: $*" >&2; exit 1; }
+err() {
+  echo "Error: $*" >&2
+  exit 1
+}
 
 need() { command -v "$1" >/dev/null 2>&1 || err "Missing: $1"; }
 
 # --- Main Script Logic ---------------------------------------------------------
 # Basic help (-h/--help)
-[ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] && { usage; exit 0; }
+[ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] && {
+  usage
+  exit 0
+}
 
 # Check required tools up front
-need curl; need tar; need dpkg; need strip; need fc-cache; need wget; need grep
+need curl
+need tar
+need dpkg
+need strip
+need fc-cache
+need wget
+need grep
 
 # --- Architecture mapping (Debian arch -> TeX Live bin dir) -------------------
 DPKG_ARCH="$(dpkg --print-architecture)"
 case "$DPKG_ARCH" in
-  amd64) TLARCH="x86_64-linux"  ;;
+  amd64) TLARCH="x86_64-linux" ;;
   arm64) TLARCH="aarch64-linux" ;;
-  *)     err "Unsupported dpkg architecture: ${DPKG_ARCH}" ;;
+  *) err "Unsupported dpkg architecture: ${DPKG_ARCH}" ;;
 esac
 
 # --- Fetch installer (with fallback if mirror redirect fails) ------------------
 echo "Fetching TeX Live installer (install-tl-unx.tar.gz)…"
 if ! curl -fsSL \
-     "https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" \
-     | tar xz -C "$TMP" --strip-components=1 ; then
+  "https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" |
+  tar xz -C "$TMP" --strip-components=1; then
   curl -fsSL \
-     "https://ftp.fau.de/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz" \
-     | tar xz -C "$TMP" --strip-components=1
+    "https://ftp.fau.de/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz" |
+    tar xz -C "$TMP" --strip-components=1
 fi
 
 # --- Installer profile (yearless layout under /usr/local/texlive) -------------
@@ -118,8 +131,8 @@ INSTALL_OK=0
 for REPO in $MIRRORS; do
   echo "install-tl: trying mirror: $REPO"
   if "$TMP/install-tl" \
-      --profile "$TMP/texlive.profile" \
-      --repository "$REPO" ; then
+    --profile "$TMP/texlive.profile" \
+    --repository "$REPO"; then
     INSTALL_OK=1
     TL_REPO="$REPO"
     break
@@ -142,7 +155,7 @@ export PATH="${TL_BINDIR}:$PATH"
 # --- tlmgr updates & package installation (with repo verification) ------------
 tlmgr option repository "$TL_REPO" || true
 tlmgr update --self --verify-repo=all || true
-tlmgr update --all  --verify-repo=all || true
+tlmgr update --all --verify-repo=all || true
 
 # The base collections are already installed; add only what we actually use.
 # shellcheck disable=SC2086
@@ -162,7 +175,7 @@ done
 # --- Cleanup: remove docs/sources, tlmgr, and strip binaries -------------------
 rm -rf "${TLROOT}/texmf-dist/doc" "${TLROOT}/texmf-dist/source" || true
 rm -rf "${TLROOT}/tlpkg" || true
-rm -f  "${TL_BINDIR}/tlmgr" || true
+rm -f "${TL_BINDIR}/tlmgr" || true
 
 # Strip ELF executables to save space (ignore non-ELF files)
 find "${TL_BINDIR}" -type f -perm -111 \
@@ -173,7 +186,7 @@ find "${TL_BINDIR}" -type f -perm -111 \
 fc-cache -fv || true
 
 # --- Make TeX Live available to all shells ------------------------------------
-echo "export PATH=${TL_BINDIR}:\$PATH" > /etc/profile.d/texlive.sh
+echo "export PATH=${TL_BINDIR}:\$PATH" >/etc/profile.d/texlive.sh
 chmod 0644 /etc/profile.d/texlive.sh
 
 echo "TeX Live installed in ${TLROOT} (yearless); packages added; tlmgr removed."

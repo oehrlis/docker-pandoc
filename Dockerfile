@@ -111,13 +111,21 @@ COPY --from=builder /etc/fonts /etc/fonts
 
 # --- Setup PATH for TeX Live + symlinks ---------------------------------------
 RUN set -eux; \
+  set -o pipefail; \
   ARCH="$(dpkg --print-architecture)"; \
   case "$ARCH" in  \
     amd64) TLARCH="x86_64-linux" ;; \
     arm64) TLARCH="aarch64-linux" ;; \
     *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
   esac; \
-  TLYEAR="$(ls -1 /usr/local/texlive | grep -E '^[0-9]{4}$' | sort -nr | head -1)"; \
+  TLYEAR=""; \
+  for d in /usr/local/texlive/[0-9][0-9][0-9][0-9]; do \
+    [ -d "$d" ] || continue; \
+    year=$(basename "$d"); \
+    if [ -z "$TLYEAR" ] || [ "$year" -gt "$TLYEAR" ]; then \
+      TLYEAR="$year"; \
+    fi; \
+  done; \
   TL_BINDIR="/usr/local/texlive/${TLYEAR}/bin/${TLARCH}"; \
   ln -sfn "${TL_BINDIR}" /usr/local/texlive/current-bin || true; \
   ln -sfn /usr/local/texlive/current-bin/* /usr/local/bin/ || true; \
@@ -181,24 +189,26 @@ RUN set -eux; chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
     /usr/local/src/scripts/install_fonts_runtime.sh
 
 # --- Install OraDBA Pandoc templates from GitHub ------------------------------
-RUN echo "Install latest OraDBA Templates from GitHub." && \
-    mkdir -p ${WORKDIR} ${ORADBA} ${XDG_DATA_HOME} \
-             ${PANDOC_DATA} ${PANDOC_TEMPLATES} ${PANDOC_THEMES} && \
-    curl -Lf ${GITHUB_URL} | tar zxv --strip-components=1 -C ${ORADBA} && \
-    rm -rf ${ORADBA}/examples ${ORADBA}/.gitignore \
-           ${ORADBA}/LICENSE ${ORADBA}/README.md && \
-    ln -sf ${ORADBA}/templates/oradba.tex ${ORADBA}/templates/oradba.latex && \
-    for i in ${ORADBA}/templates/*; do \
-      ln -sf "$i" ${PANDOC_TEMPLATES}/$(basename "$i"); \
-    done && \
-    for i in ${ORADBA}/templates/oradba.*; do \
-      ln -sf "$i" ${PANDOC_TEMPLATES}/default.${i##*.}; \
-    done && \
-    for i in ${ORADBA}/themes/*; do \
-      ln -sf "$i" ${PANDOC_TEMPLATES}/$(basename "$i"); \
-    done && \
-    ln -sf ${ORADBA}/templates/oradba.pptx ${PANDOC_DATA}/reference.pptx && \
-    ln -sf ${ORADBA}/templates/oradba.docx ${PANDOC_DATA}/reference.docx
+RUN set -eux; \
+    set -o pipefail; \
+    echo "Install latest OraDBA Templates from GitHub."; \
+    mkdir -p "${WORKDIR}" "${ORADBA}" "${XDG_DATA_HOME}" \
+             "${PANDOC_DATA}" "${PANDOC_TEMPLATES}" "${PANDOC_THEMES}"; \
+    curl -Lf "${GITHUB_URL}" | tar zxv --strip-components=1 -C "${ORADBA}"; \
+    rm -rf "${ORADBA}/examples" "${ORADBA}/.gitignore" \
+           "${ORADBA}/LICENSE" "${ORADBA}/README.md"; \
+    ln -sf "${ORADBA}/templates/oradba.tex" "${ORADBA}/templates/oradba.latex"; \
+    for i in "${ORADBA}"/templates/*; do \
+      ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
+    done; \
+    for i in "${ORADBA}"/templates/oradba.*; do \
+      ln -sf "$i" "${PANDOC_TEMPLATES}/default.${i##*.}"; \
+    done; \
+    for i in "${ORADBA}"/themes/*; do \
+      ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
+    done; \
+    ln -sf "${ORADBA}/templates/oradba.pptx" "${PANDOC_DATA}/reference.pptx"; \
+    ln -sf "${ORADBA}/templates/oradba.docx" "${PANDOC_DATA}/reference.docx"
 
 # --- Define volume, workdir, entrypoint ---------------------------------------
 VOLUME ["${WORKDIR}"]

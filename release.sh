@@ -16,11 +16,14 @@
 
 # - Environment Variables ------------------------------------------------------
 export DOCKER_USER="oehrlis"
-export BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)"
-export PROJECT=$(basename ${BUILD_CONTEXT})
-export IMAGE=$(echo ${PROJECT}|cut -d- -f2)
+export BUILD_CONTEXT
+BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
+export PROJECT
+PROJECT=$(basename "${BUILD_CONTEXT}")
+export IMAGE
+IMAGE=$(echo "${PROJECT}" | cut -d- -f2)
 # - EOF Environment Variables --------------------------------------------------
-REL_TYPE=${1:-"patch"}  # could be also minor or major
+REL_TYPE=${1:-"patch"} # could be also minor or major
 NOCACHE=${2:-""}
 REL_TYPE=$(echo "$REL_TYPE" | tr '[:upper:]' '[:lower:]')
 
@@ -28,7 +31,7 @@ REL_TYPE=$(echo "$REL_TYPE" | tr '[:upper:]' '[:lower:]')
 CURRENT_PATH=$(pwd)
 
 # change to build context
-cd ${BUILD_CONTEXT}
+cd "${BUILD_CONTEXT}" || exit 1
 
 # ensure we're up to date
 git pull
@@ -51,5 +54,5 @@ git push
 git push --tags
 
 # change back to working directory
-cd ${CURRENT_PATH}
+cd "${CURRENT_PATH}" || exit 1
 # --- EOF ----------------------------------------------------------------------
