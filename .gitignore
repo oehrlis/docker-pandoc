@@ -266,3 +266,18 @@ fonts/TheSansSwisscom55iTT.ttf
 fonts/TheSansSwisscom57_TT.ttf
 fonts/TheSansSwisscom57iTT.ttf
 test_mermaid.sh
+
+# Build artifacts
+sample/sample-test.pdf
+sample/sample-test.docx
+sample/sample-test.pptx
+sample/sample-release.pdf
+sample/sample-release.docx
+sample/sample-release.pptx
+examples/test-mermaid-test.pdf
+examples/test-mermaid-release.pdf
+examples/test-output.pdf
+
+# Temporary files
+/tmp/
+.tmp/

@@ -1,0 +1,20 @@
+---
+# Hadolint configuration for Dockerfile linting
+
+# Rules to ignore
+ignored:
+  # DL3008: Pin versions in apt-get install
+  # (We may want latest packages in some cases)
+  - DL3008
+  
+  # DL3009: Delete apt-get cache
+  # (Handled in multi-stage builds)
+  - DL3009
+
+# Trusted registries (optional)
+trustedRegistries:
+  - docker.io
+  - debian
+
+# Disable specific checks for specific lines
+# Use inline comments in Dockerfile: # hadolint ignore=DL3006

@@ -1,5 +1,11 @@
 # Pandoc Docker Images
 
+[![CI](https://github.com/oehrlis/docker-pandoc/actions/workflows/ci.yml/badge.svg)](https://github.com/oehrlis/docker-pandoc/actions/workflows/ci.yml)
+[![Release](https://github.com/oehrlis/docker-pandoc/actions/workflows/release.yml/badge.svg)](https://github.com/oehrlis/docker-pandoc/actions/workflows/release.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/oehrlis/pandoc)](https://hub.docker.com/r/oehrlis/pandoc)
+[![Docker Image Version](https://img.shields.io/docker/v/oehrlis/pandoc?sort=semver)](https://hub.docker.com/r/oehrlis/pandoc)
+[![License](https://img.shields.io/github/license/oehrlis/docker-pandoc)](LICENSE)
+
 Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations and Mermaid diagram rendering support for generating diagrams in PDFs. Additional TexLive packages have to be installed by extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
 
 ## Run
@@ -98,6 +104,112 @@ git clone git@github.com:oehrlis/docker-pandoc.git
 $ cd docker-pandoc
 $ build.sh
 ```
+
+## Development
+
+This project uses automated CI/CD pipelines for building, testing, and releasing Docker images.
+
+### Using Makefile
+
+The project includes a comprehensive Makefile for common development tasks:
+
+```bash
+# Display all available targets
+make help
+
+# Build the Docker image locally
+make build
+
+# Build multi-platform image
+make build-multi
+
+# Run all linting checks
+make lint
+
+# Build sample documents to test
+make test-samples
+
+# Open an interactive shell in the container
+make shell
+
+# Clean up build artifacts
+make clean
+```
+
+### Linting Locally
+
+Run linters before submitting pull requests:
+
+```bash
+# Run all linters
+make lint
+
+# Run individual linters
+make lint-shell          # shellcheck
+make lint-shell-format   # shfmt
+make lint-markdown       # markdownlint
+make lint-docker         # hadolint
+```
+
+**Installing linting tools**:
+
+```bash
+# Shellcheck
+apt-get install shellcheck  # Ubuntu/Debian
+brew install shellcheck     # macOS
+
+# shfmt
+curl -L "https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64" -o shfmt
+chmod +x shfmt && sudo mv shfmt /usr/local/bin/
+
+# markdownlint-cli
+npm install -g markdownlint-cli
+
+# hadolint
+wget https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+chmod +x hadolint-Linux-x86_64 && sudo mv hadolint-Linux-x86_64 /usr/local/bin/hadolint
+```
+
+### Creating a New Release
+
+To create a new release:
+
+```bash
+# Interactive release process
+make release
+```
+
+This will:
+1. Prompt for a new version number
+2. Update the VERSION file
+3. Create a git commit and tag
+4. Optionally push the tag to trigger the automated release workflow
+
+The release workflow will:
+- Build multi-platform Docker images (linux/amd64, linux/arm64)
+- Push images to Docker Hub with version and `latest` tags
+- Build sample documents to verify functionality
+- Create a GitHub release with auto-generated notes
+
+### Setting Up Docker Hub Credentials for GitHub Actions
+
+Repository maintainers need to configure Docker Hub credentials in GitHub secrets:
+
+1. Go to repository **Settings** → **Secrets and variables** → **Actions**
+2. Add the following secrets:
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username
+   - `DOCKERHUB_TOKEN`: Docker Hub access token (create at hub.docker.com/settings/security)
+
+See [`.github/SETUP.md`](.github/SETUP.md) for detailed setup instructions.
+
+### Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
+- Development setup
+- CI/CD pipeline
+- Release process
+- Linting requirements
+- Pull request process
 
 ## Issues
 
