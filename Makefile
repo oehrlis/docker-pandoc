@@ -55,22 +55,7 @@ test: test-samples ## Run all tests (build samples, validate examples)
 
 test-samples: ## Build all sample documents to verify functionality
 	@echo "$(BLUE)Building sample documents...$(NC)"
-	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
-		--metadata-file sample/metadata.yml --filter pandoc-latex-environment \
-		--resource-path=sample --pdf-engine=xelatex \
-		-o sample/sample-test.pdf sample/sample.md
-	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
-		--metadata-file sample/metadata.yml --resource-path=sample \
-		-o sample/sample-test.docx sample/sample.md
-	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
-		--metadata-file sample/metadata.yml --resource-path=sample \
-		-o sample/sample-test.pptx sample/sample.md
-	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
-		examples/test-mermaid.md \
-		-o examples/test-mermaid-test.pdf \
-		--filter mermaid-filter \
-		--pdf-engine=xelatex \
-		--toc
+	./scripts/test.sh $(VERSION)
 	@echo "$(GREEN)Sample documents built successfully$(NC)"
 
 ##@ Linting Targets

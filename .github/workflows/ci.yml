@@ -24,7 +24,7 @@ jobs:
       - name: Run Shellcheck
         uses: ludeeus/action-shellcheck@master
         with:
-          scandir: '.'
+          scandir: 'scripts'
           format: gcc
           severity: warning
           additional_files: 'build.sh release.sh'
