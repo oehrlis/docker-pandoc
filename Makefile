@@ -100,8 +100,7 @@ lint-docker: ## Run hadolint on Dockerfile
 		hadolint Dockerfile; \
 		echo "$(GREEN)Dockerfile lint passed$(NC)"; \
 	else \
-		echo "$(YELLOW)hadolint not installed. Install from: https://github.com/hadolint/hadolint/releases$(NC)"; \
-		exit 1; \
+		echo "$(YELLOW)hadolint not installed (optional). Install from: https://github.com/hadolint/hadolint/releases$(NC)"; \
 	fi
 
 ##@ Release Targets

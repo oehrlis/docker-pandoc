@@ -95,13 +95,17 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 
 ## Diagram Support
 
-> **⚠️ Mermaid Support Temporarily Disabled**: Chromium-based mermaid rendering has been removed due to Docker sandbox restrictions with non-root users. See [GitHub issue #XX](https://github.com/oehrlis/docker-pandoc/issues/XX) for planned alternatives (Kroki, PlantUML integration).
+> **⚠️ Mermaid Support Temporarily Disabled**: Chromium-based mermaid rendering
+> has been removed due to Docker sandbox restrictions with non-root users.
+> See [GitHub issue #XX](https://github.com/oehrlis/docker-pandoc/issues/XX)
+> for planned alternatives (Kroki, PlantUML integration).
 
 ### Alternative Diagram Tools
 
 For diagram rendering in PDF documents, consider these alternatives that work well in containerized environments:
 
 **PlantUML** - Comprehensive UML and architecture diagrams
+
 ```bash
 # Java-based, works in containers
 docker run --rm -v $PWD:/workdir oehrlis/pandoc \
@@ -109,12 +113,14 @@ docker run --rm -v $PWD:/workdir oehrlis/pandoc \
 ```
 
 **Graphviz** - Graph visualizations and flowcharts
+
 ```bash
 # C-based, lightweight, container-friendly
 dot -Tpng diagram.dot -o diagram.png
 ```
 
 **TikZ** - LaTeX-native diagrams (built into TeX Live)
+
 ```latex
 \begin{tikzpicture}
   \node (A) at (0,0) {Start};
@@ -126,6 +132,7 @@ dot -Tpng diagram.dot -o diagram.png
 ### Future Plans
 
 We're evaluating these solutions for Mermaid support:
+
 - **Kroki server integration** (self-hosted or public)
 - **Server-side rendering alternatives**
 - **Pre-rendering workflows for CI/CD**

@@ -87,9 +87,9 @@ if [ "${REQ_VERSION}" = "latest" ]; then
   # Fallback: Try to get latest version from redirect (no API call)
   echo "Attempting to fetch latest Pandoc release info..."
   LATEST_VERSION="$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
-    'https://github.com/jgm/pandoc/releases/latest' 2>/dev/null | \
+    'https://github.com/jgm/pandoc/releases/latest' 2>/dev/null |
     grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?' | tail -1 || echo '')"
-  
+
   if [ -n "${LATEST_VERSION}" ]; then
     echo "Detected latest version via redirect: ${LATEST_VERSION}"
     REQ_VERSION="${LATEST_VERSION}"
@@ -105,7 +105,7 @@ if [ "${REQ_VERSION}" = "latest" ]; then
     echo "Could not detect version from redirect, trying API..."
     URL=""
   fi
-  
+
   # If direct URL didn't work, try API
   if [ -z "${URL}" ]; then
     URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
@@ -116,7 +116,7 @@ else
   # Specific version requested - try direct URL first
   echo "Installing specific Pandoc version: ${REQ_VERSION}"
   URL="https://github.com/jgm/pandoc/releases/download/${REQ_VERSION}/pandoc-${REQ_VERSION}-${GH_ARCH}.tar.gz"
-  
+
   if ! http_ok "${URL}"; then
     echo "Direct download failed, trying API fallback..."
     API_URL="https://api.github.com/repos/jgm/pandoc/releases/tags/${REQ_VERSION}"
