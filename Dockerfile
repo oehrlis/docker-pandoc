@@ -229,7 +229,8 @@ RUN set -eux; \
     chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
     mkdir -p /workdir/.config/puppeteer; \
     echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /workdir/.config/puppeteer/config.json; \
-    chown -R pandoc:pandoc /workdir/.config
+    chown -R pandoc:pandoc /workdir/.config; \
+    chmod 644 /workdir/.config/puppeteer/config.json
 
 # --- Define volume, workdir, user, entrypoint ---------------------------------
 VOLUME ["${WORKDIR}"]
