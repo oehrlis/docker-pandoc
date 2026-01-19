@@ -14,12 +14,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `lineno` package to TeX Live minimal installation
 - Add `\newcounter{none}` to LaTeX template for Pandoc table compatibility with caption package
 - Add custom environment definitions (noteblock, tipblock, warningblock, cautionblock, importantblock) mapped to awesomebox for pandoc-latex-environment filter
+- Add `DEVELOPMENT.md` - comprehensive local development guide covering architecture, build system, testing, troubleshooting, and coding standards
+- Add `.github/copilot-instructions.md` - detailed project documentation for GitHub Copilot context
+- Add GitHub API fallback mechanism in `install_pandoc.sh` to bypass rate limiting by using direct download URLs
+- Add `.cache/` and `.config/` to `.gitignore` for runtime artifacts
 
 ### Changed
 
 - Add retry logic and timeouts to APT operations in Dockerfile for improved network reliability
 - Add automatic fallback to alternative Debian mirror (ftp.us.debian.org) if primary repository fails
 - Add BUILDKIT_INLINE_CACHE build argument for better multi-platform build performance
+- Restructured `.github/SETUP.md` to focus on CI/CD configuration, referencing `DEVELOPMENT.md` for local workflows
+- Updated `install_pandoc.sh` to use direct GitHub release URLs first, falling back to API only if needed (avoids rate limiting)
+- Migrated `build.sh`, `release.sh`, and `test.sh` scripts from root to `scripts/` directory
+- Updated `Makefile` to reference scripts in new `scripts/` directory location
+- Changed Git remote from SSH to HTTPS for firewall compatibility
 
 ### Fixed
 
@@ -28,6 +37,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix mermaid-filter version from non-existent 1.4.8 to available 1.4.7
 - Remove deprecated `--listings` flag causing LaTeX errors, replaced with modern Pandoc syntax highlighting
 - Update metadata.yml to comment out deprecated listings configuration that caused "No counter 'none' defined" LaTeX error
+- Fix Pandoc installation failures due to GitHub API rate limiting (403 errors) by implementing direct download URL fallback
+
+### Known Issues
+
+- **Mermaid rendering non-functional**: Chromium-based mermaid-cli cannot run in Docker with non-root user due to sandbox namespace restrictions. See `DEVELOPMENT.md` for workarounds (pre-rendering diagrams locally or using alternative tools like PlantUML/Graphviz/TikZ).
+- Documented limitation in `README.md` Mermaid section with clear workarounds
+
+### Documentation
+
+- Added comprehensive `DEVELOPMENT.md` covering local development workflows, architecture, testing, and troubleshooting
+- Updated `README.md` to document Mermaid rendering limitation and provide workarounds
+- Updated `.github/SETUP.md` to clarify separation between CI/CD setup and local development
+- Added `.github/copilot-instructions.md` for AI-assisted development context
 - Fix network connectivity issues during Docker build with retry mechanism and mirror fallback
 - Fix "No counter 'none' defined" LaTeX error for tables without captions by defining missing counter in template
 - Fix pandoc-latex-environment filter compatibility by adding awesomebox environment mappings

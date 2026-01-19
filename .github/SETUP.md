@@ -2,6 +2,8 @@
 
 This document provides instructions for repository maintainers to set up the automated build and release system.
 
+> **Note**: For local development workflows, building, and testing, see [DEVELOPMENT.md](../DEVELOPMENT.md)
+
 ## Required GitHub Secrets
 
 To enable the automated release workflow, you need to configure the following secrets in your GitHub repository:
@@ -81,35 +83,29 @@ If you want to protect the main/master branch:
 
 ## Creating a Release
 
-There are two ways to create a release:
+> **Note**: For detailed release workflows and version management, see the [Release Process](../DEVELOPMENT.md#release-process) section in DEVELOPMENT.md.
 
-### Method 1: Using the Makefile (Recommended)
+### Quick Reference
+
+Releases are triggered by pushing version tags to GitHub:
+
+### Quick Reference
+
+Releases are triggered by pushing version tags to GitHub:
 
 ```bash
+# Using Makefile (recommended)
 make release
-```
 
-This interactive command will:
-1. Prompt for the new version number
-2. Update the VERSION file
-3. Create a git commit and tag
-4. Optionally push the tag to trigger the release workflow
-
-### Method 2: Manual Process
-
-```bash
-# Update VERSION file
+# Manual process
 echo "1.0.1" > VERSION
-
-# Commit and tag
 git add VERSION
 git commit -m "Bump version to 1.0.1"
 git tag 1.0.1
-
-# Push to trigger release
-git push
-git push --tags
+git push && git push --tags
 ```
+
+When a tag is pushed, the release workflow automatically builds and publishes the Docker image.
 
 ## Verifying the Setup
 

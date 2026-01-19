@@ -84,20 +84,49 @@ esac
 # Build the GitHub API endpoint based on requested version
 if [ "${REQ_VERSION}" = "latest" ]; then
   API_URL="https://api.github.com/repos/jgm/pandoc/releases/latest"
+  # Fallback: Try to get latest version from redirect (no API call)
+  echo "Attempting to fetch latest Pandoc release info..."
+  LATEST_VERSION="$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
+    'https://github.com/jgm/pandoc/releases/latest' 2>/dev/null | \
+    grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?' | tail -1 || echo '')"
+  
+  if [ -n "${LATEST_VERSION}" ]; then
+    echo "Detected latest version via redirect: ${LATEST_VERSION}"
+    REQ_VERSION="${LATEST_VERSION}"
+    # Try direct download URL first (no API needed)
+    URL="https://github.com/jgm/pandoc/releases/download/${REQ_VERSION}/pandoc-${REQ_VERSION}-${GH_ARCH}.tar.gz"
+    if http_ok "${URL}"; then
+      echo "Using direct download URL (no API): ${URL}"
+    else
+      echo "Direct URL failed, falling back to API query..."
+      URL=""
+    fi
+  else
+    echo "Could not detect version from redirect, trying API..."
+    URL=""
+  fi
+  
+  # If direct URL didn't work, try API
+  if [ -z "${URL}" ]; then
+    URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
+      grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" |
+      head -n1 || true)"
+  fi
 else
-  # Tag names are plain versions, e.g., 3.2.1 (no leading 'v').
-  API_URL="https://api.github.com/repos/jgm/pandoc/releases/tags/${REQ_VERSION}"
-  # Preflight: check the tag exists (fail fast with a clear message).
-  if ! http_ok "${API_URL}"; then
-    err "Pandoc release tag '${REQ_VERSION}' not found on GitHub. \
-Check spelling (e.g., 3.2.1) or use 'latest'."
+  # Specific version requested - try direct URL first
+  echo "Installing specific Pandoc version: ${REQ_VERSION}"
+  URL="https://github.com/jgm/pandoc/releases/download/${REQ_VERSION}/pandoc-${REQ_VERSION}-${GH_ARCH}.tar.gz"
+  
+  if ! http_ok "${URL}"; then
+    echo "Direct download failed, trying API fallback..."
+    API_URL="https://api.github.com/repos/jgm/pandoc/releases/tags/${REQ_VERSION}"
+    URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
+      grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" |
+      head -n1 || true)"
+  else
+    echo "Using direct download URL: ${URL}"
   fi
 fi
-
-# Query release JSON and extract asset URL for the selected architecture
-URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
-  grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" |
-  head -n1 || true)"
 
 [ -n "${URL}" ] || err "Cannot find pandoc tarball for ${GH_ARCH} (${REQ_VERSION})."
 

@@ -96,14 +96,32 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 
 ## Mermaid Diagram Support
 
-This image includes support for rendering Mermaid diagrams in PDF output.
+> **⚠️ Known Limitation**: Mermaid diagram rendering currently does not work in the containerized environment due to Chromium sandbox restrictions with non-root users. See [DEVELOPMENT.md - Chromium/Mermaid Crashes](DEVELOPMENT.md#chromiummermaid-crashes) for workarounds.
 
-### Usage with Mermaid
+This image includes `mermaid-cli` and `mermaid-filter`, but Chromium's browser-based rendering is incompatible with Docker's security model when running as a non-root user.
 
-To convert Markdown files containing Mermaid diagrams to PDF:
+### Workarounds
 
+**Option 1: Pre-render diagrams locally**
 ```bash
-docker run --rm \
+# Install mermaid-cli on your host machine
+npm install -g @mermaid-js/mermaid-cli
+
+# Render diagram to PNG
+mmdc -i diagram.mmd -o diagram.png
+
+# Use in Markdown as regular image
+![Diagram](diagram.png)
+```
+
+**Option 2: Use alternative diagram tools**
+- **PlantUML** - Works in containers, good for UML diagrams
+- **Graphviz** - Works in containers, good for graph visualizations
+- **TikZ** - LaTeX-native, excellent for technical diagrams
+
+**Option 3: Run container as root** (⚠️ Security Risk - Not Recommended)
+```bash
+docker run --rm --user root \
     -v $(pwd):/workdir \
     oehrlis/pandoc:latest \
     input.md \
@@ -112,22 +130,20 @@ docker run --rm \
     --pdf-engine=xelatex
 ```
 
-### Mermaid Example
+### Mermaid Example Syntax
 
-Include Mermaid diagrams in your Markdown using code blocks:
+Mermaid diagram syntax (for reference):
 
 ```mermaid
 graph TD
     A[Start] --> B[End]
 ```
 
-The diagrams will be automatically rendered as images in the PDF output.
-
 ### Installed Components
 
-- **mermaid-cli**: Latest version from npm
-- **mermaid-filter**: Latest version from npm
-- **Chromium**: System chromium browser for rendering
+- **mermaid-cli@11.4.1**: npm package (rendering currently non-functional)
+- **mermaid-filter@1.4.7**: Pandoc filter npm package
+- **Chromium**: System browser (sandbox restrictions prevent usage)
 
 ## Build and add new packages
 

@@ -192,6 +192,7 @@ RUN set -eux; \
 # --- Configure Puppeteer to use system Chromium -------------------------------
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
+    PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage" \
     CHROME_BIN=/usr/bin/chromium
 
 # --- Install fonts + runtime deps ---------------------------------------------
@@ -227,10 +228,14 @@ RUN set -eux; \
     useradd -r -g pandoc --uid=1000 --home-dir=/workdir --shell=/bin/bash pandoc; \
     chown -R pandoc:pandoc "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
     chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
-    mkdir -p /workdir/.config/puppeteer; \
-    echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /workdir/.config/puppeteer/config.json; \
-    chown -R pandoc:pandoc /workdir/.config; \
-    chmod 644 /workdir/.config/puppeteer/config.json
+    mkdir -p /home/pandoc/.config; \
+    echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' \
+      > /home/pandoc/.config/puppeteer-config.json; \
+    chown -R pandoc:pandoc /home/pandoc; \
+    chmod 644 /home/pandoc/.config/puppeteer-config.json
+
+# Set Puppeteer config path for mmdc
+ENV PUPPETEER_CONFIG_PATH=/home/pandoc/.config/puppeteer-config.json
 
 # --- Define volume, workdir, user, entrypoint ---------------------------------
 VOLUME ["${WORKDIR}"]
