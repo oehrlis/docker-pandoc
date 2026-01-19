@@ -106,7 +106,7 @@ make release           # Create new release (maintainers only)
 make build
 make test
 
-# Test manually
+# Test manually (replace version with current VERSION file value)
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:4.0.0 \
   sample/sample.md -o test-output.pdf --toc --listings
 ```
