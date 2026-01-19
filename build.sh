@@ -118,6 +118,8 @@ BUILD_OPTS=(
   --build-arg "SLIM_TEX=1"
   --build-arg "PRUNE_MS_FONTS=1"
   --platform="${PLATFORM}"
+  --network=host
+  --build-arg "BUILDKIT_INLINE_CACHE=1"
 )
 [[ ${USE_NO_CACHE} -eq 1 ]] && BUILD_OPTS+=(--no-cache)
 

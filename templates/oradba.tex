@@ -354,6 +354,8 @@ $if(beamer)$
 \def\fnum@table{\tablename~\thetable}
 \makeatother
 $else$
+% Define 'none' counter for tables without captions (Pandoc compatibility)
+\newcounter{none}
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
 \makeatletter
@@ -446,6 +448,15 @@ $endif$
 % former header from metadata
 \setcounter{page}{0}
 \usepackage{awesomebox}
+
+% Define custom environments for pandoc-latex-environment filter
+% Map to awesomebox commands
+\newenvironment{noteblock}{\begin{awesomeblock}[purple]{2pt}{\faNoteSticky}{purple}}{\end{awesomeblock}}
+\newenvironment{tipblock}{\begin{awesomeblock}[green]{2pt}{\faLightbulb}{green}}{\end{awesomeblock}}
+\newenvironment{warningblock}{\begin{awesomeblock}[orange]{2pt}{\faExclamationTriangle}{orange}}{\end{awesomeblock}}
+\newenvironment{cautionblock}{\begin{awesomeblock}[red]{2pt}{\faFire}{red}}{\end{awesomeblock}}
+\newenvironment{importantblock}{\begin{awesomeblock}[purple]{2pt}{\faExclamationCircle}{purple}}{\end{awesomeblock}}
+
 \usepackage{sectsty}
 \sectionfont{\clearpage}
 

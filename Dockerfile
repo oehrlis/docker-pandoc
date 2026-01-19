@@ -151,7 +151,10 @@ RUN set -eux; \
 
 # --- Install Node.js and dependencies for Mermaid rendering ------------------
 RUN set -eux; \
-  apt-get update; \
+  echo 'Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries; \
+  echo 'Acquire::http::Timeout "30";' >> /etc/apt/apt.conf.d/80retries; \
+  echo 'Acquire::https::Timeout "30";' >> /etc/apt/apt.conf.d/80retries; \
+  apt-get update || (sleep 5 && apt-get update); \
   apt-get install -y --no-install-recommends \
     nodejs \
     npm \
@@ -170,7 +173,15 @@ RUN set -eux; \
     libxdamage1 \
     libxrandr2 \
     libgbm1 \
-    libasound2; \
+    libasound2 || \
+  (echo 'Retrying with alternative mirror...'; \
+   sed -i 's|deb.debian.org|ftp.us.debian.org|g' /etc/apt/sources.list.d/debian.sources 2>/dev/null || \
+   sed -i 's|deb.debian.org|ftp.us.debian.org|g' /etc/apt/sources.list; \
+   apt-get update && apt-get install -y --no-install-recommends \
+    nodejs npm chromium chromium-sandbox fonts-liberation \
+    fonts-noto-color-emoji libnss3 libnspr4 libatk1.0-0 \
+    libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
+    libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2); \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/*
 

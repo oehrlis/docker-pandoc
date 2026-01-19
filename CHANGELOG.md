@@ -12,8 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `lineno` package to TeX Live minimal installation
+- Add `\newcounter{none}` to LaTeX template for Pandoc table compatibility with caption package
+- Add custom environment definitions (noteblock, tipblock, warningblock, cautionblock, importantblock) mapped to awesomebox for pandoc-latex-environment filter
 
 ### Changed
+
+- Add retry logic and timeouts to APT operations in Dockerfile for improved network reliability
+- Add automatic fallback to alternative Debian mirror (ftp.us.debian.org) if primary repository fails
+- Add BUILDKIT_INLINE_CACHE build argument for better multi-platform build performance
 
 ### Fixed
 
@@ -22,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix mermaid-filter version from non-existent 1.4.8 to available 1.4.7
 - Remove deprecated `--listings` flag causing LaTeX errors, replaced with modern Pandoc syntax highlighting
 - Update metadata.yml to comment out deprecated listings configuration that caused "No counter 'none' defined" LaTeX error
+- Fix network connectivity issues during Docker build with retry mechanism and mirror fallback
+- Fix "No counter 'none' defined" LaTeX error for tables without captions by defining missing counter in template
+- Fix pandoc-latex-environment filter compatibility by adding awesomebox environment mappings
 
 ### Removed
 
