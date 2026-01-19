@@ -226,7 +226,10 @@ RUN set -eux; \
     groupadd -r pandoc --gid=1000; \
     useradd -r -g pandoc --uid=1000 --home-dir=/workdir --shell=/bin/bash pandoc; \
     chown -R pandoc:pandoc "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
-    chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"
+    chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
+    mkdir -p /workdir/.config/puppeteer; \
+    echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /workdir/.config/puppeteer/config.json; \
+    chown -R pandoc:pandoc /workdir/.config
 
 # --- Define volume, workdir, user, entrypoint ---------------------------------
 VOLUME ["${WORKDIR}"]
