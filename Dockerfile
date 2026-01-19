@@ -192,7 +192,8 @@ RUN set -eux; \
 # --- Configure Puppeteer to use system Chromium (avoid download) -------------
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
-    CHROME_BIN=/usr/bin/chromium
+    CHROME_BIN=/usr/bin/chromium \
+    PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage"
 
 # --- Install fonts + runtime deps ---------------------------------------------
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
