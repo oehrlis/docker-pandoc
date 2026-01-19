@@ -76,6 +76,9 @@ RUN set -eux; \
 # ==============================================================================
 FROM debian:bookworm-slim
 
+# --- Set shell to bash with pipefail for all RUN commands ---------------------
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # --- Labels (for metadata) ----------------------------------------------------
 ARG PANDOC_VERSION
 LABEL maintainer="stefan.oehrli@oradba.ch" \
@@ -111,7 +114,6 @@ COPY --from=builder /etc/fonts /etc/fonts
 
 # --- Setup PATH for TeX Live + symlinks ---------------------------------------
 RUN set -eux; \
-  set -o pipefail; \
   ARCH="$(dpkg --print-architecture)"; \
   case "$ARCH" in  \
     amd64) TLARCH="x86_64-linux" ;; \
@@ -175,8 +177,8 @@ RUN set -eux; \
 # --- Install mermaid-cli and pandoc filter globally --------------------------
 RUN set -eux; \
   npm install -g \
-    @mermaid-js/mermaid-cli \
-    mermaid-filter; \
+    @mermaid-js/mermaid-cli@11.4.1 \
+    mermaid-filter@1.4.8; \
   npm cache clean --force
 
 # --- Configure Puppeteer to use system Chromium (avoid download) -------------
@@ -191,7 +193,6 @@ RUN set -eux; chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
 
 # --- Install OraDBA Pandoc templates from GitHub ------------------------------
 RUN set -eux; \
-    set -o pipefail; \
     echo "Install latest OraDBA Templates from GitHub."; \
     mkdir -p "${WORKDIR}" "${ORADBA}" "${XDG_DATA_HOME}" \
              "${PANDOC_DATA}" "${PANDOC_TEMPLATES}" "${PANDOC_THEMES}"; \
