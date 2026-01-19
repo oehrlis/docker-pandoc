@@ -63,7 +63,7 @@ jobs:
 
       - name: Lint markdown files
         run: |
-          markdownlint README.md CHANGELOG.md scripts/REAMDE.md examples/*.md
+          markdownlint README.md CHANGELOG.md scripts/README.md examples/*.md
 
   docker-lint:
     name: Docker Lint (Hadolint)

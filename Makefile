@@ -85,7 +85,7 @@ lint-shell-format: ## Run shfmt on all shell scripts
 lint-markdown: ## Run markdownlint on all markdown files
 	@echo "$(BLUE)Running markdownlint...$(NC)"
 	@if command -v markdownlint >/dev/null 2>&1; then \
-		markdownlint README.md CHANGELOG.md scripts/REAMDE.md examples/*.md || true; \
+		markdownlint README.md CHANGELOG.md scripts/README.md examples/*.md || true; \
 		echo "$(GREEN)Markdown lint completed$(NC)"; \
 	else \
 		echo "$(YELLOW)markdownlint not installed. Install with: npm install -g markdownlint-cli$(NC)"; \
