@@ -189,11 +189,17 @@ RUN set -eux; \
     mermaid-filter@1.4.7; \
   npm cache clean --force
 
-# --- Configure Puppeteer to use system Chromium (avoid download) -------------
+# --- Configure Puppeteer and mermaid-cli for root execution ------------------
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
-    CHROME_BIN=/usr/bin/chromium \
-    PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage"
+    CHROME_BIN=/usr/bin/chromium
+
+# Create Puppeteer config for mermaid-cli to run as root
+RUN set -eux; \
+  mkdir -p /root/.config/puppeteer; \
+  echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /root/.config/puppeteer/config.json; \
+  mkdir -p /.config/puppeteer; \
+  echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' > /.config/puppeteer/config.json
 
 # --- Install fonts + runtime deps ---------------------------------------------
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
