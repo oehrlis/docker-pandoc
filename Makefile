@@ -28,7 +28,9 @@ help: ## Display this help message
 
 build: ## Build Docker image locally (single platform)
 	@echo "$(BLUE)Building $(IMAGE_NAME):$(VERSION) locally...$(NC)"
-	./scripts/build.sh $(VERSION) --local --test
+	./scripts/build.sh $(VERSION) --local
+	@echo "$(BLUE)Testing sample documents...$(NC)"
+	./scripts/test.sh $(VERSION)
 
 build-multi: ## Build multi-platform image and push to registry
 	@echo "$(BLUE)Building and pushing multi-platform $(IMAGE_NAME):$(VERSION)...$(NC)"
@@ -46,7 +48,7 @@ build-multi: ## Build multi-platform image and push to registry
 
 push: ## Push image to Docker Hub
 	@echo "$(BLUE)Building and pushing $(IMAGE_NAME):$(VERSION) to Docker Hub...$(NC)"
-	./scripts/build.sh $(VERSION) --push --no-test
+	./scripts/build.sh $(VERSION) --push
 	@echo "$(GREEN)Image pushed successfully$(NC)"
 
 ##@ Testing Targets
