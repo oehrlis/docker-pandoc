@@ -223,6 +223,17 @@ RUN set -eux; \
     ln -sf "${ORADBA}/templates/oradba.pptx" "${PANDOC_DATA}/reference.pptx"; \
     ln -sf "${ORADBA}/templates/oradba.docx" "${PANDOC_DATA}/reference.docx"
 
+# --- Copy local template overrides (if any) -----------------------------------
+COPY templates/ "${ORADBA}/templates/"
+RUN set -eux; \
+    ln -sf "${ORADBA}/templates/oradba.tex" "${ORADBA}/templates/oradba.latex"; \
+    for i in "${ORADBA}"/templates/*; do \
+      ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
+    done; \
+    for i in "${ORADBA}"/templates/oradba.*; do \
+      ln -sf "$i" "${PANDOC_TEMPLATES}/default.${i##*.}"; \
+    done
+
 # --- Define volume, workdir, entrypoint ---------------------------------------
 VOLUME ["${WORKDIR}"]
 WORKDIR "${WORKDIR}"
