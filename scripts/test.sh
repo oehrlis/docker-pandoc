@@ -8,7 +8,8 @@
 # Date.......: 2026-01-19
 # Revision...: 1.0.0
 # Purpose....: Test Docker image by generating sample documents
-# Notes......: Tests PDF, DOCX, PPTX generation and Mermaid filter
+# Notes......: Tests PDF, DOCX, PPTX generation
+#              Mermaid support temporarily disabled (see issue #XX)
 #              Separated from build for focused responsibility
 # Reference..: https://github.com/oehrlis/docker-pandoc
 # License....: Apache License Version 2.0, January 2004 as shown
@@ -80,7 +81,7 @@ Tests:
   - PDF generation with XeLaTeX
   - DOCX generation
   - PPTX generation
-  - Mermaid diagram filter
+  - Mermaid diagram filter (currently disabled)
 
 Examples:
   $(basename "$0")           # Test beta tag
@@ -268,7 +269,8 @@ main() {
   generate_pdf_sample "${image_tag}"
   generate_docx_sample "${image_tag}"
   generate_pptx_sample "${image_tag}"
-  generate_mermaid_test "${image_tag}"
+  # Mermaid test disabled - see GitHub issue for mermaid support
+  # generate_mermaid_test "${image_tag}"
 
   # Return to original directory
   cd "${current_path}" || err "Failed to return to original directory"

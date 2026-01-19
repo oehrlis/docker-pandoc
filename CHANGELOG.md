@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `.github/copilot-instructions.md` - detailed project documentation for GitHub Copilot context
 - Add GitHub API fallback mechanism in `install_pandoc.sh` to bypass rate limiting by using direct download URLs
 - Add `.cache/` and `.config/` to `.gitignore` for runtime artifacts
+- Add `.github/ISSUE_MERMAID_SUPPORT.md` - tracking issue for future Mermaid/Kroki implementation
 
 ### Changed
 
@@ -30,6 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `Makefile` to reference scripts in new `scripts/` directory location
 - Changed Git remote from SSH to HTTPS for firewall compatibility
 
+### Removed
+
+- **Mermaid support temporarily removed**: Removed `mermaid-cli`, `mermaid-filter`, Node.js, npm, Chromium, and related dependencies due to Docker sandbox incompatibility with non-root users
+- Removed Chromium and browser dependencies (saves ~300MB in image size)
+- Disabled Mermaid test in `scripts/test.sh`
+
 ### Fixed
 
 - Fix multi-platform Docker build issues with `--load` flag by automatically detecting and using single platform for local builds
@@ -39,17 +46,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update metadata.yml to comment out deprecated listings configuration that caused "No counter 'none' defined" LaTeX error
 - Fix Pandoc installation failures due to GitHub API rate limiting (403 errors) by implementing direct download URL fallback
 
-### Known Issues
+### Deprecated
 
-- **Mermaid rendering non-functional**: Chromium-based mermaid-cli cannot run in Docker with non-root user due to sandbox namespace restrictions. See `DEVELOPMENT.md` for workarounds (pre-rendering diagrams locally or using alternative tools like PlantUML/Graphviz/TikZ).
-- Documented limitation in `README.md` Mermaid section with clear workarounds
+- Mermaid diagram rendering via `mermaid-cli` - will be replaced with Kroki integration in future release
 
 ### Documentation
 
 - Added comprehensive `DEVELOPMENT.md` covering local development workflows, architecture, testing, and troubleshooting
-- Updated `README.md` to document Mermaid rendering limitation and provide workarounds
+- Updated `README.md` to remove Mermaid feature listing and add Diagram Support section with alternatives (PlantUML, Graphviz, TikZ)
 - Updated `.github/SETUP.md` to clarify separation between CI/CD setup and local development
 - Added `.github/copilot-instructions.md` for AI-assisted development context
+- Created `.github/ISSUE_MERMAID_SUPPORT.md` tracking future Mermaid/Kroki implementation
+
+### Security
+
+- Improved security posture by removing Chromium and Node.js dependencies (reduced attack surface)
+- Maintains non-root container execution without security compromises
 - Fix network connectivity issues during Docker build with retry mechanism and mirror fallback
 - Fix "No counter 'none' defined" LaTeX error for tables without captions by defining missing counter in template
 - Fix pandoc-latex-environment filter compatibility by adding awesomebox environment mappings

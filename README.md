@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/github/license/oehrlis/docker-pandoc)](LICENSE)
 
 <!-- markdownlint-disable MD013 -->
-Docker image for the universal document converter [pandoc](https://pandoc.org) with full PDF conversion support, custom LaTeX templates, and Mermaid diagram rendering. Includes a minimal [TexLive](https://www.tug.org/texlive/) installation optimized for document conversion. Source available at [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
+Docker image for the universal document converter [pandoc](https://pandoc.org) with full PDF conversion support and custom LaTeX templates. Includes a minimal [TexLive](https://www.tug.org/texlive/) installation optimized for document conversion. Source available at [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
 <!-- markdownlint-enable MD013 -->
 
 ## Features
@@ -16,7 +16,6 @@ Docker image for the universal document converter [pandoc](https://pandoc.org) w
 - **LaTeX** - Minimal TexLive installation with essential packages
 - **Templates** - Custom templates (OraDBA, TechDoc, Trivadis) for professional documents
 - **Fonts** - MS Core Fonts, Open Sans, Montserrat
-- **Mermaid** - Diagram rendering support for flowcharts, sequence diagrams, etc.
 - **Multi-arch** - Supports both linux/amd64 and linux/arm64 platforms
 
 <!-- markdownlint-enable MD013 -->
@@ -94,56 +93,44 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
     document.md -o output.pdf --template techdoc --pdf-engine=xelatex
 ```
 
-## Mermaid Diagram Support
+## Diagram Support
 
-> **⚠️ Known Limitation**: Mermaid diagram rendering currently does not work in the containerized environment due to Chromium sandbox restrictions with non-root users. See [DEVELOPMENT.md - Chromium/Mermaid Crashes](DEVELOPMENT.md#chromiummermaid-crashes) for workarounds.
+> **⚠️ Mermaid Support Temporarily Disabled**: Chromium-based mermaid rendering has been removed due to Docker sandbox restrictions with non-root users. See [GitHub issue #XX](https://github.com/oehrlis/docker-pandoc/issues/XX) for planned alternatives (Kroki, PlantUML integration).
 
-This image includes `mermaid-cli` and `mermaid-filter`, but Chromium's browser-based rendering is incompatible with Docker's security model when running as a non-root user.
+### Alternative Diagram Tools
 
-### Workarounds
+For diagram rendering in PDF documents, consider these alternatives that work well in containerized environments:
 
-**Option 1: Pre-render diagrams locally**
+**PlantUML** - Comprehensive UML and architecture diagrams
 ```bash
-# Install mermaid-cli on your host machine
-npm install -g @mermaid-js/mermaid-cli
-
-# Render diagram to PNG
-mmdc -i diagram.mmd -o diagram.png
-
-# Use in Markdown as regular image
-![Diagram](diagram.png)
+# Java-based, works in containers
+docker run --rm -v $PWD:/workdir oehrlis/pandoc \
+  input.md -o output.pdf --filter pandoc-plantuml
 ```
 
-**Option 2: Use alternative diagram tools**
-- **PlantUML** - Works in containers, good for UML diagrams
-- **Graphviz** - Works in containers, good for graph visualizations
-- **TikZ** - LaTeX-native, excellent for technical diagrams
-
-**Option 3: Run container as root** (⚠️ Security Risk - Not Recommended)
+**Graphviz** - Graph visualizations and flowcharts
 ```bash
-docker run --rm --user root \
-    -v $(pwd):/workdir \
-    oehrlis/pandoc:latest \
-    input.md \
-    -o output.pdf \
-    --filter mermaid-filter \
-    --pdf-engine=xelatex
+# C-based, lightweight, container-friendly
+dot -Tpng diagram.dot -o diagram.png
 ```
 
-### Mermaid Example Syntax
-
-Mermaid diagram syntax (for reference):
-
-```mermaid
-graph TD
-    A[Start] --> B[End]
+**TikZ** - LaTeX-native diagrams (built into TeX Live)
+```latex
+\begin{tikzpicture}
+  \node (A) at (0,0) {Start};
+  \node (B) at (2,0) {End};
+  \draw[->] (A) -- (B);
+\end{tikzpicture}
 ```
 
-### Installed Components
+### Future Plans
 
-- **mermaid-cli@11.4.1**: npm package (rendering currently non-functional)
-- **mermaid-filter@1.4.7**: Pandoc filter npm package
-- **Chromium**: System browser (sandbox restrictions prevent usage)
+We're evaluating these solutions for Mermaid support:
+- **Kroki server integration** (self-hosted or public)
+- **Server-side rendering alternatives**
+- **Pre-rendering workflows for CI/CD**
+
+See [issue #XX](https://github.com/oehrlis/docker-pandoc/issues/XX) to track progress or contribute suggestions.
 
 ## Build and add new packages
 

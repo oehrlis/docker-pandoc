@@ -148,7 +148,12 @@ RUN set -eux; \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# --- Install Node.js and dependencies for Mermaid rendering ------------------
+# --- Mermaid support temporarily disabled -------------------------------------
+# Chromium-based rendering doesn't work with non-root Docker users due to
+# sandbox namespace restrictions. See GitHub issue for alternative solutions
+# (Kroki, PlantUML, etc.). Keeping fonts for other diagram tools.
+
+# --- Install fonts for diagram rendering --------------------------------------
 RUN set -eux; \
   echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80retries; \
   echo 'Acquire::http::Timeout "120";' >> /etc/apt/apt.conf.d/80retries; \
@@ -161,39 +166,10 @@ RUN set -eux; \
     }; \
   done; \
   apt-get install -y --no-install-recommends \
-    nodejs \
-    npm \
-    chromium \
-    chromium-sandbox \
     fonts-liberation \
-    fonts-noto-color-emoji \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2; \
+    fonts-noto-color-emoji; \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/*
-
-# --- Install mermaid-cli and pandoc filter globally --------------------------
-RUN set -eux; \
-  npm install -g \
-    @mermaid-js/mermaid-cli@11.4.1 \
-    mermaid-filter@1.4.7; \
-  npm cache clean --force
-
-# --- Configure Puppeteer to use system Chromium -------------------------------
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
-    PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage" \
-    CHROME_BIN=/usr/bin/chromium
 
 # --- Install fonts + runtime deps ---------------------------------------------
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
@@ -227,15 +203,7 @@ RUN set -eux; \
     groupadd -r pandoc --gid=1000; \
     useradd -r -g pandoc --uid=1000 --home-dir=/workdir --shell=/bin/bash pandoc; \
     chown -R pandoc:pandoc "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
-    chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"; \
-    mkdir -p /home/pandoc/.config; \
-    echo '{"args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]}' \
-      > /home/pandoc/.config/puppeteer-config.json; \
-    chown -R pandoc:pandoc /home/pandoc; \
-    chmod 644 /home/pandoc/.config/puppeteer-config.json
-
-# Set Puppeteer config path for mmdc
-ENV PUPPETEER_CONFIG_PATH=/home/pandoc/.config/puppeteer-config.json
+    chmod -R 755 "${WORKDIR}" "${XDG_DATA_HOME}" "${ORADBA}"
 
 # --- Define volume, workdir, user, entrypoint ---------------------------------
 VOLUME ["${WORKDIR}"]
