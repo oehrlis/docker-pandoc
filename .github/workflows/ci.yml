@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: Shell Lint (Shellcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          format: gcc
+          severity: warning
+          additional_files: 'build.sh release.sh'
+
+  shell-format:
+    name: Shell Format Check (shfmt)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install shfmt
+        run: |
+          curl -L "https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64" -o shfmt
+          chmod +x shfmt
+          sudo mv shfmt /usr/local/bin/
+
+      - name: Check shell script formatting
+        run: |
+          shfmt -d -i 2 -ci build.sh release.sh scripts/*.sh
+
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
+
+      - name: Lint markdown files
+        run: |
+          markdownlint README.md CHANGELOG.md scripts/REAMDE.md examples/*.md
+
+  docker-lint:
+    name: Docker Lint (Hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          config: .hadolint.yaml
+
+  validate-examples:
+    name: Validate Markdown Examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
+
+      - name: Validate example markdown files
+        run: |
+          markdownlint examples/test-mermaid.md
