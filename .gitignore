@@ -8,6 +8,10 @@
 # ignore mac OS resource forks
 **/*.DS_Store
 
+# ignore runtime cache and config directories
+.cache/
+.config/
+
 # Eclipse and VSC stuff
 /.pydevproject
 /.project
