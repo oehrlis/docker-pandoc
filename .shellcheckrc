@@ -13,9 +13,15 @@ disable=SC2004
 # SC2310: Function invoked in condition (info only)
 disable=SC2310
 
+# SC2250: Prefer putting braces around variable references (style preference)
+disable=SC2250
+
+# SC2312: Consider invoking commands separately (info only)
+disable=SC2312
+
 # SC2086: Double quote to prevent globbing
-# (Sometimes we want word splitting)
-# disable=SC2086
+# (Sometimes we want word splitting, e.g. for $PIP_ARGS)
+disable=SC2086
 
 # Enable all optional checks
 enable=all
