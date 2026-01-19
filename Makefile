@@ -89,8 +89,14 @@ lint-markdown: ## Run markdownlint on all markdown files
 	@if command -v markdownlint >/dev/null 2>&1; then \
 		markdownlint README.md CHANGELOG.md scripts/README.md examples/*.md || true; \
 		echo "$(GREEN)Markdown lint completed$(NC)"; \
+	elif command -v docker >/dev/null 2>&1; then \
+		docker run --rm -v $(BUILD_CONTEXT):/workdir:z \
+			davidanson/markdownlint-cli2:v0.10.0 \
+			README.md CHANGELOG.md scripts/README.md examples/*.md; \
+		echo "$(GREEN)Markdown lint completed (via Docker)$(NC)"; \
 	else \
 		echo "$(YELLOW)markdownlint not installed. Install with: npm install -g markdownlint-cli$(NC)"; \
+		echo "$(YELLOW)Or use Docker: docker run --rm -v \$$PWD:/workdir:z davidanson/markdownlint-cli2:v0.10.0 <files>$(NC)"; \
 		exit 1; \
 	fi
 
