@@ -180,12 +180,14 @@ make release
 ```
 
 This will:
+
 1. Prompt for a new version number
 2. Update the VERSION file
 3. Create a git commit and tag
 4. Optionally push the tag to trigger the automated release workflow
 
 The release workflow will:
+
 - Build multi-platform Docker images (linux/amd64, linux/arm64)
 - Push images to Docker Hub with version and `latest` tags
 - Build sample documents to verify functionality
@@ -205,6 +207,7 @@ See [`.github/SETUP.md`](.github/SETUP.md) for detailed setup instructions.
 ### Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
+
 - Development setup
 - CI/CD pipeline
 - Release process
