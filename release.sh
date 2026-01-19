@@ -1,61 +1,27 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ------------------------------------------------------------------------------
 # OraDBA - Oracle Database Infrastructure and Security, 5630 Muri, Switzerland
 # ------------------------------------------------------------------------------
-# Name.......: relase.sh
+# Name.......: release.sh
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 # Editor.....: Stefan Oehrli
-# Date.......: 2023.08.17
-# Revision...: --
-# Purpose....: Script to release Docker image
-# Notes......: --
-# Reference..: --
+# Date.......: 2026-01-19
+# Revision...: 2.0.0
+# Purpose....: Wrapper script for backwards compatibility
+# Notes......: Delegates to scripts/release.sh
+#              Maintains compatibility with old argument format
+# Reference..: https://github.com/oehrlis/docker-pandoc
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
 # ------------------------------------------------------------------------------
 
-# - Environment Variables ------------------------------------------------------
-export DOCKER_USER="oehrlis"
-# Separate cd and assignment to avoid masking return values
-_build_dir="$(dirname "${BASH_SOURCE[0]}")"
-cd "$_build_dir" || exit 1
-export BUILD_CONTEXT
-BUILD_CONTEXT="$(pwd -P)"
-export PROJECT
-PROJECT=$(basename "${BUILD_CONTEXT}")
-export IMAGE
-IMAGE=$(echo "${PROJECT}" | cut -d- -f2)
-# - EOF Environment Variables --------------------------------------------------
-REL_TYPE=${1:-"patch"} # could be also minor or major
-NOCACHE=${2:-""}
-REL_TYPE=$(echo "$REL_TYPE" | tr '[:upper:]' '[:lower:]')
+set -euo pipefail
+IFS=$'\n\t'
 
-# save current path
-CURRENT_PATH=$(pwd)
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
-# change to build context
-cd "${BUILD_CONTEXT}" || exit 1
+# Call the new release script with all arguments
+"${SCRIPT_DIR}/scripts/release.sh" "$@"
 
-# ensure we're up to date
-git pull
-
-# bump version
-pre_version=$(cat VERSION)
-docker run --rm -v "$PWD":/app treeder/bump $REL_TYPE
-
-version=$(cat VERSION)
-echo "version: $version"
-
-# run build
-./build.sh $version $NOCACHE
-
-# tag it
-git add -A
-git commit -m "version $version"
-git tag -a "$version" -m "version $version"
-git push
-git push --tags
-
-# change back to working directory
-cd "${CURRENT_PATH}" || exit 1
 # --- EOF ----------------------------------------------------------------------
