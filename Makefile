@@ -28,7 +28,7 @@ help: ## Display this help message
 
 build: ## Build Docker image locally (single platform)
 	@echo "$(BLUE)Building $(IMAGE_NAME):$(VERSION) locally...$(NC)"
-	./build.sh $(VERSION) --local --test
+	./scripts/build.sh $(VERSION) --local --test
 
 build-multi: ## Build multi-platform image and push to registry
 	@echo "$(BLUE)Building and pushing multi-platform $(IMAGE_NAME):$(VERSION)...$(NC)"
@@ -46,7 +46,7 @@ build-multi: ## Build multi-platform image and push to registry
 
 push: ## Push image to Docker Hub
 	@echo "$(BLUE)Building and pushing $(IMAGE_NAME):$(VERSION) to Docker Hub...$(NC)"
-	./build.sh $(VERSION) --push --no-test
+	./scripts/build.sh $(VERSION) --push --no-test
 	@echo "$(GREEN)Image pushed successfully$(NC)"
 
 ##@ Testing Targets
@@ -65,7 +65,7 @@ lint: lint-shell lint-shell-format lint-markdown lint-docker ## Run all linting 
 lint-shell: ## Run shellcheck on all shell scripts
 	@echo "$(BLUE)Running shellcheck...$(NC)"
 	@if command -v shellcheck >/dev/null 2>&1; then \
-		shellcheck build.sh release.sh scripts/*.sh; \
+		shellcheck scripts/*.sh; \
 		echo "$(GREEN)Shellcheck passed$(NC)"; \
 	else \
 		echo "$(YELLOW)shellcheck not installed. Install with: apt-get install shellcheck$(NC)"; \
@@ -75,7 +75,7 @@ lint-shell: ## Run shellcheck on all shell scripts
 lint-shell-format: ## Run shfmt on all shell scripts
 	@echo "$(BLUE)Running shfmt...$(NC)"
 	@if command -v shfmt >/dev/null 2>&1; then \
-		shfmt -d -i 2 -ci build.sh release.sh scripts/*.sh; \
+		shfmt -d -i 2 -ci scripts/*.sh; \
 		echo "$(GREEN)Shell format check passed$(NC)"; \
 	else \
 		echo "$(YELLOW)shfmt not installed. Install from: https://github.com/mvdan/sh/releases$(NC)"; \
@@ -104,26 +104,10 @@ lint-docker: ## Run hadolint on Dockerfile
 
 ##@ Release Targets
 
-release: ## Interactive release process (prompts for version)
-	@echo "$(BLUE)Current version: $(VERSION)$(NC)"
-	@read -p "Enter new version (e.g., 1.0.1): " NEW_VERSION; \
-	if [ -z "$$NEW_VERSION" ]; then \
-		echo "$(YELLOW)No version provided. Aborting.$(NC)"; \
-		exit 1; \
-	fi; \
-	echo "$$NEW_VERSION" > VERSION; \
-	echo "$(GREEN)Updated VERSION file to $$NEW_VERSION$(NC)"; \
-	git add VERSION; \
-	git commit -m "Bump version to $$NEW_VERSION"; \
-	git tag "$$NEW_VERSION"; \
-	echo "$(GREEN)Created tag $$NEW_VERSION$(NC)"; \
-	read -p "Push tag to trigger release workflow? (y/N): " PUSH; \
-	if [ "$$PUSH" = "y" ] || [ "$$PUSH" = "Y" ]; then \
-		git push && git push --tags; \
-		echo "$(GREEN)Tag pushed. Release workflow will start.$(NC)"; \
-	else \
-		echo "$(YELLOW)Tag not pushed. Run 'git push --tags' manually.$(NC)"; \
-	fi
+release: ## Release with version bump (usage: make release [RELEASE_TYPE=patch|minor|major])
+	@echo "$(BLUE)Running release script...$(NC)"
+	./scripts/release.sh $(RELEASE_TYPE)
+	@echo "$(GREEN)Release completed$(NC)"
 
 version: ## Display current version from VERSION file
 	@echo "Current version: $(VERSION)"
