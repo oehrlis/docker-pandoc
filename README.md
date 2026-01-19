@@ -7,8 +7,17 @@
 [![License](https://img.shields.io/github/license/oehrlis/docker-pandoc)](LICENSE)
 
 <!-- markdownlint-disable MD013 -->
-Docker scripts to build an image to run the universal document converter [pandoc](https://pandoc.org) including support to convert PDF files. The image includes a reduced [TexLive 2022](https://www.tug.org/texlive/) installation to support simple PDF transformations and Mermaid diagram rendering support for generating diagrams in PDFs. Additional TexLive packages have to be installed by extending this images. Source can be found in GitHub [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
+Docker image for the universal document converter [pandoc](https://pandoc.org) with full PDF conversion support, custom LaTeX templates, and Mermaid diagram rendering. Includes a minimal [TexLive](https://www.tug.org/texlive/) installation optimized for document conversion. Source available at [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
 <!-- markdownlint-enable MD013 -->
+
+## Features
+
+- **Pandoc** - Latest version from GitHub releases
+- **LaTeX** - Minimal TexLive installation with essential packages
+- **Templates** - Custom templates (OraDBA, TechDoc, Trivadis) for professional documents
+- **Fonts** - MS Core Fonts, Open Sans, Montserrat
+- **Mermaid** - Diagram rendering support for flowcharts, sequence diagrams, etc.
+- **Multi-arch** - Supports both linux/amd64 and linux/arm64 platforms
 
 <!-- markdownlint-enable MD013 -->
 
@@ -60,6 +69,29 @@ Alternatively you can open a shell in the container and use the miscellanies pan
 
 ```bash
 docker run -it --rm -v $PWD:/workdir:z --entrypoint sh oehrlis/pandoc
+```
+
+## Included Templates
+
+This repository includes custom Pandoc templates for professional document generation:
+
+- **oradba** - OraDBA corporate template with branding
+- **techdoc** - Technical documentation template
+- **trivadis** - Trivadis corporate template
+- **GitHub** - GitHub-style HTML output
+
+Templates are located in the [`templates/`](templates/) directory. For detailed authoring guidance, see [AUTHOR_GUIDE.md](AUTHOR_GUIDE.md).
+
+### Using Custom Templates
+
+```bash
+# Use OraDBA template with PDF output
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+    document.md -o output.pdf --template oradba --pdf-engine=xelatex
+
+# Use TechDoc template
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+    document.md -o output.pdf --template techdoc --pdf-engine=xelatex
 ```
 
 ## Mermaid Diagram Support

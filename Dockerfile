@@ -101,7 +101,6 @@ ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     PANDOC_DATA="/opt/pandoc-data/pandoc" \
     PANDOC_TEMPLATES="/opt/pandoc-data/pandoc/templates" \
     PANDOC_THEMES="/opt/pandoc-data/pandoc/themes" \
-    GITHUB_URL="https://github.com/oehrlis/pandoc_template/archive/refs/heads/master.tar.gz" \
     ORADBA="/oradba" \
     WORKDIR="/workdir"
 
@@ -200,14 +199,15 @@ COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
 RUN set -eux; chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
     /usr/local/src/scripts/install_fonts_runtime.sh
 
-# --- Install OraDBA Pandoc templates from GitHub ------------------------------
+# --- Install OraDBA Pandoc templates from local files -------------------------
+COPY templates/ "${ORADBA}/templates/"
+COPY themes/ "${ORADBA}/themes/"
+COPY images/ "${ORADBA}/images/"
+
 RUN set -eux; \
-    echo "Install latest OraDBA Templates from GitHub."; \
+    echo "Install OraDBA Templates from local files."; \
     mkdir -p "${WORKDIR}" "${ORADBA}" "${XDG_DATA_HOME}" \
              "${PANDOC_DATA}" "${PANDOC_TEMPLATES}" "${PANDOC_THEMES}"; \
-    curl -Lf "${GITHUB_URL}" | tar zxv --strip-components=1 -C "${ORADBA}"; \
-    rm -rf "${ORADBA}/examples" "${ORADBA}/.gitignore" \
-           "${ORADBA}/LICENSE" "${ORADBA}/README.md"; \
     ln -sf "${ORADBA}/templates/oradba.tex" "${ORADBA}/templates/oradba.latex"; \
     for i in "${ORADBA}"/templates/*; do \
       ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
@@ -216,21 +216,10 @@ RUN set -eux; \
       ln -sf "$i" "${PANDOC_TEMPLATES}/default.${i##*.}"; \
     done; \
     for i in "${ORADBA}"/themes/*; do \
-      ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
+      ln -sf "$i" "${PANDOC_THEMES}/$(basename "$i")"; \
     done; \
     ln -sf "${ORADBA}/templates/oradba.pptx" "${PANDOC_DATA}/reference.pptx"; \
     ln -sf "${ORADBA}/templates/oradba.docx" "${PANDOC_DATA}/reference.docx"
-
-# --- Copy local template overrides (if any) -----------------------------------
-COPY templates/ "${ORADBA}/templates/"
-RUN set -eux; \
-    ln -sf "${ORADBA}/templates/oradba.tex" "${ORADBA}/templates/oradba.latex"; \
-    for i in "${ORADBA}"/templates/*; do \
-      ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
-    done; \
-    for i in "${ORADBA}"/templates/oradba.*; do \
-      ln -sf "$i" "${PANDOC_TEMPLATES}/default.${i##*.}"; \
-    done
 
 # --- Define volume, workdir, entrypoint ---------------------------------------
 VOLUME ["${WORKDIR}"]
