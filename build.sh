@@ -37,8 +37,12 @@ EOF
 
 # --- Defaults ---------------------------------------------------------------
 export DOCKER_USER="oehrlis"
+# Separate cd and assignment to avoid masking return values
+_build_dir="$(dirname "${BASH_SOURCE[0]}")"
+cd "$_build_dir" || exit 1
 export BUILD_CONTEXT
-BUILD_CONTEXT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
+BUILD_CONTEXT="$(pwd -P)"
+cd - >/dev/null || exit 1
 export PROJECT
 PROJECT="$(basename "${BUILD_CONTEXT}")"
 

@@ -87,13 +87,13 @@ case "$DPKG_ARCH" in
 esac
 
 # If TL is yearful, use the newest year; otherwise allow yearless layouts
-# Find the newest 4-digit year directory, if any
 TLYEAR=""
-for d in "$TEXROOT"/[0-9][0-9][0-9][0-9]; do
-  [ -d "$d" ] || continue
-  year=$(basename "$d")
-  if [ -z "$TLYEAR" ] || [ "$year" -gt "$TLYEAR" ]; then
-    TLYEAR="$year"
+for dir in "$TEXROOT"/[0-9][0-9][0-9][0-9]; do
+  if [ -d "$dir" ]; then
+    dirname=$(basename "$dir")
+    if [ -z "$TLYEAR" ] || [ "$dirname" -gt "$TLYEAR" ]; then
+      TLYEAR="$dirname"
+    fi
   fi
 done
 

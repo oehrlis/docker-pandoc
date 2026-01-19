@@ -119,11 +119,12 @@ RUN set -eux; \
     *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
   esac; \
   TLYEAR=""; \
-  for d in /usr/local/texlive/[0-9][0-9][0-9][0-9]; do \
-    [ -d "$d" ] || continue; \
-    year=$(basename "$d"); \
-    if [ -z "$TLYEAR" ] || [ "$year" -gt "$TLYEAR" ]; then \
-      TLYEAR="$year"; \
+  for dir in /usr/local/texlive/[0-9][0-9][0-9][0-9]; do \
+    if [ -d "$dir" ]; then \
+      dirname=$(basename "$dir"); \
+      if [ -z "$TLYEAR" ] || [ "$dirname" -gt "$TLYEAR" ]; then \
+        TLYEAR="$dirname"; \
+      fi; \
     fi; \
   done; \
   TL_BINDIR="/usr/local/texlive/${TLYEAR}/bin/${TLARCH}"; \
