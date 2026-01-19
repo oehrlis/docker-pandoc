@@ -258,7 +258,13 @@ print_build_summary() {
   log_detail "Mode:    ${mode}"
   log_detail "Cache:   ${cache}"
   log_detail "Platf.:  ${PLATFORM}"
-  log_info "Tags: ${TAG_OPTS[*]}"
+  log_info "Tags:"
+  for tag in "${TAG_OPTS[@]}"; do
+    if [[ "${tag}" == -t ]]; then
+      continue
+    fi
+    log_detail "${tag}"
+  done
 }
 
 # ------------------------------------------------------------------------------
