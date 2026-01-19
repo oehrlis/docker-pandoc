@@ -65,9 +65,9 @@ filecolor:      purple
 bulletcolor:    black
 
 # - Listings -------------------------------------------------------------------
-listings: true
-listings-disable-line-numbers: true
-listings-no-page-break: true
+# listings: true  # Deprecated - use syntax-highlighting instead
+# listings-disable-line-numbers: true
+# listings-no-page-break: true
 code-block-font-size: \scriptsize
 
 # - LaTeX config ---------------------------------------------------------------

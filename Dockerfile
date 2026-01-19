@@ -178,7 +178,7 @@ RUN set -eux; \
 RUN set -eux; \
   npm install -g \
     @mermaid-js/mermaid-cli@11.4.1 \
-    mermaid-filter@1.4.8; \
+    mermaid-filter@1.4.7; \
   npm cache clean --force
 
 # --- Configure Puppeteer to use system Chromium (avoid download) -------------

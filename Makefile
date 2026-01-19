@@ -30,9 +30,9 @@ build: ## Build Docker image locally (single platform)
 	@echo "$(BLUE)Building $(IMAGE_NAME):$(VERSION) locally...$(NC)"
 	./build.sh $(VERSION) --local --test
 
-build-multi: ## Build multi-platform image locally (without pushing)
-	@echo "$(BLUE)Building multi-platform $(IMAGE_NAME):$(VERSION)...$(NC)"
-	@docker buildx create --use --name multi-builder 2>/dev/null || true
+build-multi: ## Build multi-platform image and push to registry
+	@echo "$(BLUE)Building and pushing multi-platform $(IMAGE_NAME):$(VERSION)...$(NC)"
+	@docker buildx create --use --name multi-builder 2>/dev/null || docker buildx use multi-builder
 	@docker buildx build \
 		--platform $(PLATFORMS) \
 		--build-arg SLIM_TEX=1 \
@@ -40,9 +40,9 @@ build-multi: ## Build multi-platform image locally (without pushing)
 		-t $(IMAGE_NAME):$(VERSION) \
 		-t $(IMAGE_NAME):latest \
 		-t $(IMAGE_NAME):texlive-slim \
-		--load \
+		--push \
 		.
-	@echo "$(GREEN)Multi-platform build completed$(NC)"
+	@echo "$(GREEN)Multi-platform build and push completed$(NC)"
 
 push: ## Push image to Docker Hub
 	@echo "$(BLUE)Building and pushing $(IMAGE_NAME):$(VERSION) to Docker Hub...$(NC)"
@@ -58,13 +58,13 @@ test-samples: ## Build all sample documents to verify functionality
 	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
 		--metadata-file sample/metadata.yml --filter pandoc-latex-environment \
 		--resource-path=sample --pdf-engine=xelatex \
-		--listings -o sample/sample-test.pdf sample/sample.md
+		-o sample/sample-test.pdf sample/sample.md
 	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
 		--metadata-file sample/metadata.yml --resource-path=sample \
-		--listings -o sample/sample-test.docx sample/sample.md
+		-o sample/sample-test.docx sample/sample.md
 	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
 		--metadata-file sample/metadata.yml --resource-path=sample \
-		--listings -o sample/sample-test.pptx sample/sample.md
+		-o sample/sample-test.pptx sample/sample.md
 	@docker run --rm -v $(BUILD_CONTEXT):/workdir:z $(IMAGE_NAME):$(VERSION) \
 		examples/test-mermaid.md \
 		-o examples/test-mermaid-test.pdf \

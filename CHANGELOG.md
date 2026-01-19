@@ -7,13 +7,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] -
+## [Unreleased] - 2026-01-19
 
 ### Added
 
 ### Changed
 
 ### Fixed
+
+- Fix multi-platform Docker build issues with `--load` flag by automatically detecting and using single platform for local builds
+- Fix `build-multi` target to use `--push` instead of `--load` since Docker buildx doesn't support loading manifest lists
+- Fix mermaid-filter version from non-existent 1.4.8 to available 1.4.7
+- Remove deprecated `--listings` flag causing LaTeX errors, replaced with modern Pandoc syntax highlighting
+- Update metadata.yml to comment out deprecated listings configuration that caused "No counter 'none' defined" LaTeX error
 
 ### Removed
 

@@ -124,7 +124,19 @@ BUILD_OPTS=(
 # --- Build ------------------------------------------------------------------
 if [[ ${LOCAL_BUILD} -eq 1 ]]; then
   echo "==> LOCAL build (--load)"
-  docker buildx build --load "${TAG_OPTS[@]}" "${BUILD_OPTS[@]}" .
+  # Use single platform for --load (buildx limitation)
+  LOCAL_PLATFORM="$(uname -m)"
+  [[ "${LOCAL_PLATFORM}" == "x86_64" ]] && LOCAL_PLATFORM="linux/amd64"
+  [[ "${LOCAL_PLATFORM}" == "aarch64" || "${LOCAL_PLATFORM}" == "arm64" ]] && LOCAL_PLATFORM="linux/arm64"
+  echo "    Single platform: ${LOCAL_PLATFORM}"
+  # Override BUILD_OPTS platform for local build
+  LOCAL_BUILD_OPTS=("${BUILD_OPTS[@]}")
+  for i in "${!LOCAL_BUILD_OPTS[@]}"; do
+    if [[ "${LOCAL_BUILD_OPTS[$i]}" == --platform=* ]]; then
+      LOCAL_BUILD_OPTS[$i]="--platform=${LOCAL_PLATFORM}"
+    fi
+  done
+  docker buildx build --load "${TAG_OPTS[@]}" "${LOCAL_BUILD_OPTS[@]}" .
 else
   echo "==> REGISTRY build (--push)"
   docker buildx build --push "${TAG_OPTS[@]}" "${BUILD_OPTS[@]}" .
@@ -141,17 +153,17 @@ if [[ ${TEST} -eq 1 ]]; then
   docker run --rm "${RUN_OPTS[@]}" \
     --metadata-file sample/metadata.yml --filter pandoc-latex-environment \
     --resource-path=sample --pdf-engine=xelatex \
-    --listings -o sample/sample.pdf sample/sample.md
+    -o sample/sample.pdf sample/sample.md
 
   echo "   -> DOCX"
   docker run --rm "${RUN_OPTS[@]}" \
     --metadata-file sample/metadata.yml --resource-path=sample \
-    --listings -o sample/sample.docx sample/sample.md
+    -o sample/sample.docx sample/sample.md
 
   echo "   -> PPTX"
   docker run --rm "${RUN_OPTS[@]}" \
     --metadata-file sample/metadata.yml --resource-path=sample \
-    --listings -o sample/sample.pptx sample/sample.md
+    -o sample/sample.pptx sample/sample.md
 
   echo "   -> Mermaid PDF Test"
   docker run --rm "${RUN_OPTS[@]}" \
