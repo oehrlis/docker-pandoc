@@ -96,7 +96,8 @@ lint-markdown: ## Run markdownlint on all markdown files
 		echo "$(GREEN)Markdown lint completed (via Docker)$(NC)"; \
 	else \
 		echo "$(YELLOW)markdownlint not installed. Install with: npm install -g markdownlint-cli$(NC)"; \
-		echo "$(YELLOW)Or use Docker: docker run --rm -v \$$PWD:/workdir:z davidanson/markdownlint-cli2:v0.10.0 <files>$(NC)"; \
+		echo "$(YELLOW)Or use Docker: docker run --rm -v \$$PWD:/workdir:z \
+			davidanson/markdownlint-cli2:v0.10.0 <files>$(NC)"; \
 		exit 1; \
 	fi
 
