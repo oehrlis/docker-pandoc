@@ -46,7 +46,7 @@ PKGS="adjustbox afterpage amsmath amssymb array awesomebox babel background
       beamerarticle biblatex bookmark booktabs calc caption csquotes etoolbox
       fancyvrb float fontenc fontspec footmisc footnote footnotehyper
       footnotebackref fvextra geometry graphicx hyperref iftex inputenc
-      listings lmodern longtable lua-ul luacolor luatexja-fontspec
+      lineno listings lmodern longtable lua-ul luacolor luatexja-fontspec
       luatexja-preset mathspec mdframed microtype multirow natbib pagecolor
       parskip pgfpages ragged2e scrlayer-scrpage sectsty selnolig setspace
       soul sourcecodepro sourcesanspro subcaption svg tabularx textcomp tikz
