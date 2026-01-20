@@ -79,7 +79,7 @@ This repository includes custom Pandoc templates for professional document gener
 - **trivadis** - Trivadis corporate template
 - **GitHub** - GitHub-style HTML output
 
-Templates are located in the [`templates/`](templates/) directory. For detailed authoring guidance, see [AUTHOR_GUIDE.md](AUTHOR_GUIDE.md).
+Templates are located in the [`templates/`](templates/) directory.
 
 ### Using Custom Templates
 
@@ -91,7 +91,36 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 # Use TechDoc template
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
     document.md -o output.pdf --template techdoc --pdf-engine=xelatex
+
+# Advanced: Custom title page, headers, filters
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+    --metadata-file=metadata.yml \
+    --template oradba \
+    --pdf-engine=xelatex \
+    --filter pandoc-latex-environment \
+    --resource-path=images \
+    -o output.pdf \
+    doc/?x??-*.md
 ```
+
+### Advanced Template Features
+
+The templates support extensive customization including:
+
+- Custom title pages with logos and colors
+- Configurable headers and footers
+- Table of contents and lists of figures/tables
+- Colored boxes for notes, tips, warnings (via filters)
+- Book mode with chapter organization
+- Custom fonts and typography
+- Multiple output formats (PDF, DOCX, PPTX, HTML, EPUB)
+
+**For comprehensive documentation**, see:
+
+- **[AUTHOR_GUIDE.md](AUTHOR_GUIDE.md)** - Complete authoring guide with
+  advanced template options, metadata configuration, formatting examples, and
+  troubleshooting
+- **[Sample metadata.yml](sample/metadata.yml)** - Example configuration file
 
 ## Diagram Support
 
@@ -279,16 +308,55 @@ Please file your bug reports, enhancement requests, questions and other support 
 - [Existing issues](https://github.com/oehrlis/docker-pandoc/issues)
 - [submit new issue](https://github.com/oehrlis/docker-pandoc/issues/new)
 
+## Documentation
+
+This project maintains comprehensive documentation for different audiences:
+
+### For Users
+
+- **[README.md](README.md)** (this file) - Quick start and basic usage
+- **[AUTHOR_GUIDE.md](AUTHOR_GUIDE.md)** - Complete authoring guide with
+  advanced template options, metadata configuration, formatting examples, and
+  troubleshooting
+- **[examples/](examples/)** - Sample documents and configurations
+  - [formatting-examples.md](examples/formatting-examples.md) - Comprehensive
+    formatting reference
+  - [metadata-advanced.yml](examples/metadata-advanced.yml) - Complete metadata
+    configuration example
+
+### For Contributors and Developers
+
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow, build system,
+  testing, and release process
+- **[.github/SETUP.md](.github/SETUP.md)** - GitHub Actions and CI/CD setup
+  (for maintainers)
+
+### Additional Resources
+
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
+- **[LICENSE](LICENSE)** - Apache License 2.0
+
 ## References
 
-- GitHub Project [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc) related to this container.
-- [pandoc](https://pandoc.org)
-- [TexLive 2022](https://www.tug.org/texlive/)
-- GitHub [google/fonts](https://github.com/google/fonts)
+- GitHub Project [oehrlis/docker-pandoc]
+  (<https://github.com/oehrlis/docker-pandoc>) - This repository
+- GitHub Project [oehrlis/pandoc_template]
+  (<https://github.com/oehrlis/pandoc_template>) - Original template repository
+  with extensive examples
+- [pandoc](https://pandoc.org) - Universal document converter
+- [Pandoc User's Guide](https://pandoc.org/MANUAL.html) - Complete Pandoc
+  documentation
+- [TexLive](https://www.tug.org/texlive/) - TeX document production system
+- GitHub [google/fonts](https://github.com/google/fonts) - Open source fonts
 - GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
-- GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template)
-- [Google Fonts](https://fonts.google.com/) Montserrat and Open Sans Light
-- Get Microsoft's Core Fonts for the Web and ClearType Fonts (<http://mscorefonts2.sourceforge.net/>)
-- [Mermaid CLI Documentation](https://github.com/mermaid-js/mermaid-cli)
-- [Pandoc Filters Documentation](https://pandoc.org/filters.html)
-- [mermaid-filter npm package](https://www.npmjs.com/package/mermaid-filter)
+  - Pandoc examples
+- GitHub [Wandmalfarbe/pandoc-latex-template]
+  (<https://github.com/Wandmalfarbe/pandoc-latex-template>) - Eisvogel template
+  (inspiration)
+- [Google Fonts](https://fonts.google.com/) - Montserrat and Open Sans
+- [MS Core Fonts](http://mscorefonts2.sourceforge.net/) - Microsoft Core and
+  ClearType fonts
+- [Mermaid CLI Documentation](https://github.com/mermaid-js/mermaid-cli) - Diagram rendering
+- [Pandoc Filters Documentation](https://pandoc.org/filters.html) - Filter system documentation
+- [Awesomebox Package](https://ctan.org/pkg/awesomebox) - Colored boxes for LaTeX

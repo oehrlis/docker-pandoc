@@ -7,7 +7,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-01-19
+## [Unreleased] - 2024-01-20
+
+### Added
+
+- **Comprehensive AUTHOR_GUIDE.md enhancements**:
+  - Advanced template options documentation (title pages, colors, headers/footers, logos)
+  - Complete YAML metadata configuration examples with all supported variables
+  - Box types and custom environments section (note, tip, warning, caution, important boxes)
+  - Comprehensive troubleshooting guide (resource paths, mounting, fonts, templates, permissions)
+  - Markdownlint configuration examples (inline and global)
+  - Pandoc filters usage documentation
+  - Output formats section covering PDF, DOCX, PPTX, HTML, EPUB, and LaTeX
+  - References section with complete citations to oehrlis/pandoc_template sources
+- `examples/metadata-advanced.yml` - Complete metadata configuration example with all available options and inline documentation
+- `examples/formatting-examples.md` - Comprehensive formatting reference demonstrating all Markdown syntax, extended features, and box types
+- Enhanced README.md with:
+  - Advanced template features overview
+  - Better cross-references to AUTHOR_GUIDE.md
+  - Organized Documentation section for different audiences
+  - Updated References section with pandoc_template repository links
+
+### Changed
+
+- Restructured AUTHOR_GUIDE.md with improved organization:
+  - Added Table of Contents for easy navigation
+  - Moved from basic "release guide" to comprehensive "authoring and user guide"
+  - Incorporated best practices from oehrlis/pandoc_template repository
+  - Enhanced with practical examples and code snippets
+- Updated README.md template section with advanced usage example
+- Enhanced documentation structure with clear separation for users, contributors, and developers
+
+### Documentation Sources
+
+All documentation enhancements incorporate content from the following sources in the [oehrlis/pandoc_template](https://github.com/oehrlis/pandoc_template) repository:
+
+- [README.md](https://github.com/oehrlis/pandoc_template/blob/master/README.md) - Template usage and configuration
+- [AUTHOR_GUIDE.md](https://github.com/oehrlis/pandoc_template/blob/master/AUTHOR_GUIDE.md) - Document structure and authoring
+- [examples/complex/README.md](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/README.md) - Complex document examples
+- [examples/complex/doc/4x00-Formatting_Examples.md](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/doc/4x00-Formatting_Examples.md) - Comprehensive formatting examples
+- [examples/complex/metadata.yml](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/metadata.yml) - Complete metadata example
+- [templates/oradba.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/oradba.tex) - OraDBA template source
+- [templates/techdoc.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/techdoc.tex) - Technical documentation template
+- [templates/trivadis.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/trivadis.tex) - Trivadis corporate template
+
+## [Unreleased] - 2024-01-19
 
 ### Added
 
