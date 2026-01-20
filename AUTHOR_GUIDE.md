@@ -622,7 +622,9 @@ The templates support colored boxes for highlighting important information using
 ```
 
 ::: note
-**Note** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam aliquet libero quis lectus elementum fermentum.
+**Note** The docker-pandoc image includes all necessary components for document
+conversion. You can specify custom templates using the `--template` option, and
+resources are resolved using the `--resource-path` parameter.
 :::
 
 #### Tip Box

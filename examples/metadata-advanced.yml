@@ -26,7 +26,7 @@ lang: en-US
 # ------------------------------------------------------------------------------
 # These can be used in templates or headers/footers
 organization: "Acme Corporation"
-department: "Cloud Infrastructure Team"  
+department: "Cloud Infrastructure Team"
 contact: "cloud-team@acme.com"
 phone: "+1 555-123-4567"
 
@@ -150,21 +150,23 @@ mainfont: Arial                           # Main document font
 sansfont: Arial                           # Font for headings and TOC
 monofont: Courier New                     # Font for code blocks
 
-# Option 2: Use custom fonts with paths
+# Option 2: Use custom TTF/OTF fonts with explicit paths
+# This example shows using a custom font family with different weights
 # Uncomment and adjust paths as needed
-# mainfont: Graphik-Regular.ttf
+# mainfont: CustomFont-Regular.ttf
 # mainfontoptions:
 #   - Path=fonts/
-#   - BoldFont=Graphik-Bold.ttf
-#   - ItalicFont=Graphik-Regular-Italic.ttf
-#   - BoldItalicFont=Graphik-Bold-Italic.ttf
-#
-# sansfont: Graphik-Regular.ttf
+#   - BoldFont=CustomFont-Bold.ttf
+#   - ItalicFont=CustomFont-Italic.ttf
+#   - BoldItalicFont=CustomFont-BoldItalic.ttf
+
+# Option 3: Use different fonts for sans-serif elements
+# Useful when you want different fonts for body text vs. headings
+# sansfont: OpenSans-Regular.ttf
 # sansfontoptions:
 #   - Path=fonts/
-#   - BoldFont=Graphik-Bold.ttf
-#   - ItalicFont=Graphik-Regular-Italic.ttf
-#   - BoldItalicFont=Graphik-Bold-Italic.ttf
+#   - BoldFont=OpenSans-Bold.ttf
+#   - ItalicFont=OpenSans-Italic.ttf
 
 # ------------------------------------------------------------------------------
 # Logo Configuration

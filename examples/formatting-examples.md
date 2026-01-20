@@ -335,22 +335,22 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 Markdown formatting is fully supported inside boxes:
 
-```markdown
+````markdown
 ::: important
 **Lorem ipsum dolor** sit amet, `consectetur adipiscing` elit.
 
-\```java
+```java
 if(args.length < 2) {
     System.out.println("Important code example");
 }
-\```
+```
 
 *Nam aliquet libero quis lectus elementum fermentum.*
 
 - Item 1
 - Item 2
 :::
-```
+````
 
 ::: important
 **Lorem ipsum dolor** sit amet, `consectetur adipiscing` elit.
