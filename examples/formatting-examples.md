@@ -1,10 +1,14 @@
 # Formatting Examples
 <!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
+<!-- markdownlint-disable MD049 MD050 MD013 MD034 -->
 
-> **Source**: This document is based on [oehrlis/pandoc_template/examples/complex/doc/4x00-Formatting_Examples.md](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/doc/4x00-Formatting_Examples.md)
+> **Source**: This document is based on
+> [oehrlis/pandoc_template/examples/complex/doc/4x00-Formatting_Examples.md]
+> (https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/doc/4x00-Formatting_Examples.md)
 
-This document demonstrates the full range of Markdown formatting supported by the docker-pandoc templates.
+This document demonstrates the full range of Markdown formatting supported by
+the docker-pandoc templates.
 
 ## Basic Syntax
 
@@ -252,7 +256,10 @@ Result:
 
 ## Box Types (Requires pandoc-latex-environment filter)
 
-> **Important**: These boxes require the `--filter pandoc-latex-environment` option and proper metadata configuration. See [AUTHOR_GUIDE.md](../AUTHOR_GUIDE.md#box-types-and-custom-environments) for details.
+> **Important**: These boxes require the `--filter pandoc-latex-environment`
+> option and proper metadata configuration. See
+> [AUTHOR_GUIDE.md](../AUTHOR_GUIDE.md#box-types-and-custom-environments)
+> for details.
 
 ### Note Box
 
@@ -332,11 +339,11 @@ Markdown formatting is fully supported inside boxes:
 ::: important
 **Lorem ipsum dolor** sit amet, `consectetur adipiscing` elit.
 
-```java
+\```java
 if(args.length < 2) {
     System.out.println("Important code example");
 }
-```
+\```
 
 *Nam aliquet libero quis lectus elementum fermentum.*
 

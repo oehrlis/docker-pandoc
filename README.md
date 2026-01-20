@@ -116,7 +116,10 @@ The templates support extensive customization including:
 - Multiple output formats (PDF, DOCX, PPTX, HTML, EPUB)
 
 **For comprehensive documentation**, see:
-- **[AUTHOR_GUIDE.md](AUTHOR_GUIDE.md)** - Complete authoring guide with advanced template options, metadata configuration, formatting examples, and troubleshooting
+
+- **[AUTHOR_GUIDE.md](AUTHOR_GUIDE.md)** - Complete authoring guide with
+  advanced template options, metadata configuration, formatting examples, and
+  troubleshooting
 - **[Sample metadata.yml](sample/metadata.yml)** - Example configuration file
 
 ## Diagram Support
@@ -312,16 +315,22 @@ This project maintains comprehensive documentation for different audiences:
 ### For Users
 
 - **[README.md](README.md)** (this file) - Quick start and basic usage
-- **[AUTHOR_GUIDE.md](AUTHOR_GUIDE.md)** - Complete authoring guide with advanced template options, metadata configuration, formatting examples, and troubleshooting
+- **[AUTHOR_GUIDE.md](AUTHOR_GUIDE.md)** - Complete authoring guide with
+  advanced template options, metadata configuration, formatting examples, and
+  troubleshooting
 - **[examples/](examples/)** - Sample documents and configurations
-  - [formatting-examples.md](examples/formatting-examples.md) - Comprehensive formatting reference
-  - [metadata-advanced.yml](examples/metadata-advanced.yml) - Complete metadata configuration example
+  - [formatting-examples.md](examples/formatting-examples.md) - Comprehensive
+    formatting reference
+  - [metadata-advanced.yml](examples/metadata-advanced.yml) - Complete metadata
+    configuration example
 
 ### For Contributors and Developers
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
-- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow, build system, testing, and release process
-- **[.github/SETUP.md](.github/SETUP.md)** - GitHub Actions and CI/CD setup (for maintainers)
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow, build system,
+  testing, and release process
+- **[.github/SETUP.md](.github/SETUP.md)** - GitHub Actions and CI/CD setup
+  (for maintainers)
 
 ### Additional Resources
 
@@ -330,16 +339,24 @@ This project maintains comprehensive documentation for different audiences:
 
 ## References
 
-- GitHub Project [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc) - This repository
-- GitHub Project [oehrlis/pandoc_template](https://github.com/oehrlis/pandoc_template) - Original template repository with extensive examples
+- GitHub Project [oehrlis/docker-pandoc]
+  (https://github.com/oehrlis/docker-pandoc) - This repository
+- GitHub Project [oehrlis/pandoc_template]
+  (https://github.com/oehrlis/pandoc_template) - Original template repository
+  with extensive examples
 - [pandoc](https://pandoc.org) - Universal document converter
-- [Pandoc User's Guide](https://pandoc.org/MANUAL.html) - Complete Pandoc documentation
+- [Pandoc User's Guide](https://pandoc.org/MANUAL.html) - Complete Pandoc
+  documentation
 - [TexLive](https://www.tug.org/texlive/) - TeX document production system
 - GitHub [google/fonts](https://github.com/google/fonts) - Open source fonts
-- GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples) - Pandoc examples
-- GitHub [Wandmalfarbe/pandoc-latex-template](https://github.com/Wandmalfarbe/pandoc-latex-template) - Eisvogel template (inspiration)
+- GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
+  - Pandoc examples
+- GitHub [Wandmalfarbe/pandoc-latex-template]
+  (https://github.com/Wandmalfarbe/pandoc-latex-template) - Eisvogel template
+  (inspiration)
 - [Google Fonts](https://fonts.google.com/) - Montserrat and Open Sans
-- [MS Core Fonts](http://mscorefonts2.sourceforge.net/) - Microsoft Core and ClearType fonts
+- [MS Core Fonts](http://mscorefonts2.sourceforge.net/) - Microsoft Core and
+  ClearType fonts
 - [Mermaid CLI Documentation](https://github.com/mermaid-js/mermaid-cli) - Diagram rendering
 - [Pandoc Filters Documentation](https://pandoc.org/filters.html) - Filter system documentation
 - [Awesomebox Package](https://ctan.org/pkg/awesomebox) - Colored boxes for LaTeX
