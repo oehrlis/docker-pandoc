@@ -1,7 +1,8 @@
 # Formatting Examples
+<!-- markdownlint-disable MD013 -->
 <!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
-<!-- markdownlint-disable MD049 MD050 MD013 MD034 -->
+<!-- markdownlint-disable MD034 MD049 MD050 -->
 
 > **Source**: This document is based on
 > [oehrlis/pandoc_template/examples/complex/doc/4x00-Formatting_Examples.md]

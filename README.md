@@ -340,9 +340,9 @@ This project maintains comprehensive documentation for different audiences:
 ## References
 
 - GitHub Project [oehrlis/docker-pandoc]
-  (https://github.com/oehrlis/docker-pandoc) - This repository
+  (<https://github.com/oehrlis/docker-pandoc>) - This repository
 - GitHub Project [oehrlis/pandoc_template]
-  (https://github.com/oehrlis/pandoc_template) - Original template repository
+  (<https://github.com/oehrlis/pandoc_template>) - Original template repository
   with extensive examples
 - [pandoc](https://pandoc.org) - Universal document converter
 - [Pandoc User's Guide](https://pandoc.org/MANUAL.html) - Complete Pandoc
@@ -352,7 +352,7 @@ This project maintains comprehensive documentation for different audiences:
 - GitHub [danstoner/pandoc_samples](https://github.com/danstoner/pandoc_samples)
   - Pandoc examples
 - GitHub [Wandmalfarbe/pandoc-latex-template]
-  (https://github.com/Wandmalfarbe/pandoc-latex-template) - Eisvogel template
+  (<https://github.com/Wandmalfarbe/pandoc-latex-template>) - Eisvogel template
   (inspiration)
 - [Google Fonts](https://fonts.google.com/) - Montserrat and Open Sans
 - [MS Core Fonts](http://mscorefonts2.sourceforge.net/) - Microsoft Core and
