@@ -148,12 +148,8 @@ RUN set -eux; \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# --- Mermaid support temporarily disabled -------------------------------------
-# Chromium-based rendering doesn't work with non-root Docker users due to
-# sandbox namespace restrictions. See GitHub issue for alternative solutions
-# (Kroki, PlantUML, etc.). Keeping fonts for other diagram tools.
-
-# --- Install fonts for diagram rendering --------------------------------------
+# --- Install Mermaid CLI for diagram rendering --------------------------------
+COPY scripts/install_mermaid.sh /usr/local/src/scripts/
 RUN set -eux; \
   { \
     echo 'Acquire::Retries "5";'; \
@@ -161,19 +157,8 @@ RUN set -eux; \
     echo 'Acquire::https::Timeout "120";'; \
     echo 'Acquire::ftp::Timeout "120";'; \
   } > /etc/apt/apt.conf.d/80retries; \
-  for i in 1 2 3; do \
-    if apt-get update; then \
-      break; \
-    else \
-      echo "Attempt $i failed, waiting 10 seconds..."; \
-      sleep 10; \
-    fi; \
-  done; \
-  apt-get install -y --no-install-recommends \
-    fonts-liberation \
-    fonts-noto-color-emoji; \
-  apt-get clean; \
-  rm -rf /var/lib/apt/lists/*
+  chmod +x /usr/local/src/scripts/install_mermaid.sh; \
+  /usr/local/src/scripts/install_mermaid.sh
 
 # --- Install fonts + runtime deps ---------------------------------------------
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
@@ -184,6 +169,9 @@ RUN set -eux; chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
 COPY templates/ "${ORADBA}/templates/"
 COPY themes/ "${ORADBA}/themes/"
 COPY images/ "${ORADBA}/images/"
+
+# --- Install Mermaid Lua filter -----------------------------------------------
+COPY mermaid.lua /usr/local/share/pandoc/filters/mermaid.lua
 
 RUN set -eux; \
     echo "Install OraDBA Templates from local files."; \

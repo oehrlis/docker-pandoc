@@ -281,6 +281,7 @@ sample/sample-release.pptx
 examples/test-mermaid-test.pdf
 examples/test-mermaid-release.pdf
 examples/test-output.pdf
+build/
 
 # Temporary files
 /tmp/
