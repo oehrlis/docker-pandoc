@@ -155,15 +155,19 @@ RUN set -eux; \
 
 # --- Install fonts for diagram rendering --------------------------------------
 RUN set -eux; \
-  echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80retries; \
-  echo 'Acquire::http::Timeout "120";' >> /etc/apt/apt.conf.d/80retries; \
-  echo 'Acquire::https::Timeout "120";' >> /etc/apt/apt.conf.d/80retries; \
-  echo 'Acquire::ftp::Timeout "120";' >> /etc/apt/apt.conf.d/80retries; \
+  { \
+    echo 'Acquire::Retries "5";'; \
+    echo 'Acquire::http::Timeout "120";'; \
+    echo 'Acquire::https::Timeout "120";'; \
+    echo 'Acquire::ftp::Timeout "120";'; \
+  } > /etc/apt/apt.conf.d/80retries; \
   for i in 1 2 3; do \
-    apt-get update && break || { \
+    if apt-get update; then \
+      break; \
+    else \
       echo "Attempt $i failed, waiting 10 seconds..."; \
       sleep 10; \
-    }; \
+    fi; \
   done; \
   apt-get install -y --no-install-recommends \
     fonts-liberation \

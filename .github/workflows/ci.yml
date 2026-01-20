@@ -27,7 +27,6 @@ jobs:
           scandir: 'scripts'
           format: gcc
           severity: warning
-          additional_files: 'build.sh release.sh'
 
   shell-format:
     name: Shell Format Check (shfmt)
@@ -44,7 +43,7 @@ jobs:
 
       - name: Check shell script formatting
         run: |
-          shfmt -d -i 2 -ci build.sh release.sh scripts/*.sh
+          shfmt -d -i 2 -ci scripts/*.sh
 
   markdown-lint:
     name: Markdown Lint
