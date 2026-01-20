@@ -97,7 +97,7 @@ install_mermaid_cli() {
   log_info "Installing mermaid-cli"
   
   # Install mermaid-cli globally
-  if [ "${MERMAID_VERSION}" = "latest" ]; then
+  if [[ "${MERMAID_VERSION}" = "latest" ]]; then
     npm install -g @mermaid-js/mermaid-cli
   else
     npm install -g "@mermaid-js/mermaid-cli@${MERMAID_VERSION}"
