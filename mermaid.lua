@@ -15,46 +15,15 @@
 --   - Output directory: build/mermaid/
 -- ==============================================================================
 
-local system = require('pandoc.system')
-
 -- Configuration
 local MERMAID_DIR = "build/mermaid"
 local MMDC_BIN = "mmdc"
 
 -- Helper function to create directory if it doesn't exist
 local function ensure_dir(dir)
-  os.execute("mkdir -p " .. pandoc.utils.stringify(dir))
-end
-
--- Helper function to create Puppeteer config if needed
-local function ensure_puppeteer_config()
-  local config_dir = "build/mermaid/.puppeteer"
-  local config_file = config_dir .. "/config.json"
-  
-  -- Check if config already exists
-  local f = io.open(config_file, "r")
-  if f then
-    f:close()
-    return config_file
-  end
-  
-  -- Create config directory
-  os.execute("mkdir -p " .. config_dir)
-  
-  -- Create minimal config
-  local config = io.open(config_file, "w")
-  if config then
-    config:write('{\n')
-    config:write('  "args": [\n')
-    config:write('    "--no-sandbox",\n')
-    config:write('    "--disable-setuid-sandbox",\n')
-    config:write('    "--disable-dev-shm-usage"\n')
-    config:write('  ]\n')
-    config:write('}\n')
-    config:close()
-  end
-  
-  return config_file
+  local dir_str = pandoc.utils.stringify(dir)
+  -- Use Lua's %q format for proper shell escaping
+  os.execute(string.format("mkdir -p %q", dir_str))
 end
 
 -- Helper function to compute SHA256 hash of a string
@@ -93,17 +62,33 @@ local function render_mermaid(code, output_path)
   f:write(code)
   f:close()
   
-  -- Ensure Puppeteer config exists
-  local puppeteer_config = ensure_puppeteer_config()
+  -- Ensure puppeteerrc config exists in working directory
+  -- mermaid-cli will automatically load .puppeteerrc.cjs from the current directory
+  local puppeteerrc = ".puppeteerrc.cjs"
+  local f = io.open(puppeteerrc, "w")
+  if f then
+    f:write("module.exports = {\n")
+    f:write("  executablePath: '/usr/bin/chromium',\n")
+    f:write("  args: [\n")
+    f:write("    '--no-sandbox',\n")
+    f:write("    '--disable-setuid-sandbox',\n")
+    f:write("    '--disable-dev-shm-usage',\n")
+    f:write("    '--disable-gpu',\n")
+    f:write("    '--disable-extensions',\n")
+    f:write("    '--disable-crash-reporter',\n")
+    f:write("    '--disable-breakpad'\n")
+    f:write("  ]\n")
+    f:write("};\n")
+    f:close()
+  end
   
-  -- Render using mmdc
+  -- Set environment variables for Puppeteer and render using mmdc
   -- Use --quiet to reduce output noise
   -- Use -b transparent for transparent background
   -- Use -s 2 for 2x scale (better quality)
-  -- Set puppeteer config path
   local cmd = string.format(
-    "PUPPETEER_CONFIG_PATH=%q %s -i %q -o %q -b transparent -s 2 --quiet 2>&1",
-    puppeteer_config, MMDC_BIN, temp_mmd, output_path
+    "PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium CHROME_PATH=/usr/bin/chromium %s -i %q -o %q -b transparent -s 2 --quiet 2>&1",
+    MMDC_BIN, temp_mmd, output_path
   )
   
   local success = os.execute(cmd)

@@ -60,13 +60,14 @@ RUN set -eux; \
   /usr/local/src/scripts/install_pandoc.sh "${TARGETARCH}"
 
 # --- Install TeX Live (use Debian packages as workaround for DNS issues) -------
-RUN set -eux; \
-  apt-get update; \
-  apt-get install -y --no-install-recommends \
-    texlive-xetex texlive-latex-base texlive-latex-extra \
-    texlive-fonts-recommended texlive-fonts-extra \
-    fontconfig; \
-  rm -rf /var/lib/apt/lists/*
+# SKIPPED: Installing in runtime stage to save builder space
+# RUN set -eux; \
+#   apt-get update; \
+#   apt-get install -y --no-install-recommends \
+#     texlive-xetex texlive-latex-base texlive-latex-extra \
+#     texlive-fonts-recommended \
+#     fontconfig; \
+#   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # --- Optionally slim the TeX tree and fonts -----------------------------------
 RUN set -eux; \
@@ -116,6 +117,10 @@ ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
 COPY --from=builder /usr/local/bin/pandoc /usr/local/bin/pandoc
 COPY --from=builder /usr/share/fonts /usr/share/fonts
 COPY --from=builder /etc/fonts /etc/fonts
+
+# --- Copy TeX Live tools and data from builder stage -------------------------------
+# SKIPPED: TeX Live installation requires too much disk space in build environment
+# We can test Mermaid rendering to PNG without PDF generation for now
 
 # --- Setup PATH and symlinks ------------------------------------------------
 RUN set -eux; \

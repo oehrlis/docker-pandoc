@@ -63,6 +63,10 @@ install_nodejs() {
 install_chromium_deps() {
   log_info "Installing Chromium and Puppeteer dependencies"
   
+  # Clean up any broken dpkg state first
+  apt-get update || log_info "Warning: apt-get update had issues (continuing)"
+  dpkg --configure -a 2>/dev/null || log_info "Warning: No incomplete packages to configure"
+  
   # Install Chromium and required libraries for headless browser
   apt-get install -y --no-install-recommends \
     chromium \
@@ -82,7 +86,9 @@ install_chromium_deps() {
     libnspr4 \
     libxcomposite1 \
     libxdamage1 \
-    libxrandr2
+    libxrandr2 || {
+    log_info "Warning: Some Chromium dependencies failed to install (continuing with available packages)"
+  }
 }
 
 # ------------------------------------------------------------------------------
@@ -116,28 +122,34 @@ install_mermaid_cli() {
 configure_puppeteer() {
   log_info "Configuring Puppeteer for container execution"
   
-  # Create Puppeteer config directory in default location
+  # Create Puppeteer config directories for both root and typical users
   mkdir -p /root/.config/puppeteer
+  mkdir -p /home/pandoc/.config/puppeteer
   
-  # Create Puppeteer configuration file
-  # This tells Puppeteer to use system Chromium and skip download
+  # Create Puppeteer configuration file with proper sandbox options
   cat > /root/.config/puppeteer/config.json <<'EOF'
 {
-  "skipDownload": true
+  "args": [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu",
+    "--disable-extensions",
+    "--disable-crash-reporter",
+    "--disable-breakpad"
+  ]
 }
 EOF
   
+  # Copy for pandoc user as well
+  cp /root/.config/puppeteer/config.json /home/pandoc/.config/puppeteer/config.json 2>/dev/null || true
+  
   # Set environment variables for Puppeteer/mermaid-cli
-  cat >> /etc/profile.d/puppeteer.sh <<'EOF'
+  cat > /etc/profile.d/puppeteer.sh <<'EOF'
 export PUPPETEER_SKIP_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 export CHROME_PATH=/usr/bin/chromium
 EOF
-  
-  # Also set it in the Docker environment
-  echo "ENV PUPPETEER_SKIP_DOWNLOAD=true" >> /tmp/puppeteer_env
-  echo "ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium" >> /tmp/puppeteer_env
-  echo "ENV CHROME_PATH=/usr/bin/chromium" >> /tmp/puppeteer_env
   
   log_info "Puppeteer configured for non-root execution with system Chromium"
 }
@@ -166,6 +178,11 @@ main() {
   install_mermaid_cli
   configure_puppeteer
   cleanup
+  
+  # Additional cleanup to save space
+  npm cache clean --force || true
+  apt-get autoremove -y || true
+  apt-get autoclean || true
   
   log_info "Mermaid installation completed successfully"
 }
