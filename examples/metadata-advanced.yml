@@ -1,0 +1,219 @@
+# ------------------------------------------------------------------------------
+# Advanced Metadata Configuration Example for docker-pandoc
+# ------------------------------------------------------------------------------
+# This file demonstrates all available template options and metadata variables
+# for the oradba, techdoc, and trivadis LaTeX templates.
+#
+# Source: Based on examples from https://github.com/oehrlis/pandoc_template
+# See AUTHOR_GUIDE.md for detailed documentation
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Basic Document Information
+# ------------------------------------------------------------------------------
+title: "Complete Guide to Docker and Kubernetes"
+subtitle: "A comprehensive technical reference"
+author:
+  - John Doe
+  - Jane Smith
+# date is automatically set by pandoc, uncomment to override
+# date: 2024-01-20
+version: 1.0.0
+lang: en-US
+
+# ------------------------------------------------------------------------------
+# Organization/Company Information (Custom Variables)
+# ------------------------------------------------------------------------------
+# These can be used in templates or headers/footers
+organization: "Acme Corporation"
+department: "Cloud Infrastructure Team"  
+contact: "cloud-team@acme.com"
+phone: "+1 555-123-4567"
+
+# ------------------------------------------------------------------------------
+# Book Settings
+# ------------------------------------------------------------------------------
+# Enable book mode for chapter-level organization
+# Use with --top-level-division=chapter
+book: false
+# Use oneside to prevent blank pages before chapters (default is twoside)
+# classoption: oneside
+
+# ------------------------------------------------------------------------------
+# Page Settings
+# ------------------------------------------------------------------------------
+papersize: a4
+geometry:
+  - top=2.54cm
+  - bottom=2.54cm
+  - left=2.54cm
+  - right=2.54cm
+
+# ------------------------------------------------------------------------------
+# Page Headers and Footers
+# ------------------------------------------------------------------------------
+# Control header and footer visibility
+disable-header: false
+disable-footer: false
+disable-header-and-footer: false
+
+# Customize header content (left, center, right)
+header-left: "Docker & Kubernetes Guide"
+header-center: ""
+header-right: "Version 1.0.0"
+
+# Customize footer content
+footer-left: "Copyright © 2024 Acme Corp. All rights reserved."
+footer-center: ""
+footer-right: "Page \\thepage"
+
+# ------------------------------------------------------------------------------
+# Title Page Configuration
+# ------------------------------------------------------------------------------
+titlepage: true
+titlepage-rule-height: 4                  # Height of top rule in points
+titlepage-rule-color: "435488"            # HTML hex color (no # prefix)
+titlepage-text-color: "000000"            # Text color on title page
+titlepage-color: "FFFFFF"                 # Background color
+title-color: "000000"                     # Document title color
+subtitle-color: "A100FF"                  # Subtitle color
+
+# ------------------------------------------------------------------------------
+# Table of Contents Configuration
+# ------------------------------------------------------------------------------
+toc: true
+toc-own-page: true                        # Start TOC on new page
+toc-title: "Table of Contents"
+toc-depth: 3                              # Include headings up to level 3
+
+# ------------------------------------------------------------------------------
+# Lists of Tables and Figures
+# ------------------------------------------------------------------------------
+lof: true                                 # List of figures
+lof-own-page: false                       # Don't start on new page
+lot: true                                 # List of tables
+lot-own-page: true                        # Start on new page
+
+# ------------------------------------------------------------------------------
+# Numbering and Links
+# ------------------------------------------------------------------------------
+numbersections: true                      # Number section headings
+links-as-notes: false                     # Don't print links as footnotes
+linkcolor: purple                         # Internal link color
+urlcolor: purple                          # URL color
+filecolor: purple                         # File link color
+bulletcolor: black                        # Bullet point color
+
+# ------------------------------------------------------------------------------
+# Code Listings Configuration
+# ------------------------------------------------------------------------------
+listings: true                            # Enable listings package
+listings-disable-line-numbers: false      # Show line numbers
+listings-no-page-break: true              # Prevent page breaks in code
+code-block-font-size: \scriptsize         # Code font size
+
+# Alternative: Use Pandoc's built-in syntax highlighting
+# Remove 'listings: true' and use:
+# highlight-style: pygments
+
+# ------------------------------------------------------------------------------
+# Typography and Caption Settings
+# ------------------------------------------------------------------------------
+caption-justification: raggedright        # Caption alignment (raggedright, centering, justified)
+
+# ------------------------------------------------------------------------------
+# Custom LaTeX Headers
+# ------------------------------------------------------------------------------
+# Add custom LaTeX commands, package loading, or color definitions
+header-includes: |
+  \definecolor{purple}{HTML}{A100FF}
+  \definecolor{lightgray}{HTML}{F5F5F5}
+  \definecolor{darkblue}{HTML}{003366}
+
+# ------------------------------------------------------------------------------
+# Pandoc Filters and Extensions
+# ------------------------------------------------------------------------------
+# Configure pandoc-latex-environment filter for colored boxes
+# Requires: --filter pandoc-latex-environment
+pandoc-latex-environment:
+  noteblock: [note]
+  tipblock: [tip]
+  warningblock: [warning]
+  cautionblock: [caution]
+  importantblock: [important]
+
+# ------------------------------------------------------------------------------
+# Font Configuration
+# ------------------------------------------------------------------------------
+# Option 1: Use standard system fonts (recommended for compatibility)
+mainfont: Arial                           # Main document font
+sansfont: Arial                           # Font for headings and TOC
+monofont: Courier New                     # Font for code blocks
+
+# Option 2: Use custom fonts with paths
+# Uncomment and adjust paths as needed
+# mainfont: Graphik-Regular.ttf
+# mainfontoptions:
+#   - Path=fonts/
+#   - BoldFont=Graphik-Bold.ttf
+#   - ItalicFont=Graphik-Regular-Italic.ttf
+#   - BoldItalicFont=Graphik-Bold-Italic.ttf
+#
+# sansfont: Graphik-Regular.ttf
+# sansfontoptions:
+#   - Path=fonts/
+#   - BoldFont=Graphik-Bold.ttf
+#   - ItalicFont=Graphik-Regular-Italic.ttf
+#   - BoldItalicFont=Graphik-Bold-Italic.ttf
+
+# ------------------------------------------------------------------------------
+# Logo Configuration
+# ------------------------------------------------------------------------------
+# Path is relative to Pandoc execution directory (not affected by --resource-path)
+logo: images/company-logo.eps             # General logo
+logo-width: 100                           # Logo width in points
+
+# Specific logos for different purposes
+titlepage-logo: images/logo-white.eps     # Logo on title page
+footer-logo: images/logo-small.eps        # Logo in footer (if template supports)
+
+# Container-based logo paths (if using docker-pandoc built-in images)
+# logo: /oradba/images/OraDBA_Logo.eps
+# titlepage-logo: /oradba/images/OraDBA_Logo_white.eps
+
+# ------------------------------------------------------------------------------
+# Additional Pandoc Options
+# ------------------------------------------------------------------------------
+# These can also be specified on command line
+
+# Markdown extensions
+# See: https://pandoc.org/MANUAL.html#extensions
+# markdown_extensions: +pipe_tables+backtick_code_blocks
+
+# Bibliography (if using citations)
+# bibliography: references.bib
+# csl: ieee.csl
+
+# ------------------------------------------------------------------------------
+# Usage Examples
+# ------------------------------------------------------------------------------
+# PDF with this metadata:
+#   docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+#     --metadata-file=metadata-advanced.yml \
+#     --template oradba \
+#     --pdf-engine=xelatex \
+#     --filter pandoc-latex-environment \
+#     --resource-path=images \
+#     -o output.pdf \
+#     document.md
+#
+# DOCX with this metadata:
+#   docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+#     --metadata-file=metadata-advanced.yml \
+#     --reference-doc=templates/oradba.docx \
+#     --resource-path=images \
+#     -o output.docx \
+#     document.md
+#
+# See AUTHOR_GUIDE.md for more examples and detailed documentation.
+# ------------------------------------------------------------------------------
