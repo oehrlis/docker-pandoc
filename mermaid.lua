@@ -26,6 +26,37 @@ local function ensure_dir(dir)
   os.execute("mkdir -p " .. pandoc.utils.stringify(dir))
 end
 
+-- Helper function to create Puppeteer config if needed
+local function ensure_puppeteer_config()
+  local config_dir = "build/mermaid/.puppeteer"
+  local config_file = config_dir .. "/config.json"
+  
+  -- Check if config already exists
+  local f = io.open(config_file, "r")
+  if f then
+    f:close()
+    return config_file
+  end
+  
+  -- Create config directory
+  os.execute("mkdir -p " .. config_dir)
+  
+  -- Create minimal config
+  local config = io.open(config_file, "w")
+  if config then
+    config:write('{\n')
+    config:write('  "args": [\n')
+    config:write('    "--no-sandbox",\n')
+    config:write('    "--disable-setuid-sandbox",\n')
+    config:write('    "--disable-dev-shm-usage"\n')
+    config:write('  ]\n')
+    config:write('}\n')
+    config:close()
+  end
+  
+  return config_file
+end
+
 -- Helper function to compute SHA256 hash of a string
 local function sha256(str)
   local cmd = string.format("echo -n %q | sha256sum | cut -d' ' -f1", str)
@@ -62,13 +93,17 @@ local function render_mermaid(code, output_path)
   f:write(code)
   f:close()
   
+  -- Ensure Puppeteer config exists
+  local puppeteer_config = ensure_puppeteer_config()
+  
   -- Render using mmdc
   -- Use --quiet to reduce output noise
   -- Use -b transparent for transparent background
   -- Use -s 2 for 2x scale (better quality)
+  -- Set puppeteer config path
   local cmd = string.format(
-    "%s -i %q -o %q -b transparent -s 2 --quiet 2>&1",
-    MMDC_BIN, temp_mmd, output_path
+    "PUPPETEER_CONFIG_PATH=%q %s -i %q -o %q -b transparent -s 2 --quiet 2>&1",
+    puppeteer_config, MMDC_BIN, temp_mmd, output_path
   )
   
   local success = os.execute(cmd)

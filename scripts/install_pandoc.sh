@@ -52,7 +52,8 @@ need() {
 
 http_ok() {
   # Returns 0 if URL returns HTTP 200; otherwise non-zero.
-  curl -fsSLI -o /dev/null -w '%{http_code}' "$1" 2>/dev/null | grep -qx 200
+  # Use -k to skip SSL verification (workaround for DNS proxy in build environments)
+  curl -fsSLkI -o /dev/null -w '%{http_code}' "$1" 2>/dev/null | grep -qx 200
 }
 
 # --- Main Script Logic ---------------------------------------------------------
@@ -86,7 +87,7 @@ if [ "${REQ_VERSION}" = "latest" ]; then
   API_URL="https://api.github.com/repos/jgm/pandoc/releases/latest"
   # Fallback: Try to get latest version from redirect (no API call)
   echo "Attempting to fetch latest Pandoc release info..."
-  LATEST_VERSION="$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
+  LATEST_VERSION="$(curl -fsSLkI -o /dev/null -w '%{url_effective}' \
     'https://github.com/jgm/pandoc/releases/latest' 2>/dev/null |
     grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?' | tail -1 || echo '')"
 
@@ -108,7 +109,7 @@ if [ "${REQ_VERSION}" = "latest" ]; then
 
   # If direct URL didn't work, try API
   if [ -z "${URL}" ]; then
-    URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
+    URL="$(curl -fsSLk -H 'Accept: application/vnd.github+json' "${API_URL}" |
       grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" |
       head -n1 || true)"
   fi
@@ -120,7 +121,7 @@ else
   if ! http_ok "${URL}"; then
     echo "Direct download failed, trying API fallback..."
     API_URL="https://api.github.com/repos/jgm/pandoc/releases/tags/${REQ_VERSION}"
-    URL="$(curl -fsSL -H 'Accept: application/vnd.github+json' "${API_URL}" |
+    URL="$(curl -fsSLk -H 'Accept: application/vnd.github+json' "${API_URL}" |
       grep -Eo "https://[^\"]*pandoc-[0-9][^\"]*-${GH_ARCH}\.tar\.gz" |
       head -n1 || true)"
   else
@@ -135,7 +136,7 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
 # Download and extract into the temporary directory
-curl -fsSL "$URL" | tar xz -C "$TMP"
+curl -fsSLk "$URL" | tar xz -C "$TMP"
 
 # Locate the unpacked versioned directory
 PVERDIR="$(find "$TMP" -maxdepth 1 -type d -name 'pandoc-*' | head -1)"

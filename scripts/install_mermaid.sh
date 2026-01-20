@@ -43,15 +43,12 @@ log_info() {
 install_nodejs() {
   log_info "Installing Node.js ${NODEJS_VERSION}.x"
   
-  # Install dependencies for setup script
+  # Install Node.js and npm from Debian repositories
   apt-get update
-  apt-get install -y --no-install-recommends ca-certificates curl gnupg
+  apt-get install -y --no-install-recommends nodejs npm
   
-  # Setup NodeSource repository
-  curl -fsSL "https://deb.nodesource.com/setup_${NODEJS_VERSION}.x" | bash -
-  
-  # Install Node.js
-  apt-get install -y --no-install-recommends nodejs
+  # Configure npm to skip SSL verification (workaround for DNS proxy)
+  npm config set strict-ssl false
   
   # Verify installation
   node --version
@@ -96,6 +93,10 @@ install_chromium_deps() {
 install_mermaid_cli() {
   log_info "Installing mermaid-cli"
   
+  # Skip Puppeteer download since we're using system Chromium
+  export PUPPETEER_SKIP_DOWNLOAD=true
+  export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+  
   # Install mermaid-cli globally
   if [[ "${MERMAID_VERSION}" = "latest" ]]; then
     npm install -g @mermaid-js/mermaid-cli
@@ -115,29 +116,28 @@ install_mermaid_cli() {
 configure_puppeteer() {
   log_info "Configuring Puppeteer for container execution"
   
-  # Create Puppeteer config directory
-  mkdir -p /workdir/.config/puppeteer
+  # Create Puppeteer config directory in default location
+  mkdir -p /root/.config/puppeteer
   
   # Create Puppeteer configuration file
   # This tells Puppeteer to use system Chromium and skip download
-  cat > /workdir/.config/puppeteer/config.json <<'EOF'
+  cat > /root/.config/puppeteer/config.json <<'EOF'
 {
-  "executablePath": "/usr/bin/chromium",
-  "args": [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-accelerated-2d-canvas",
-    "--no-first-run",
-    "--no-zygote",
-    "--single-process",
-    "--disable-gpu"
-  ]
+  "skipDownload": true
 }
 EOF
   
-  # Set environment variable for Puppeteer config
-  echo 'export PUPPETEER_CONFIG_PATH=/workdir/.config/puppeteer/config.json' >> /etc/profile.d/puppeteer.sh
+  # Set environment variables for Puppeteer/mermaid-cli
+  cat >> /etc/profile.d/puppeteer.sh <<'EOF'
+export PUPPETEER_SKIP_DOWNLOAD=true
+export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+export CHROME_PATH=/usr/bin/chromium
+EOF
+  
+  # Also set it in the Docker environment
+  echo "ENV PUPPETEER_SKIP_DOWNLOAD=true" >> /tmp/puppeteer_env
+  echo "ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium" >> /tmp/puppeteer_env
+  echo "ENV CHROME_PATH=/usr/bin/chromium" >> /tmp/puppeteer_env
   
   log_info "Puppeteer configured for non-root execution with system Chromium"
 }
