@@ -266,13 +266,13 @@ Result:
 ```markdown
 ::: note
 **Note** This is important information that readers should be aware of.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Always use the `--resource-path` option when your images are in subdirectories.
 :::
 ```
 
 ::: note
 **Note** This is important information that readers should be aware of.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Always use the `--resource-path` option when your images are in subdirectories.
 :::
 
 ### Tip Box
@@ -280,13 +280,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ```markdown
 ::: tip
 **Tip** This is a helpful suggestion or best practice.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Use `--pdf-engine=xelatex` for better font support with custom templates.
 :::
 ```
 
 ::: tip
 **Tip** This is a helpful suggestion or best practice.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Use `--pdf-engine=xelatex` for better font support with custom templates.
 :::
 
 ### Warning Box
@@ -294,13 +294,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ```markdown
 ::: warning
 **Warning** This is a warning about potential issues or risks.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Missing the `--filter pandoc-latex-environment` option will cause boxes to
+render as plain text.
 :::
 ```
 
 ::: warning
 **Warning** This is a warning about potential issues or risks.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Missing the `--filter pandoc-latex-environment` option will cause boxes to
+render as plain text.
 :::
 
 ### Caution Box
@@ -308,13 +310,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ```markdown
 ::: caution
 **Caution** This requires special attention or care.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Ensure Docker volumes are mounted with `:z` flag on SELinux systems to avoid
+permission issues.
 :::
 ```
 
 ::: caution
 **Caution** This requires special attention or care.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Ensure Docker volumes are mounted with `:z` flag on SELinux systems to avoid
+permission issues.
 :::
 
 ### Important Box
@@ -322,13 +326,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 ```markdown
 ::: important
 **Important** This is critical information that must not be missed.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The container runs as uid/gid 1000, so host file ownership must match to avoid
+permission errors.
 :::
 ```
 
 ::: important
 **Important** This is critical information that must not be missed.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The container runs as uid/gid 1000, so host file ownership must match to avoid
+permission errors.
 :::
 
 ### Boxes with Rich Content
@@ -337,34 +343,36 @@ Markdown formatting is fully supported inside boxes:
 
 ````markdown
 ::: important
-**Lorem ipsum dolor** sit amet, `consectetur adipiscing` elit.
+**Configuration tip**: Set `metadata-file` option for complex documents with
+multiple source files.
 
-```java
-if(args.length < 2) {
-    System.out.println("Important code example");
-}
+```bash
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+  --metadata-file=config.yml \
+  doc/*.md -o output.pdf
 ```
 
-*Nam aliquet libero quis lectus elementum fermentum.*
+*This approach keeps your Pandoc commands clean and maintainable.*
 
-- Item 1
-- Item 2
+- Easier to version control
+- Reusable across projects
 :::
 ````
 
 ::: important
-**Lorem ipsum dolor** sit amet, `consectetur adipiscing` elit.
+**Configuration tip**: Set `metadata-file` option for complex documents with
+multiple source files.
 
-```java
-if(args.length < 2) {
-    System.out.println("Important code example");
-}
+```bash
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+  --metadata-file=config.yml \
+  doc/*.md -o output.pdf
 ```
 
-*Nam aliquet libero quis lectus elementum fermentum.*
+*This approach keeps your Pandoc commands clean and maintainable.*
 
-- Item 1
-- Item 2
+- Easier to version control
+- Reusable across projects
 :::
 
 ## Building This Document

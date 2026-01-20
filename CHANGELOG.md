@@ -51,7 +51,7 @@ All documentation enhancements incorporate content from the following sources in
 - [templates/techdoc.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/techdoc.tex) - Technical documentation template
 - [templates/trivadis.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/trivadis.tex) - Trivadis corporate template
 
-## [Unreleased] - 2026-01-19
+## [Unreleased] - 2024-01-19
 
 ### Added
 
