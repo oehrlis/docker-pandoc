@@ -150,7 +150,9 @@ RUN set -eux; \
     echo "==> TeX Live installed for ${IMAGE_VARIANT} variant"; \
   else \
     echo "==> Skipping TeX Live for ${IMAGE_VARIANT} variant"; \
-    apt-get update && apt-get install -y --no-install-recommends fontconfig && rm -rf /var/lib/apt/lists/*; \
+    apt-get update || true; \
+    apt-get install -y --no-install-recommends fontconfig || true; \
+    rm -rf /var/lib/apt/lists/* || true; \
   fi
 
 # --- Setup PATH and symlinks ------------------------------------------------
