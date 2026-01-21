@@ -128,7 +128,9 @@ This image includes built-in support for **Mermaid diagrams**, which are automat
 
 ### Mermaid Diagrams
 
-Mermaid diagrams in Markdown code blocks are automatically detected and rendered to PNG images during Pandoc execution. No manual pre-rendering required.
+Mermaid diagrams in Markdown code blocks are automatically detected and
+rendered to PNG images during Pandoc execution. No manual pre-rendering
+required.
 
 **Usage Example:**
 
@@ -145,7 +147,9 @@ graph TD
     C --> E[Database]
     D --> E
 ```
-```
+
+<!-- markdownlint-disable-next-line MD031 -->
+```text
 
 **Generate PDF with Mermaid:**
 
@@ -157,6 +161,7 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 ```
 
 **Features:**
+
 - Automatic rendering to PNG images
 - Transparent backgrounds for clean integration
 - Hash-based caching (diagrams only re-rendered if changed)
@@ -164,6 +169,7 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 - Output directory: `build/mermaid/` (created automatically)
 
 **Supported Diagram Types:**
+
 - Flowcharts
 - Sequence diagrams  
 - Class diagrams
