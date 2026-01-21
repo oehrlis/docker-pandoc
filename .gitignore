@@ -11,6 +11,12 @@
 # ignore runtime cache and config directories
 .cache/
 .config/
+.pki/
+.puppeteerrc.cjs
+
+# Mermaid build outputs
+build/mermaid/
+**/build/mermaid/
 
 # Eclipse and VSC stuff
 /.pydevproject

@@ -13,11 +13,13 @@
 --   - Transparent background by default
 --   - Graceful fallback if rendering fails
 --   - Output directory: build/mermaid/
+--   - CI/CD support: Set MERMAID_SKIP_RENDERING=true to skip rendering
 -- ==============================================================================
 
 -- Configuration
-local MERMAID_DIR = "build/mermaid"
-local MMDC_BIN = "mmdc"
+local MERMAID_DIR = os.getenv("MERMAID_OUTPUT_DIR") or "build/mermaid"
+local MMDC_BIN = os.getenv("MERMAID_CLI_BIN") or "mmdc"
+local SKIP_RENDERING = os.getenv("MERMAID_SKIP_RENDERING") == "true"
 
 -- Helper function to create directory if it doesn't exist
 local function ensure_dir(dir)
@@ -50,6 +52,14 @@ end
 
 -- Helper function to render Mermaid diagram
 local function render_mermaid(code, output_path)
+  -- Check if rendering is disabled (for CI/CD environments)
+  if SKIP_RENDERING then
+    io.stderr:write("⚠️  Skipping Mermaid rendering (MERMAID_SKIP_RENDERING=true)\n")
+    io.stderr:write("    Set MERMAID_SKIP_RENDERING=false to enable rendering\n")
+    io.stderr:write("    See MERMAID_CI_ALTERNATIVES.md for CI/CD solutions\n")
+    return false
+  end
+  
   -- Create temporary .mmd file
   local temp_mmd = output_path:gsub("%.png$", ".mmd")
   

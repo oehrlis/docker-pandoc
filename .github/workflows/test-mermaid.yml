@@ -1,0 +1,189 @@
+name: Test Mermaid Rendering
+
+on:
+  push:
+    paths:
+      - '**.md'
+      - 'mermaid.lua'
+      - '.github/workflows/test-mermaid.yml'
+  pull_request:
+    paths:
+      - '**.md'
+      - 'mermaid.lua'
+
+jobs:
+  # Option 1: Skip rendering in CI (fastest, most secure)
+  test-skip-rendering:
+    name: Test with Mermaid Rendering Disabled
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t oehrlis/pandoc:test .
+
+      - name: Generate HTML (skip Mermaid)
+        run: |
+          docker run --rm \
+            -v $PWD/examples:/workdir:z \
+            -e MERMAID_SKIP_RENDERING=true \
+            oehrlis/pandoc:test \
+            test-mermaid.md -o output-no-diagrams.html \
+            --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+            --standalone
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-no-diagrams
+          path: examples/output-no-diagrams.html
+
+  # Option 2: Pre-render with mermaid-cli (recommended for production)
+  test-prerender:
+    name: Pre-render Mermaid Diagrams
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install mermaid-cli
+        run: npm install -g @mermaid-js/mermaid-cli
+
+      - name: Install Chromium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+
+      - name: Create Puppeteer config
+        run: |
+          cat > puppeteer-config.json <<EOF
+          {
+            "headless": "new",
+            "args": [
+              "--no-sandbox",
+              "--disable-setuid-sandbox",
+              "--disable-dev-shm-usage",
+              "--disable-gpu"
+            ]
+          }
+          EOF
+
+      - name: Pre-render Mermaid diagrams
+        run: |
+          mkdir -p build/mermaid
+          cd examples
+          
+          # Extract and render first diagram
+          awk '/```mermaid/,/```/ {if (!/```/) print}' test-mermaid.md | \
+            head -n -1 | \
+            mmdc -i - -o ../build/mermaid/diagram1.png \
+              --puppeteerConfigFile ../puppeteer-config.json \
+              -b transparent || true
+          
+          echo "✅ Pre-rendered diagrams"
+          ls -lh ../build/mermaid/
+
+      - name: Build Docker image
+        run: docker build -t oehrlis/pandoc:test .
+
+      - name: Generate PDF with pre-rendered diagrams
+        run: |
+          docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:test \
+            examples/test-mermaid.md -o examples/output.pdf \
+            --pdf-engine=xelatex || echo "PDF generation skipped (TeX Live not installed)"
+
+      - name: Upload diagrams
+        uses: actions/upload-artifact@v4
+        with:
+          name: mermaid-diagrams
+          path: build/mermaid/*.png
+
+  # Option 3: Use mermaid.ink (no Chromium needed)
+  test-mermaid-ink:
+    name: Test with mermaid.ink Service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create mermaid.ink filter
+        run: |
+          cat > mermaid-ink.lua <<'EOF'
+          function CodeBlock(block)
+            if block.classes[1] == "mermaid" then
+              local code = block.text
+              -- Encode diagram to base64
+              local handle = io.popen("echo -n '" .. code:gsub("'", "'\\''") .. "' | base64 -w 0")
+              local base64 = handle:read("*a")
+              handle:close()
+              
+              local url = "https://mermaid.ink/img/" .. base64
+              io.stderr:write("🔗 Rendering via mermaid.ink: " .. url:sub(1, 80) .. "...\n")
+              
+              return pandoc.Para{pandoc.Image("Diagram", url)}
+            end
+          end
+          EOF
+
+      - name: Build Docker image
+        run: docker build -t oehrlis/pandoc:test .
+
+      - name: Generate HTML with mermaid.ink
+        run: |
+          docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:test \
+            examples/test-mermaid.md -o examples/output-ink.html \
+            --lua-filter /workdir/mermaid-ink.lua \
+            --standalone
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-with-mermaid-ink
+          path: examples/output-ink.html
+
+  # Option 4: Test with SYS_ADMIN (not recommended, but works)
+  test-with-sys-admin:
+    name: Test with SYS_ADMIN (⚠️ Not Recommended)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' # Only on PRs for testing
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image with Chromium
+        run: |
+          # Build test-chromium variant
+          docker build -f Dockerfile.fix -t oehrlis/pandoc:test-chromium .
+
+      - name: Generate HTML with Mermaid (using SYS_ADMIN)
+        run: |
+          docker run --rm --cap-add=SYS_ADMIN \
+            -v $PWD/examples:/workdir:z \
+            oehrlis/pandoc:test-chromium \
+            test-mermaid.md -o output-full.html \
+            --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+            --standalone
+
+      - name: Verify diagrams rendered
+        run: |
+          if [ -d examples/build/mermaid ]; then
+            echo "✅ Mermaid diagrams rendered successfully"
+            ls -lh examples/build/mermaid/
+          else
+            echo "❌ No diagrams found"
+            exit 1
+          fi
+
+      - name: Upload full result
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-with-full-rendering
+          path: |
+            examples/output-full.html
+            examples/build/mermaid/*.png
