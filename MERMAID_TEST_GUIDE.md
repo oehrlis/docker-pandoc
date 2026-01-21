@@ -1,9 +1,11 @@
 # Mermaid Support Testing Guide
 
 ## Overview
+
 This guide provides step-by-step instructions to build and test the new Mermaid diagram support that was recently merged.
 
 ## Prerequisites
+
 - Docker installed and running
 - At least 5GB of free disk space
 - Stable internet connection (Node.js installation downloads ~45MB of packages)
@@ -11,6 +13,7 @@ This guide provides step-by-step instructions to build and test the new Mermaid 
 ## Build Process
 
 ### Option 1: Full Build (Recommended)
+
 ```bash
 cd /Users/stefan.oehrli/Development/github/oehrlis/docker-pandoc
 
@@ -28,6 +31,7 @@ make build
 **Build time estimate**: 10-15 minutes (depending on network speed)
 
 ### Option 2: Direct Docker Build
+
 ```bash
 cd /Users/stefan.oehrli/Development/github/oehrlis/docker-pandoc
 
@@ -39,6 +43,7 @@ docker build --no-cache -t oehrlis/pandoc:test .
 ```
 
 ### Option 3: Build with Specific Platform
+
 ```bash
 # For ARM64 (Apple Silicon)
 docker build --platform linux/arm64 -t oehrlis/pandoc:test .
@@ -50,11 +55,13 @@ docker build --platform linux/amd64 -t oehrlis/pandoc:test .
 ## Verify Installation
 
 ### Step 1: Check Pandoc Version
+
 ```bash
 docker run --rm oehrlis/pandoc:test --version
 ```
 
 **Expected output:**
+
 ```
 pandoc 3.8.3
 Features: +server +lua
@@ -62,27 +69,32 @@ Features: +server +lua
 ```
 
 ### Step 2: Check Mermaid CLI Installation
+
 ```bash
 docker run --rm --entrypoint sh oehrlis/pandoc:test -c "command -v mmdc && mmdc --version"
 ```
 
 **Expected output:**
+
 ```
 /usr/local/bin/mmdc
 11.4.0
 ```
 
 **If this fails:**
+
 - The build didn't complete successfully
 - Node.js or mermaid-cli wasn't installed
 - Check build logs for errors in the `install_mermaid.sh` step
 
 ### Step 3: Check Lua Filter
+
 ```bash
 docker run --rm --entrypoint sh oehrlis/pandoc:test -c "ls -la /workdir/mermaid.lua"
 ```
 
 **Expected output:**
+
 ```
 -rw-r--r--    1 root     root          XXXX Jan 21 XX:XX /workdir/mermaid.lua
 ```
@@ -90,6 +102,7 @@ docker run --rm --entrypoint sh oehrlis/pandoc:test -c "ls -la /workdir/mermaid.
 ## Test Mermaid Rendering
 
 ### Test 1: Simple Mermaid Diagram
+
 ```bash
 cd /Users/stefan.oehrli/Development/github/oehrlis/docker-pandoc/examples
 
@@ -103,10 +116,12 @@ ls -lh test-mermaid.pdf
 ```
 
 **Expected result:**
+
 - `test-mermaid.pdf` file created (size should be >50KB)
 - PDF should contain rendered diagrams (flowchart and sequence diagram)
 
 **If this fails:**
+
 - Error message will indicate the problem
 - Common issues:
   - "mmdc: command not found" → mermaid-cli not installed
@@ -114,6 +129,7 @@ ls -lh test-mermaid.pdf
   - "Permission denied" → Volume mount or user permissions
 
 ### Test 2: Check Generated Images
+
 Mermaid diagrams are converted to images first. Check if they're generated:
 
 ```bash
@@ -127,6 +143,7 @@ ls -la *.png *.svg 2>/dev/null
 ```
 
 ### Test 3: Test with Custom Document
+
 Create a simple test document:
 
 ```bash
@@ -144,17 +161,23 @@ flowchart LR
 ```
 
 ## Done
+
 EOF
 
 # Generate PDF
+
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:test \
   mermaid-test-simple.md -o mermaid-test-simple.pdf \
   --lua-filter /workdir/mermaid.lua
 
 # Open the PDF
+
 open mermaid-test-simple.pdf  # macOS
+
 # or
+
 xdg-open mermaid-test-simple.pdf  # Linux
+
 ```
 
 ## Troubleshooting
@@ -186,20 +209,24 @@ docker run --rm --entrypoint sh oehrlis/pandoc:test -c "npm list -g --depth=0"
 **Solution**: Rebuild image ensuring `scripts/install_mermaid.sh` executes successfully
 
 ### Issue: Chromium/Puppeteer Errors
+
 **Symptoms**: Errors about display, sandbox, or browser
 
 **Possible errors**:
+
 ```
 Error: Failed to launch the browser process!
 No usable sandbox! Update your kernel
 ```
 
 **Check Puppeteer configuration**:
+
 ```bash
 docker run --rm --entrypoint sh oehrlis/pandoc:test -c "cat /workdir/.config/puppeteer/config.json"
 ```
 
 **Expected content**:
+
 ```json
 {
   "args": ["--no-sandbox", "--disable-setuid-sandbox"]
@@ -209,9 +236,11 @@ docker run --rm --entrypoint sh oehrlis/pandoc:test -c "cat /workdir/.config/pup
 **Solution**: This should be handled automatically by `install_mermaid.sh`. If not, rebuild with `--no-cache`.
 
 ### Issue: Permission Errors
+
 **Symptoms**: Cannot write output file
 
 **Solution**:
+
 ```bash
 # Ensure output directory is writable
 chmod 755 $PWD
@@ -224,9 +253,11 @@ docker run --rm --user $(id -u):$(id -g) \
 ```
 
 ### Issue: Build Interrupted
+
 **Symptoms**: Build was cancelled/interrupted mid-way
 
 **Solution**:
+
 ```bash
 # Clean up partial images
 docker image prune -f
@@ -269,6 +300,7 @@ docker run --rm --entrypoint sh oehrlis/pandoc:test -c "
 ```
 
 **Expected output** (all checks should pass):
+
 ```
 === System Info ===
 PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
@@ -321,6 +353,7 @@ flowchart TD
 ```
 
 ## 2. Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -330,6 +363,7 @@ sequenceDiagram
 ```
 
 ## 3. Class Diagram
+
 ```mermaid
 classDiagram
     Animal <|-- Duck
@@ -344,6 +378,7 @@ classDiagram
 ```
 
 ## 4. State Diagram
+
 ```mermaid
 stateDiagram-v2
     [*] --> Still
@@ -355,6 +390,7 @@ stateDiagram-v2
 ```
 
 ## 5. Gantt Chart
+
 ```mermaid
 gantt
     title Project Timeline
@@ -365,16 +401,20 @@ gantt
     section Phase 2
     Task 3           :2024-02-01, 25d
 ```
+
 EOF
 
 # Generate PDF
+
 docker run --rm -v $PWD/examples:/workdir:z oehrlis/pandoc:test \
   comprehensive-mermaid-test.md -o comprehensive-mermaid-test.pdf \
   --lua-filter /workdir/../mermaid.lua \
   --toc -N
 
 # Check result
+
 ls -lh examples/comprehensive-mermaid-test.pdf
+
 ```
 
 ### Performance Testing
@@ -412,6 +452,7 @@ docker push oehrlis/pandoc:4.0.0-mermaid
 ## Next Steps
 
 If all tests pass:
+
 1. Update CHANGELOG.md with Mermaid support
 2. Update README.md with Mermaid usage examples
 3. Create release notes
@@ -421,6 +462,7 @@ If all tests pass:
 ## Support
 
 If you encounter issues not covered here:
+
 1. Check build logs: `docker build . 2>&1 | tee build-debug.log`
 2. Search for similar issues in the repository
 3. Create a GitHub issue with:

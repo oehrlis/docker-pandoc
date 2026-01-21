@@ -118,29 +118,40 @@ COPY --from=builder /usr/local/bin/pandoc /usr/local/bin/pandoc
 COPY --from=builder /usr/share/fonts /usr/share/fonts
 COPY --from=builder /etc/fonts /etc/fonts
 
+# --- Declare IMAGE_VARIANT for conditional installations ---------------------
+ARG IMAGE_VARIANT=standard
+
 # --- Install minimal TeX Live for PDF generation -----------------------------
+# Conditional: Skip for 'minimal' and 'mermaid' variants
 RUN set -eux; \
-  { \
-    echo 'Acquire::Retries "5";'; \
-    echo 'Acquire::http::Timeout "120";'; \
-    echo 'Acquire::https::Timeout "120";'; \
-    echo 'Acquire::ftp::Timeout "120";'; \
-  } > /etc/apt/apt.conf.d/80retries; \
-  apt-get update; \
-  apt-get install -y --no-install-recommends \
-    texlive-xetex \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-fonts-recommended \
-    fontconfig \
-    lmodern; \
-  rm -rf /var/lib/apt/lists/* \
-         /var/cache/apt/archives/* \
-         /usr/share/doc/* \
-         /usr/share/man/* \
-         /usr/share/texlive/texmf-dist/doc/* \
-         /tmp/* \
-         /var/tmp/*
+  if [ "${IMAGE_VARIANT}" != "minimal" ] && [ "${IMAGE_VARIANT}" != "mermaid" ]; then \
+    { \
+      echo 'Acquire::Retries "5";'; \
+      echo 'Acquire::http::Timeout "120";'; \
+      echo 'Acquire::https::Timeout "120";'; \
+      echo 'Acquire::ftp::Timeout "120";'; \
+    } > /etc/apt/apt.conf.d/80retries; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      texlive-xetex \
+      texlive-latex-base \
+      texlive-latex-recommended \
+      texlive-latex-extra \
+      texlive-fonts-recommended \
+      fontconfig \
+      lmodern; \
+    rm -rf /var/lib/apt/lists/* \
+           /var/cache/apt/archives/* \
+           /usr/share/doc/* \
+           /usr/share/man/* \
+           /usr/share/texlive/texmf-dist/doc/* \
+           /tmp/* \
+           /var/tmp/*; \
+    echo "==> TeX Live installed for ${IMAGE_VARIANT} variant"; \
+  else \
+    echo "==> Skipping TeX Live for ${IMAGE_VARIANT} variant"; \
+    apt-get update && apt-get install -y --no-install-recommends fontconfig && rm -rf /var/lib/apt/lists/*; \
+  fi
 
 # --- Setup PATH and symlinks ------------------------------------------------
 RUN set -eux; \
@@ -164,26 +175,38 @@ RUN set -eux; \
 #   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # --- Install Mermaid CLI for diagram rendering --------------------------------
+# Conditional: Install for 'full' and 'mermaid' variants only
 COPY scripts/install_mermaid.sh /usr/local/src/scripts/
 RUN set -eux; \
-  { \
-    echo 'Acquire::Retries "5";'; \
-    echo 'Acquire::http::Timeout "120";'; \
-    echo 'Acquire::https::Timeout "120";'; \
-    echo 'Acquire::ftp::Timeout "120";'; \
-  } > /etc/apt/apt.conf.d/80retries; \
-  chmod +x /usr/local/src/scripts/install_mermaid.sh; \
-  /usr/local/src/scripts/install_mermaid.sh
+  if [ "${IMAGE_VARIANT}" = "full" ] || [ "${IMAGE_VARIANT}" = "mermaid" ]; then \
+    { \
+      echo 'Acquire::Retries "5"'; \
+      echo 'Acquire::http::Timeout "120"'; \
+      echo 'Acquire::https::Timeout "120"'; \
+      echo 'Acquire::ftp::Timeout "120"'; \
+    } > /etc/apt/apt.conf.d/80retries; \
+    chmod +x /usr/local/src/scripts/install_mermaid.sh; \
+    /usr/local/src/scripts/install_mermaid.sh; \
+    echo "==> Mermaid installed for ${IMAGE_VARIANT} variant"; \
+  else \
+    echo "==> Skipping Mermaid for ${IMAGE_VARIANT} variant"; \
+  fi
 
 # --- Install fonts + runtime deps (non-essential, skip failures) ---------------
+# Conditional: Full fonts for standard/full, minimal for minimal/mermaid
 COPY scripts/install_fonts_runtime.sh /usr/local/src/scripts/
 RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends curl; \
-    chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
-    /usr/local/src/scripts/install_fonts_runtime.sh || true; \
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/* || true
+    if [ "${IMAGE_VARIANT}" = "standard" ] || [ "${IMAGE_VARIANT}" = "full" ]; then \
+      apt-get update; \
+      apt-get install -y --no-install-recommends curl; \
+      chmod +x /usr/local/src/scripts/install_fonts_runtime.sh; \
+      /usr/local/src/scripts/install_fonts_runtime.sh || true; \
+      apt-get clean; \
+      rm -rf /var/lib/apt/lists/* || true; \
+      echo "==> Full fonts installed for ${IMAGE_VARIANT} variant"; \
+    else \
+      echo "==> Minimal fonts for ${IMAGE_VARIANT} variant"; \
+    fi
 
 # --- Install OraDBA Pandoc templates from local files -------------------------
 COPY templates/ "${ORADBA}/templates/"
