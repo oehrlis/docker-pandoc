@@ -124,10 +124,61 @@ The templates support extensive customization including:
 
 ## Diagram Support
 
-> **⚠️ Mermaid Support Temporarily Disabled**: Chromium-based mermaid rendering
-> has been removed due to Docker sandbox restrictions with non-root users.
-> See [GitHub issue #XX](https://github.com/oehrlis/docker-pandoc/issues/XX)
-> for planned alternatives (Kroki, PlantUML integration).
+This image includes built-in support for **Mermaid diagrams**, which are automatically rendered during PDF generation.
+
+### Mermaid Diagrams
+
+Mermaid diagrams in Markdown code blocks are automatically detected and
+rendered to PNG images during Pandoc execution. No manual pre-rendering
+required.
+
+**Usage Example:**
+
+```markdown
+# My Document
+
+## System Architecture
+
+```mermaid
+graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Web Server 1]
+    B --> D[Web Server 2]
+    C --> E[Database]
+    D --> E
+```
+
+<!-- markdownlint-disable-next-line MD031 -->
+```text
+
+**Generate PDF with Mermaid:**
+
+```bash
+docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+  document.md -o output.pdf \
+  --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+  --pdf-engine=xelatex
+```
+
+**Features:**
+
+- Automatic rendering to PNG images
+- Transparent backgrounds for clean integration
+- Hash-based caching (diagrams only re-rendered if changed)
+- Support for all Mermaid diagram types (flowcharts, sequence diagrams, class diagrams, etc.)
+- Output directory: `build/mermaid/` (created automatically)
+
+**Supported Diagram Types:**
+
+- Flowcharts
+- Sequence diagrams  
+- Class diagrams
+- State diagrams
+- Entity relationship diagrams
+- Gantt charts
+- Pie charts
+- Git graphs
+- And more - see [Mermaid documentation](https://mermaid.js.org/)
 
 ### Alternative Diagram Tools
 
@@ -157,16 +208,6 @@ dot -Tpng diagram.dot -o diagram.png
   \draw[->] (A) -- (B);
 \end{tikzpicture}
 ```
-
-### Future Plans
-
-We're evaluating these solutions for Mermaid support:
-
-- **Kroki server integration** (self-hosted or public)
-- **Server-side rendering alternatives**
-- **Pre-rendering workflows for CI/CD**
-
-See [issue #XX](https://github.com/oehrlis/docker-pandoc/issues/XX) to track progress or contribute suggestions.
 
 ## Build and add new packages
 

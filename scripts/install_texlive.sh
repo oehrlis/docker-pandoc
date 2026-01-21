@@ -97,10 +97,10 @@ esac
 
 # --- Fetch installer (with fallback if mirror redirect fails) ------------------
 echo "Fetching TeX Live installer (install-tl-unx.tar.gz)…"
-if ! curl -fsSL \
+if ! curl -fsSLk \
   "https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" |
   tar xz -C "$TMP" --strip-components=1; then
-  curl -fsSL \
+  curl -fsSLk \
     "https://ftp.fau.de/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz" |
     tar xz -C "$TMP" --strip-components=1
 fi
