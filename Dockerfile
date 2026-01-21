@@ -130,12 +130,17 @@ RUN set -eux; \
   apt-get install -y --no-install-recommends \
     texlive-xetex \
     texlive-latex-base \
-    texlive-latex-extra \
+    texlive-latex-recommended \
     texlive-fonts-recommended \
-    texlive-fonts-extra \
     fontconfig \
     lmodern; \
-  rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+  rm -rf /var/lib/apt/lists/* \
+         /var/cache/apt/archives/* \
+         /usr/share/doc/* \
+         /usr/share/man/* \
+         /usr/share/texlive/texmf-dist/doc/* \
+         /tmp/* \
+         /var/tmp/*
 
 # --- Setup PATH and symlinks ------------------------------------------------
 RUN set -eux; \

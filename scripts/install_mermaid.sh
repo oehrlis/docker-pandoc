@@ -156,15 +156,23 @@ EOF
 
 # ------------------------------------------------------------------------------
 # Function: cleanup
-# Purpose.: Clean up package manager caches
+# Purpose.: Clean up package manager caches and unnecessary files
 # Returns.: 0 on success
 # ------------------------------------------------------------------------------
 cleanup() {
-  log_info "Cleaning up package manager caches"
+  log_info "Cleaning up package manager caches and unnecessary files"
 
   apt-get clean
   rm -rf /var/lib/apt/lists/*
   npm cache clean --force
+  rm -rf /root/.npm /tmp/* /var/tmp/*
+  
+  # Remove unnecessary files from node_modules to save space
+  find /usr/local/lib/node_modules -name "*.md" -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "test" -type d -exec rm -rf {} + 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "*.ts" -delete 2>/dev/null || true
+  
+  log_info "Cleanup completed"
 }
 
 # ------------------------------------------------------------------------------

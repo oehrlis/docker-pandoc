@@ -1,0 +1,34 @@
+# Build context exclusions
+.git/
+.github/
+.gitignore
+.vscode/
+.DS_Store
+
+# Documentation (not needed in image)
+*.md
+!CHANGELOG.md
+!LICENSE
+
+# Examples and test files
+examples/
+sample/
+build/
+*.html
+*.pdf
+*.log
+
+# Development files
+node_modules/
+.cache/
+.config/
+.pki/
+.npm/
+.puppeteerrc.cjs
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.*.swp
+/tmp/
