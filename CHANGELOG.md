@@ -7,7 +7,76 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2024-01-20
+## [Unreleased] - 2026-01-21
+
+### Added
+
+- **Mermaid diagram support** (#23):
+  - Automatic rendering of Mermaid code blocks to PNG images
+  - Integration with mermaid-cli 11.12.0 and Chromium 144.0.7559.59
+  - Lua filter at `/usr/local/share/pandoc/filters/mermaid.lua`
+  - Hash-based caching for efficient regeneration
+  - Transparent backgrounds for clean PDF integration
+  - Support for all Mermaid diagram types (flowcharts, sequence, class, state, ER, Gantt, etc.)
+- **TeX Live installation** for full PDF generation support:
+  - texlive-xetex for XeLaTeX engine
+  - texlive-latex-base and texlive-latex-extra packages
+  - texlive-fonts-recommended and texlive-fonts-extra
+  - lmodern fonts for better typography
+- **CI/CD alternatives documentation**:
+  - Comprehensive guide: `MERMAID_CI_ALTERNATIVES.md` with 5 security-conscious solutions
+  - GitHub Actions workflow: `.github/workflows/test-mermaid.yml` demonstrating all approaches
+  - Pre-rendering, Kroki service, mermaid.ink, and conditional rendering options
+- **Mermaid documentation suite**:
+  - `MERMAID_STATUS.md` - Implementation status and architecture
+  - `MERMAID_TEST_GUIDE.md` - Comprehensive 400+ line testing guide
+  - `MERMAID_QUICK_TEST.md` - Quick reference card
+  - `MERMAID_CHROMIUM_FIX.md` - Working solution and troubleshooting
+- Environment variable controls for Mermaid rendering:
+  - `MERMAID_SKIP_RENDERING` - Skip rendering in CI/CD environments
+  - `MERMAID_OUTPUT_DIR` - Custom output directory
+  - `MERMAID_CLI_BIN` - Custom mermaid-cli binary path
+- Updated `.gitignore` to exclude Chromium artifacts and rendered diagrams
+
+### Changed
+
+- **Dockerfile enhancements**:
+  - Added TeX Live installation in runtime stage (~660MB packages)
+  - Included Chromium and dependencies for Mermaid rendering
+  - Added retry logic for APT operations (5 attempts, 120s timeout)
+- **README.md updates**:
+  - Added Mermaid diagram support section with usage examples
+  - Documented `--cap-add=SYS_ADMIN` requirement for Chromium
+  - Added CI/CD considerations with link to alternatives guide
+  - Included environment variable examples for conditional rendering
+- **mermaid.lua filter improvements**:
+  - Added environment variable support for flexible configuration
+  - Enhanced error messages when rendering is disabled
+  - Improved documentation with CI/CD usage notes
+
+### Security
+
+- **CI/CD security enhancements**:
+  - Documented alternatives to `--cap-add=SYS_ADMIN` for production pipelines
+  - Pre-rendering approach eliminates runtime browser requirements
+  - Self-hosted Kroki option avoids external dependencies
+  - Conditional rendering for security-sensitive environments
+
+### Documentation
+
+- Fixed markdown lint issues across all documentation files
+- Added comprehensive CI/CD workflow examples
+- Enhanced README with security considerations
+- Cross-referenced all Mermaid-related documentation
+
+### Technical Notes
+
+- Mermaid rendering requires `--cap-add=SYS_ADMIN` for local development
+- For CI/CD, use pre-rendering or Kroki service (see MERMAID_CI_ALTERNATIVES.md)
+- XeLaTeX recommended as PDF engine (`--pdf-engine=xelatex`)
+- Container runs as non-root user (pandoc, uid 1000)
+
+## [Previous Release] - 2024-01-20
 
 ### Added
 

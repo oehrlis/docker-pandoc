@@ -148,8 +148,9 @@ graph TD
     D --> E
 ```
 
-<!-- markdownlint-disable-next-line MD031 -->
-```
+<!-- markdownlint-disable MD031 -->
+
+```text
 
 **Generate PDF with Mermaid:**
 
@@ -169,15 +170,20 @@ docker run --rm --cap-add=SYS_ADMIN -v $PWD:/workdir:z oehrlis/pandoc \
 - Support for all Mermaid diagram types (flowcharts, sequence diagrams, class diagrams, etc.)
 - Output directory: `build/mermaid/` (created automatically)
 
-**Important:** Mermaid diagram rendering requires the `--cap-add=SYS_ADMIN` Docker capability to allow Chromium to create namespaces. This is a standard requirement for running Chromium/Puppeteer in containers.
+**Important:** Mermaid diagram rendering requires the `--cap-add=SYS_ADMIN` Docker capability to allow
+Chromium to create namespaces. This is a standard requirement for running Chromium/Puppeteer in containers.
 
-**CI/CD Environments:** For security reasons, `--cap-add=SYS_ADMIN` may not be acceptable in CI/CD pipelines. See **[MERMAID_CI_ALTERNATIVES.md](MERMAID_CI_ALTERNATIVES.md)** for alternative solutions including:
+**CI/CD Environments:** For security reasons, `--cap-add=SYS_ADMIN` may not be acceptable in CI/CD
+pipelines. See **[MERMAID_CI_ALTERNATIVES.md](MERMAID_CI_ALTERNATIVES.md)** for alternative solutions
+including:
+
 - Pre-rendering diagrams as a separate CI step
 - Using Kroki service (self-hosted or public)
 - Using mermaid.ink for simple diagrams
 - Conditional rendering with environment variables
 
 To skip Mermaid rendering in CI:
+
 ```bash
 docker run --rm -v $PWD:/workdir:z -e MERMAID_SKIP_RENDERING=true oehrlis/pandoc \
   document.md -o output.pdf --lua-filter /usr/local/share/pandoc/filters/mermaid.lua
