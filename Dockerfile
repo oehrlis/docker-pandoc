@@ -118,9 +118,24 @@ COPY --from=builder /usr/local/bin/pandoc /usr/local/bin/pandoc
 COPY --from=builder /usr/share/fonts /usr/share/fonts
 COPY --from=builder /etc/fonts /etc/fonts
 
-# --- Copy TeX Live tools and data from builder stage -------------------------------
-# SKIPPED: TeX Live installation requires too much disk space in build environment
-# We can test Mermaid rendering to PNG without PDF generation for now
+# --- Install minimal TeX Live for PDF generation -----------------------------
+RUN set -eux; \
+  { \
+    echo 'Acquire::Retries "5";'; \
+    echo 'Acquire::http::Timeout "120";'; \
+    echo 'Acquire::https::Timeout "120";'; \
+    echo 'Acquire::ftp::Timeout "120";'; \
+  } > /etc/apt/apt.conf.d/80retries; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+    texlive-xetex \
+    texlive-latex-base \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    fontconfig \
+    lmodern; \
+  rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # --- Setup PATH and symlinks ------------------------------------------------
 RUN set -eux; \

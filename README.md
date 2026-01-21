@@ -149,12 +149,13 @@ graph TD
 ```
 
 <!-- markdownlint-disable-next-line MD031 -->
-```text
+```
 
 **Generate PDF with Mermaid:**
 
 ```bash
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
+# Note: --cap-add=SYS_ADMIN required for Chromium browser execution
+docker run --rm --cap-add=SYS_ADMIN -v $PWD:/workdir:z oehrlis/pandoc \
   document.md -o output.pdf \
   --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
   --pdf-engine=xelatex
@@ -162,11 +163,13 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 
 **Features:**
 
-- Automatic rendering to PNG images
+- Automatic rendering to PNG images via Chromium/Puppeteer
 - Transparent backgrounds for clean integration
 - Hash-based caching (diagrams only re-rendered if changed)
 - Support for all Mermaid diagram types (flowcharts, sequence diagrams, class diagrams, etc.)
 - Output directory: `build/mermaid/` (created automatically)
+
+**Important:** Mermaid diagram rendering requires the `--cap-add=SYS_ADMIN` Docker capability to allow Chromium to create namespaces. This is a standard requirement for running Chromium/Puppeteer in containers.
 
 **Supported Diagram Types:**
 
