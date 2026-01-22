@@ -110,19 +110,37 @@ docker run --rm --cap-add=SYS_ADMIN -v $PWD:/workdir:z \
 
 ## Building Variants
 
-### Build all variants locally
+### Build all variants locally (single platform)
 ```bash
+# Builds for current architecture only (fast, for testing)
 ./scripts/build-variants.sh
+```
+
+### Build all variants for multiple platforms
+```bash
+# Builds for linux/amd64 and linux/arm64, pushes to registry
+MULTI_PLATFORM=true ./scripts/build-variants.sh
 ```
 
 ### Build specific variant
 ```bash
+# Single variant, single platform
 docker build --build-arg IMAGE_VARIANT=minimal -t oehrlis/pandoc:dev-minimal .
+
+# Single variant, multi-platform
+docker buildx build --platform linux/amd64,linux/arm64 \
+  --build-arg IMAGE_VARIANT=minimal \
+  -t oehrlis/pandoc:4.0.0-minimal \
+  --push .
 ```
 
-### Build for multiple architectures
+### Custom configuration
 ```bash
-PLATFORM="linux/amd64,linux/arm64" PUSH=true ./scripts/build-variants.sh
+# Custom image name and version
+IMAGE_NAME=myrepo/pandoc VERSION=1.0.0 ./scripts/build-variants.sh
+
+# Multi-platform with custom platforms
+MULTI_PLATFORM=true PLATFORM="linux/amd64,linux/arm64,linux/arm/v7" ./scripts/build-variants.sh
 ```
 
 ## Choosing the Right Variant

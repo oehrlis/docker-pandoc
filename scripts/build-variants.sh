@@ -6,10 +6,19 @@
 # Author.....: Stefan Oehrli (oes) stefan.oehrli@oradba.ch
 # Editor.....: Stefan Oehrli
 # Date.......: 2026-01-21
-# Revision...: 1.0.0
+# Revision...: 1.1.0
 # Purpose....: Build all Pandoc Docker image variants
 # Notes......: Creates minimal, standard, full, and mermaid variants
 #              Each variant has different features and size tradeoffs
+# Usage......:
+#   # Single platform (local testing)
+#   ./build-variants.sh
+#
+#   # Multi-platform build and push
+#   MULTI_PLATFORM=true ./build-variants.sh
+#
+#   # Custom configuration
+#   IMAGE_NAME=myrepo/pandoc VERSION=1.0.0 MULTI_PLATFORM=true ./build-variants.sh
 # Reference..: https://github.com/oehrlis/docker-pandoc
 # License....: Apache License Version 2.0, January 2004
 # ------------------------------------------------------------------------------
@@ -22,8 +31,16 @@ IFS=$'\n\t'
 # ------------------------------------------------------------------------------
 IMAGE_NAME="${IMAGE_NAME:-oehrlis/pandoc}"
 VERSION="${VERSION:-$(cat VERSION 2>/dev/null || echo "dev")}"
-PLATFORM="${PLATFORM:-linux/arm64}"  # Default to current platform for testing
+MULTI_PLATFORM="${MULTI_PLATFORM:-false}"
 PUSH="${PUSH:-false}"
+
+# Determine platform(s) to build for
+if [ "${MULTI_PLATFORM}" = "true" ]; then
+  PLATFORM="${PLATFORM:-linux/amd64,linux/arm64}"
+  PUSH="true"  # Multi-platform requires --push
+else
+  PLATFORM="${PLATFORM:-linux/arm64}"  # Default to current platform
+fi
 
 # ------------------------------------------------------------------------------
 # Functions
