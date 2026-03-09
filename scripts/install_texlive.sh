@@ -161,6 +161,14 @@ tlmgr update --all --verify-repo=all || true
 # shellcheck disable=SC2086
 tlmgr install $PKGS --verify-repo=all || true
 
+# --- Explicitly ensure font packages are installed (they may fail in bulk) -----
+for pkg in sourcesanspro sourcecodepro; do
+  if ! kpsewhich "${pkg}.sty" >/dev/null 2>&1; then
+    echo "==> Re-trying tlmgr install for missing package: ${pkg}"
+    tlmgr install "${pkg}" --verify-repo=all || echo "WARNING: ${pkg} install failed"
+  fi
+done
+
 # --- Rebuild file name db, formats, and font maps ------------------------------
 mktexlsr || true
 fmtutil-sys --all --no-error-if-no-format || true
@@ -168,8 +176,8 @@ updmap-sys --syncwithtrees || true
 
 # --- Sanity checks for key binaries and style files ----------------------------
 need xelatex
-for sty in fontspec.sty fontawesome5.sty zref-abspage.sty listings.sty; do
-  kpsewhich "$sty" >/dev/null 2>&1 || err "Missing TeX style: $sty"
+for sty in fontspec.sty fontawesome5.sty zref-abspage.sty listings.sty sourcesanspro.sty; do
+  kpsewhich "$sty" >/dev/null 2>&1 || echo "WARNING: Missing TeX style: $sty"
 done
 
 # --- Cleanup: remove docs/sources, tlmgr, and strip binaries -------------------

@@ -166,10 +166,14 @@ verify_image_exists() {
 # ------------------------------------------------------------------------------
 generate_pdf_sample() {
   local image_tag="$1"
-  local run_opts=(-v "${PWD}:/workdir:z" "${image_tag}")
+
+  if ! has_xelatex "${image_tag}"; then
+    log_detail "PDF (SKIPPED - xelatex not in this variant)"
+    return 0
+  fi
 
   log_detail "PDF"
-  docker run --rm "${run_opts[@]}" \
+  docker run --rm -v "${PWD}:/workdir:z" "${image_tag}" \
     --metadata-file sample/metadata.yml --filter pandoc-latex-environment \
     --resource-path=sample --pdf-engine=xelatex \
     -o sample/sample.pdf sample/sample.md
@@ -208,17 +212,48 @@ generate_pptx_sample() {
 }
 
 # ------------------------------------------------------------------------------
-# Function: generate_mermaid_test
-# Purpose.: Generate Mermaid diagram test PDF
+# Function: has_mermaid
+# Purpose.: Check if mmdc (mermaid-cli) is available in the image
 # Args....: $1 - Docker image tag
-# Returns.: 0 on success
+# Returns.: 0 if mmdc found, 1 otherwise
+# ------------------------------------------------------------------------------
+has_mermaid() {
+  local image_tag="$1"
+  docker run --rm --entrypoint sh "${image_tag}" -c "command -v mmdc" >/dev/null 2>&1
+}
+
+# ------------------------------------------------------------------------------
+# Function: has_xelatex
+# Purpose.: Check if xelatex is available in the image
+# Args....: $1 - Docker image tag
+# Returns.: 0 if xelatex found, 1 otherwise
+# ------------------------------------------------------------------------------
+has_xelatex() {
+  local image_tag="$1"
+  docker run --rm --entrypoint sh "${image_tag}" -c "command -v xelatex" >/dev/null 2>&1
+}
+
+# ------------------------------------------------------------------------------
+# Function: generate_mermaid_test
+# Purpose.: Generate Mermaid diagram test PDF (mermaid/full variants only)
+# Args....: $1 - Docker image tag
+# Returns.: 0 on success, skipped if mmdc/xelatex not present
 # ------------------------------------------------------------------------------
 generate_mermaid_test() {
   local image_tag="$1"
-  local run_opts=(-v "${PWD}:/workdir:z" "${image_tag}")
+
+  if ! has_mermaid "${image_tag}"; then
+    log_detail "Mermaid PDF Test (SKIPPED - mmdc not in this variant)"
+    return 0
+  fi
+  if ! has_xelatex "${image_tag}"; then
+    log_detail "Mermaid PDF Test (SKIPPED - xelatex not in this variant)"
+    return 0
+  fi
 
   log_detail "Mermaid PDF Test"
-  docker run --rm "${run_opts[@]}" \
+  docker run --rm --cap-add=SYS_ADMIN \
+    -v "${PWD}:/workdir:z" "${image_tag}" \
     examples/test-mermaid.md \
     -o examples/test-output.pdf \
     --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
