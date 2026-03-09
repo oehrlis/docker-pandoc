@@ -81,7 +81,7 @@ The [Dockerfile](Dockerfile) uses a multi-stage build pattern:
 
 ### Directory Structure
 
-```
+```text
 /workdir/                 # User workspace (volume mount point)
 /oradba/                  # Templates, themes, images
 /opt/pandoc-data/         # Pandoc data directory
@@ -91,6 +91,7 @@ The [Dockerfile](Dockerfile) uses a multi-stage build pattern:
 ### Template Integration
 
 Templates are embedded in the Docker image (not downloaded at runtime):
+
 - All templates copied from `templates/` directory during build
 - Themes from `themes/` directory
 - Images from `images/` directory
@@ -187,12 +188,14 @@ make test
 ```
 
 This runs `scripts/test.sh` which generates:
+
 1. **PDF** from Markdown (with XeLaTeX engine)
 2. **DOCX** from Markdown
 3. **PPTX** from Markdown
 4. **Mermaid diagrams** in PDF
 
 Test documents use:
+
 - `sample/sample.md` - Main test document
 - `sample/metadata.yml` - Pandoc metadata configuration
 - `examples/test-mermaid.md` - Mermaid diagram test
@@ -200,11 +203,13 @@ Test documents use:
 ### Expected Behavior
 
 #### Successful Output
+
 - Sample documents generated in `sample/` directory
 - PDF renders correctly with custom LaTeX template
 - Mermaid diagrams embedded in PDF
 
 #### Expected Warnings
+
 - LaTeX warnings about `\underbar` and `\underline` changes (from ulem package)
 - These warnings are **non-fatal** and can be ignored
 
@@ -250,6 +255,7 @@ make release BUMP=major
 ```
 
 This will:
+
 1. Bump version in `VERSION` file
 2. Commit the change
 3. Create a git tag
@@ -274,6 +280,7 @@ git push --tags
 ### Automated Release Workflow
 
 When a version tag is pushed:
+
 1. GitHub Actions workflow (`.github/workflows/release.yml`) triggers
 2. Multi-platform Docker image built (linux/amd64, linux/arm64)
 3. Image pushed to Docker Hub as:
@@ -292,7 +299,8 @@ When a version tag is pushed:
 
 **Symptom**: `Failed to fetch` errors during Debian package installation
 
-**Solution**: Retry the build. The Dockerfile includes retry logic (5 attempts, 120s timeout), but network instability can still cause failures.
+**Solution**: Retry the build. The Dockerfile includes retry logic (5 attempts,
+120s timeout), but network instability can still cause failures.
 
 ```bash
 # Retry the build
@@ -319,6 +327,7 @@ docker buildx build --no-cache -t oehrlis/pandoc:dev .
 **Explanation**: Multi-platform builds cannot be loaded to local Docker, they must be pushed to a registry.
 
 **Solution**: Either:
+
 - Push to registry: `make build-multi`
 - Or build single platform: `make build`
 
@@ -345,18 +354,20 @@ docker run --rm -u root -v $PWD:/workdir:z oehrlis/pandoc [OPTIONS]
 
 **Symptom**: Mermaid diagram rendering fails with sandbox namespace errors
 
-```
+```text
 Error: Failed to launch the browser process!
 Failed to move to new namespace: PID namespaces supported, Network namespace supported, but failed: errno = Operation not permitted
 ```
 
-**Root Cause**: Chromium requires either root privileges or `--no-sandbox` flag, but even with the flag, Docker's security restrictions prevent namespace creation for non-root users.
+**Root Cause**: Chromium requires either root privileges or `--no-sandbox` flag,
+but even with the flag, Docker's security restrictions prevent namespace creation for non-root users.
 
 **Current Status**: ⚠️ **Known Limitation** - Mermaid diagram rendering does not work in the containerized non-root environment.
 
 **Workarounds**:
 
 1. **Use mermaid-cli locally** (outside Docker):
+
    ```bash
    npm install -g @mermaid-js/mermaid-cli
    mmdc -i diagram.mmd -o diagram.png
@@ -364,6 +375,7 @@ Failed to move to new namespace: PID namespaces supported, Network namespace sup
    ```
 
 2. **Pre-render diagrams** before using the container:
+
    ```bash
    # Generate PNG diagrams first
    mmdc -i diagram.mmd -o diagram.png
@@ -378,18 +390,21 @@ Failed to move to new namespace: PID namespaces supported, Network namespace sup
    - TikZ (LaTeX-native, works with XeLaTeX)
 
 **Not Recommended** (Security Risk):
+
 ```bash
 # Run container as root (bypasses security)
 docker run --rm --user root -v $PWD:/workdir:z oehrlis/pandoc [OPTIONS]
 ```
 
 **Technical Details**: The issue arises because:
+
 - Chromium/Puppeteer requires sandbox namespace creation
 - Docker's default seccomp profile blocks certain syscalls for non-root users
 - Adding `--no-sandbox` flag disables security features but doesn't resolve namespace permission issues
 - Running as root poses security risks and is not recommended for production use
 
 **Future Resolution**: This limitation may be resolved by:
+
 - Using headless rendering alternatives (e.g., Playwright with different backend)
 - Running with `--security-opt` Docker flags (requires host-level configuration)
 - Switching to server-side SVG rendering libraries that don't require browsers
@@ -422,7 +437,8 @@ This is already fixed in `templates/oradba.tex` (line 358).
 
 **Symptom**: `! LaTeX Error: Option clash for package X`
 
-**Solution**: Check package load order in template. Packages with options must be loaded before packages that load them as dependencies.
+**Solution**: Check package load order in template. Packages with options must be
+loaded before packages that load them as dependencies.
 
 ### Development Workflow Issues
 
@@ -509,7 +525,7 @@ download_file() {
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -518,6 +534,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -527,7 +544,8 @@ Types:
 - `chore`: Build process, tooling changes
 
 Examples:
-```
+
+```tex
 feat(templates): Add new techdoc template
 fix(docker): Resolve Chromium sandbox issue
 docs(readme): Update installation instructions

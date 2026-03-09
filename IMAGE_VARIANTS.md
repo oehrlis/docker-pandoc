@@ -6,14 +6,14 @@ cases. All variants are built for `linux/amd64` and `linux/arm64`.
 
 ## Docker Hub Tags
 
-| Tag | Variant | Description |
-|-----|---------|-------------|
-| `latest` | standard | Default — Pandoc + TeX Live + fonts + templates |
-| `VERSION` | standard | Pinned release, same content as `latest` |
-| `VERSION-minimal` | minimal | Pandoc only, no TeX, no Mermaid |
-| `VERSION-standard` | standard | Pandoc + TeX Live + fonts + templates |
-| `VERSION-mermaid` | mermaid | Pandoc + Mermaid/Chromium, no TeX |
-| `VERSION-full` | full | All features: TeX + Mermaid + fonts + templates |
+| Tag                | Variant  | Description                                     |
+|--------------------|----------|-------------------------------------------------|
+| `latest`           | standard | Default — Pandoc + TeX Live + fonts + templates |
+| `VERSION`          | standard | Pinned release, same content as `latest`        |
+| `VERSION-minimal`  | minimal  | Pandoc only, no TeX, no Mermaid                 |
+| `VERSION-standard` | standard | Pandoc + TeX Live + fonts + templates           |
+| `VERSION-mermaid`  | mermaid  | Pandoc + Mermaid/Chromium, no TeX               |
+| `VERSION-full`     | full     | All features: TeX + Mermaid + fonts + templates |
 
 > `latest` and `VERSION` always point to the **standard** variant.
 
@@ -28,6 +28,7 @@ cases. All variants are built for `linux/amd64` and `linux/arm64`.
 **Does not include:** TeX Live · Mermaid/Chromium · extra fonts · templates
 
 **Use when:**
+
 - Converting Markdown → HTML, JSON, or other text formats
 - CI/CD pipelines where image size is critical
 - No PDF or template requirements
@@ -39,7 +40,7 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-minimal \
 
 ---
 
-### `standard` (~800 MB–1 GB) · **DEFAULT / `latest`**
+### `standard` (~800 MB-1 GB) · **DEFAULT / `latest`**
 
 **Includes:** Pandoc · TeX Live (XeLaTeX + packages) · MS Core Fonts, Open Sans,
 Montserrat · OraDBA / TechDoc / Trivadis LaTeX templates · Pandoc Python filters
@@ -48,6 +49,7 @@ Montserrat · OraDBA / TechDoc / Trivadis LaTeX templates · Pandoc Python filte
 **Does not include:** Mermaid/Chromium
 
 **Use when:**
+
 - Generating PDFs from Markdown (most common use case)
 - Using custom LaTeX templates
 - Professional documents with custom fonts
@@ -69,7 +71,7 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:latest \
 
 ---
 
-### `mermaid` (~900 MB–1 GB)
+### `mermaid` (~900 MB-1 GB)
 
 **Includes:** Pandoc · Node.js · mermaid-cli (`mmdc`) · Chromium · `mermaid.lua`
 Lua filter
@@ -77,6 +79,7 @@ Lua filter
 **Does not include:** TeX Live · custom templates
 
 **Use when:**
+
 - Rendering Mermaid diagrams in HTML output
 - Diagram-to-PNG/SVG workflows
 - Web-based documentation without PDF requirements
@@ -94,12 +97,13 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-mermaid \
 
 ---
 
-### `full` (~1.3–1.5 GB)
+### `full` (~1.3-1.5 GB)
 
 **Includes:** Everything — Pandoc · TeX Live · Mermaid/Chromium · all fonts ·
 all templates · Python filters
 
 **Use when:**
+
 - Documents need both **PDF output** and **Mermaid diagrams**
 - Complete documentation pipelines
 - Development and testing environments
@@ -117,19 +121,19 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-full \
 
 ## Feature Matrix
 
-| Feature | minimal | standard | mermaid | full |
-|---------|:-------:|:--------:|:-------:|:----:|
-| **Approx. size** | ~250 MB | ~800 MB–1 GB | ~900 MB–1 GB | ~1.3–1.5 GB |
-| Pandoc binary | ✅ | ✅ | ✅ | ✅ |
-| TeX Live / XeLaTeX | ❌ | ✅ | ❌ | ✅ |
-| PDF generation | ❌ | ✅ | ❌ | ✅ |
-| LaTeX templates | ❌ | ✅ | ❌ | ✅ |
-| MS Core / custom fonts | ❌ | ✅ | ❌ | ✅ |
-| Python filters | ❌ | ✅ | ❌ | ✅ |
-| Mermaid CLI (`mmdc`) | ❌ | ❌ | ✅ | ✅ |
-| Chromium | ❌ | ❌ | ✅ | ✅ |
-| Node.js | ❌ | ❌ | ✅ | ✅ |
-| `mermaid.lua` filter | ✅ | ✅ | ✅ | ✅ |
+| Feature                | minimal |   standard   |   mermaid    |    full     |
+|------------------------|---------|--------------|--------------|-------------|
+| **Approx. size**       | ~250 MB | ~800 MB-1 GB | ~900 MB-1 GB | ~1.3-1.5 GB |
+| Pandoc binary          |    ✅   |      ✅      |      ✅      |      ✅     |
+| TeX Live / XeLaTeX     |    ❌   |      ✅      |      ❌      |      ✅     |
+| PDF generation         |    ❌   |      ✅      |      ❌      |      ✅     |
+| LaTeX templates        |    ❌   |      ✅      |      ❌      |      ✅     |
+| MS Core / custom fonts |    ❌   |      ✅      |      ❌      |      ✅     |
+| Python filters         |    ❌   |      ✅      |      ❌      |      ✅     |
+| Mermaid CLI (`mmdc`)   |    ❌   |      ❌      |      ✅      |      ✅     |
+| Chromium               |    ❌   |      ❌      |      ✅      |      ✅     |
+| Node.js                |    ❌   |      ❌      |      ✅      |      ✅     |
+| `mermaid.lua` filter   |    ✅   |      ✅      |      ✅      |      ✅     |
 
 > `mermaid.lua` is present in all variants. In `minimal` and `standard` it
 > gracefully skips rendering when `mmdc` is absent (falls back to code block).
@@ -140,13 +144,13 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-full \
 
 The `mermaid.lua` Lua filter accepts these environment variables:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MERMAID_IMAGE_WIDTH` | `80%` | Image width as % of line width |
-| `MERMAID_IMAGE_MAX_HEIGHT` | `75%` | Max height as % of page height (keepaspectratio) |
-| `MERMAID_OUTPUT_DIR` | `build/mermaid` | Directory for rendered PNGs |
-| `MERMAID_CLI_BIN` | `mmdc` | Path to mermaid-cli binary |
-| `MERMAID_SKIP_RENDERING` | _(unset)_ | Set to `true` to skip rendering (pass-through) |
+| Variable                   | Default         | Description                                      |
+|----------------------------|-----------------|--------------------------------------------------|
+| `MERMAID_IMAGE_WIDTH`      | `80%`           | Image width as % of line width                   |
+| `MERMAID_IMAGE_MAX_HEIGHT` | `75%`           | Max height as % of page height (keepaspectratio) |
+| `MERMAID_OUTPUT_DIR`       | `build/mermaid` | Directory for rendered PNGs                      |
+| `MERMAID_CLI_BIN`          | `mmdc`          | Path to mermaid-cli binary                       |
+| `MERMAID_SKIP_RENDERING`   | _(unset)_       | Set to `true` to skip rendering (pass-through)   |
 
 **Caption support** — add a `caption` attribute to the fenced code block:
 
@@ -210,20 +214,20 @@ make build-multi             # linux/amd64 + linux/arm64, pushes all tags above
 
 ### Tag strategy summary
 
-| Tag | Points to |
-| --- | --------- |
-| `latest` | standard variant |
-| `VERSION` | standard variant |
-| `VERSION-minimal` | minimal variant |
+| Tag                | Points to        |
+|--------------------|------------------|
+| `latest`           | standard variant |
+| `VERSION`          | standard variant |
+| `VERSION-minimal`  | minimal variant  |
 | `VERSION-standard` | standard variant |
-| `VERSION-mermaid` | mermaid variant |
-| `VERSION-full` | full variant |
+| `VERSION-mermaid`  | mermaid variant  |
+| `VERSION-full`     | full variant     |
 
 ---
 
 ## Choosing the Right Variant
 
-```
+```text
 Need PDF output?
 ├── Yes → Need Mermaid diagrams?
 │         ├── Yes → full

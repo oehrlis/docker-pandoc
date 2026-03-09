@@ -1,10 +1,13 @@
 # Author and User Guide
 <!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
-<!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
 
-> **Note**: This guide incorporates advanced template documentation and best practices from the [oehrlis/pandoc_template](https://github.com/oehrlis/pandoc_template) repository. See the [References](#references) section for specific source citations.
+> **Note**: This guide incorporates advanced template documentation and best
+> practices from the [oehrlis/pandoc_template](https://github.com/oehrlis/pandoc_template)
+> repository. See the [References](#references) section for specific source citations.
 
-This comprehensive guide covers authoring documents with the docker-pandoc image, including advanced template options, metadata configuration, formatting examples, and troubleshooting.
+This comprehensive guide covers authoring documents with the docker-pandoc image,
+including advanced template options, metadata configuration, formatting examples,
+and troubleshooting.
 
 ## Table of Contents
 
@@ -22,7 +25,8 @@ This comprehensive guide covers authoring documents with the docker-pandoc image
 
 ## Quick Start
 
-The docker-pandoc image provides a complete Pandoc environment with LaTeX, custom templates, and fonts. Basic usage:
+The docker-pandoc image provides a complete Pandoc environment with LaTeX, custom
+templates, and fonts. Basic usage:
 
 ```bash
 # Pull the image
@@ -64,13 +68,15 @@ authoring, contributing etc:
 
 > *Source: [pandoc_template/AUTHOR_GUIDE.md](https://github.com/oehrlis/pandoc_template/blob/master/AUTHOR_GUIDE.md)*
 
-For larger documents, you can organize content across multiple Markdown files using a naming pattern `NxMM-Title.md`:
+For larger documents, you can organize content across multiple Markdown files
+using a naming pattern `NxMM-Title.md`:
 
 - **N** - Digit for the main chapter number
 - **MM** - Two digits for sorting files within a main chapter
 - **Title** - Descriptive name for the file content
 
-**Important**: The prefix is crucial for proper file ordering during document build. Files without this prefix pattern will be ignored.
+**Important**: The prefix is crucial for proper file ordering during document
+build. Files without this prefix pattern will be ignored.
 
 | Prefix | Chapter Purpose                                             |
 |--------|-------------------------------------------------------------|
@@ -82,7 +88,7 @@ For larger documents, you can organize content across multiple Markdown files us
 
 Example file structure:
 
-```
+```text
 doc/
 ├── 0x01-Preface.md
 ├── 0x02-Revision_History.md
@@ -94,7 +100,9 @@ doc/
 └── metadata.yml
 ```
 
-You can add as many files as you want. The prefix is used for sorting only; Pandoc creates the table of contents based on heading levels within the files (e.g., `#` creates a top-level heading).
+You can add as many files as you want. The prefix is used for sorting only;
+Pandoc creates the table of contents based on heading levels within the files
+(e.g., `#` creates a top-level heading).
 
 ## Markdown Syntax
 
@@ -222,9 +230,12 @@ term
 
 > *Source: [pandoc_template/AUTHOR_GUIDE.md](https://github.com/oehrlis/pandoc_template/blob/master/AUTHOR_GUIDE.md)*
 
-The Markdown syntax is validated using [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli). Any violation of the [markdownlint rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md) will result in an error during CI/CD builds.
+The Markdown syntax is validated using [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli).
+Any violation of the [markdownlint rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)
+will result in an error during CI/CD builds.
 
-You can add exceptions either inline in files or in the global [.markdownlint.json](.markdownlint.json) configuration file.
+You can add exceptions either inline in files or in the global
+[.markdownlint.json](.markdownlint.json) configuration file.
 
 #### Inline Exceptions
 
@@ -330,7 +341,7 @@ footer-center: "Confidential"             # Center of footer
 footer-right: "Page \\thepage"            # Right side of footer (default: page number)
 ```
 
-### Table of Contents
+### Table of Contents Configuration
 
 ```yaml
 toc: true                                 # Enable table of contents
@@ -691,7 +702,6 @@ if(args.length < 2) {
 
 *Nam aliquet libero quis lectus elementum fermentum.*
 :::
-```
 
 ### Using Boxes with Pandoc
 
@@ -771,6 +781,7 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 ```
 
 **Options explained**:
+
 - `--template oradba` - Use custom OraDBA LaTeX template
 - `--pdf-engine=xelatex` - Use XeLaTeX (supports TrueType/OpenType fonts)
 - `--resource-path=images` - Path for resolving images and resources
@@ -881,17 +892,20 @@ You can specify multiple resource paths. Pandoc searches them in order.
 **Solutions**:
 
 1. **Provide logo in expected location**:
+
    ```bash
    mkdir -p images
    cp /path/to/logo.eps images/
    ```
 
 2. **Specify logo in metadata**:
+
    ```yaml
    logo: images/company-logo.eps
    ```
 
 3. **Use command-line variable**:
+
    ```bash
    docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
      document.md -o output.pdf \
@@ -908,6 +922,7 @@ You can specify multiple resource paths. Pandoc searches them in order.
 **Solutions**:
 
 1. **Use standard fonts**:
+
    ```yaml
    mainfont: Arial
    sansfont: Arial
@@ -915,11 +930,13 @@ You can specify multiple resource paths. Pandoc searches them in order.
    ```
 
 2. **Verify font availability** in container:
+
    ```bash
    docker run --rm oehrlis/pandoc fc-list | grep Arial
    ```
 
 3. **Use custom fonts with correct paths**:
+
    ```yaml
    mainfont: CustomFont-Regular.ttf
    mainfontoptions:
@@ -936,6 +953,7 @@ You can specify multiple resource paths. Pandoc searches them in order.
 **Solutions**:
 
 1. **Use built-in templates** by name:
+
    ```bash
    --template oradba
    --template techdoc
@@ -943,11 +961,13 @@ You can specify multiple resource paths. Pandoc searches them in order.
    ```
 
 2. **Provide template path explicitly**:
+
    ```bash
    --template=/workdir/templates/custom.tex
    ```
 
 3. **Verify template exists** in container:
+
    ```bash
    docker run --rm oehrlis/pandoc ls -la /oradba/templates/
    ```
@@ -961,16 +981,19 @@ You can specify multiple resource paths. Pandoc searches them in order.
 **Solutions**:
 
 1. **Fix file ownership** on host:
+
    ```bash
    sudo chown -R 1000:1000 /path/to/documents
    ```
 
 2. **Use SELinux-compatible mount** (`:z` flag):
+
    ```bash
    docker run --rm -v $PWD:/workdir:z oehrlis/pandoc [...]
    ```
 
 3. **Run as root** (not recommended for security):
+
    ```bash
    docker run --rm --user root -v $PWD:/workdir:z oehrlis/pandoc [...]
    ```
@@ -1039,15 +1062,19 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
 **Solutions**:
 
 1. **Enable listings**:
+
    ```bash
    --listings
    ```
+
    Or in metadata:
+
    ```yaml
    listings: true
    ```
 
 2. **Specify language** in code blocks:
+
    ````markdown
    ```python
    def hello():
@@ -1056,6 +1083,7 @@ docker run --rm -v $PWD:/workdir:z oehrlis/pandoc \
    ````
 
 3. **Use Pandoc's highlighting**:
+
    ```bash
    --highlight-style=pygments
    ```
@@ -1096,7 +1124,3 @@ This guide incorporates content and best practices from multiple sources:
 - [Markdownlint Rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)
 - [Awesomebox Package](https://ctan.org/pkg/awesomebox)
 - [Pandoc-LaTeX-Environment Filter](https://github.com/chdemko/pandoc-latex-environment)
-
----
-
-*Last updated: 2024-01-20*

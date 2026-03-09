@@ -1,6 +1,7 @@
 # Contributing to docker-pandoc
 
-Thank you for your interest in contributing to the docker-pandoc project! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to the docker-pandoc project! This
+document provides guidelines and instructions for contributing.
 
 ## Table of Contents
 
@@ -163,7 +164,8 @@ The release workflow automatically:
 
 ### Reporting Issues
 
-Check [existing issues](https://github.com/oehrlis/docker-pandoc/issues) or [create a new issue](https://github.com/oehrlis/docker-pandoc/issues/new) with:
+Check [existing issues](https://github.com/oehrlis/docker-pandoc/issues) or
+[create a new issue](https://github.com/oehrlis/docker-pandoc/issues/new) with:
 
 - Clear description of the problem
 - Steps to reproduce

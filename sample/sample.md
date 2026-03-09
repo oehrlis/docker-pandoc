@@ -2,6 +2,8 @@
 <!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
 <!-- markdownlint-configure-file { "MD024": {"allow_different_nesting": true}} -->
 <!-- markdownlint-configure-file { "MD036": } -->
+<!-- markdownlint-configure-file { "MD049": } -->
+<!-- markdownlint-configure-file { "MD050": } -->
 
 ## Basic Syntax
 
@@ -82,10 +84,10 @@ Markdown applications support these elements.
 
 ### Table
 
-| Syntax | Description |
-| ----------- | ----------- |
-| Header | Title |
-| Paragraph | Text |
+| Syntax    | Description |
+|-----------|-------------|
+| Header    | Title       |
+| Paragraph | Text        |
 
 ### Fenced Code Block
 
