@@ -68,26 +68,25 @@ install_chromium_deps() {
   dpkg --configure -a 2>/dev/null || log_info "Warning: No incomplete packages to configure"
 
   # Install Chromium and required libraries for headless browser
+  # Note: libxss1 is not available in Debian bookworm; omitted intentionally
   apt-get install -y --no-install-recommends \
     chromium \
     chromium-sandbox \
     fonts-liberation \
     fonts-noto-color-emoji \
     libnss3 \
-    libxss1 \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libgbm1 \
-    libgtk-3-0 \
     libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
     libxcomposite1 \
     libxdamage1 \
-    libxrandr2 || {
-    log_info "Warning: Some Chromium dependencies failed to install (continuing with available packages)"
+    libxrandr2 \
+    libgbm1 \
+    libasound2 || {
+    log_info "Warning: Some Chromium dependencies failed to install (continuing)"
   }
 }
 
@@ -103,7 +102,8 @@ install_mermaid_cli() {
   export PUPPETEER_SKIP_DOWNLOAD=true
   export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-  # Install mermaid-cli globally
+  # Install mermaid-cli globally; use pinned version for reproducibility
+  # The Lua filter (mermaid.lua) calls mmdc directly - no mermaid-filter npm pkg needed
   if [[ "${MERMAID_VERSION}" = "latest" ]]; then
     npm install -g @mermaid-js/mermaid-cli
   else

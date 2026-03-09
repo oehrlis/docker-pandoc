@@ -7,179 +7,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-01-21
+## [Unreleased] - 2026-03-09
 
 ### Added
 
-- **Mermaid diagram support** (#23):
-  - Automatic rendering of Mermaid code blocks to PNG images
-  - Integration with mermaid-cli 11.12.0 and Chromium 144.0.7559.59
-  - Lua filter at `/usr/local/share/pandoc/filters/mermaid.lua`
-  - Hash-based caching for efficient regeneration
-  - Transparent backgrounds for clean PDF integration
-  - Support for all Mermaid diagram types (flowcharts, sequence, class, state, ER, Gantt, etc.)
-- **TeX Live installation** for full PDF generation support:
-  - texlive-xetex for XeLaTeX engine
-  - texlive-latex-base and texlive-latex-extra packages
-  - texlive-fonts-recommended and texlive-fonts-extra
-  - lmodern fonts for better typography
-- **CI/CD alternatives documentation**:
-  - Comprehensive guide: `MERMAID_CI_ALTERNATIVES.md` with 5 security-conscious solutions
-  - GitHub Actions workflow: `.github/workflows/test-mermaid.yml` demonstrating all approaches
-  - Pre-rendering, Kroki service, mermaid.ink, and conditional rendering options
-- **Mermaid documentation suite**:
-  - `MERMAID_STATUS.md` - Implementation status and architecture
-  - `MERMAID_TEST_GUIDE.md` - Comprehensive 400+ line testing guide
-  - `MERMAID_QUICK_TEST.md` - Quick reference card
-  - `MERMAID_CHROMIUM_FIX.md` - Working solution and troubleshooting
-- Environment variable controls for Mermaid rendering:
-  - `MERMAID_SKIP_RENDERING` - Skip rendering in CI/CD environments
-  - `MERMAID_OUTPUT_DIR` - Custom output directory
-  - `MERMAID_CLI_BIN` - Custom mermaid-cli binary path
-- Updated `.gitignore` to exclude Chromium artifacts and rendered diagrams
-
-### Changed
-
-- **Dockerfile enhancements**:
-  - Added TeX Live installation in runtime stage (~660MB packages)
-  - Included Chromium and dependencies for Mermaid rendering
-  - Added retry logic for APT operations (5 attempts, 120s timeout)
-- **README.md updates**:
-  - Added Mermaid diagram support section with usage examples
-  - Documented `--cap-add=SYS_ADMIN` requirement for Chromium
-  - Added CI/CD considerations with link to alternatives guide
-  - Included environment variable examples for conditional rendering
-- **mermaid.lua filter improvements**:
-  - Added environment variable support for flexible configuration
-  - Enhanced error messages when rendering is disabled
-  - Improved documentation with CI/CD usage notes
-
-### Security
-
-- **CI/CD security enhancements**:
-  - Documented alternatives to `--cap-add=SYS_ADMIN` for production pipelines
-  - Pre-rendering approach eliminates runtime browser requirements
-  - Self-hosted Kroki option avoids external dependencies
-  - Conditional rendering for security-sensitive environments
-
-### Documentation
-
-- Fixed markdown lint issues across all documentation files
-- Added comprehensive CI/CD workflow examples
-- Enhanced README with security considerations
-- Cross-referenced all Mermaid-related documentation
-
-### Technical Notes
-
-- Mermaid rendering requires `--cap-add=SYS_ADMIN` for local development
-- For CI/CD, use pre-rendering or Kroki service (see MERMAID_CI_ALTERNATIVES.md)
-- XeLaTeX recommended as PDF engine (`--pdf-engine=xelatex`)
-- Container runs as non-root user (pandoc, uid 1000)
-
-## [Previous Release] - 2024-01-20
-
-### Added
-
-- **Comprehensive AUTHOR_GUIDE.md enhancements**:
-  - Advanced template options documentation (title pages, colors, headers/footers, logos)
-  - Complete YAML metadata configuration examples with all supported variables
-  - Box types and custom environments section (note, tip, warning, caution, important boxes)
-  - Comprehensive troubleshooting guide (resource paths, mounting, fonts, templates, permissions)
-  - Markdownlint configuration examples (inline and global)
-  - Pandoc filters usage documentation
-  - Output formats section covering PDF, DOCX, PPTX, HTML, EPUB, and LaTeX
-  - References section with complete citations to oehrlis/pandoc_template sources
-- `examples/metadata-advanced.yml` - Complete metadata configuration example with all available options and inline documentation
-- `examples/formatting-examples.md` - Comprehensive formatting reference demonstrating all Markdown syntax, extended features, and box types
-- Enhanced README.md with:
-  - Advanced template features overview
-  - Better cross-references to AUTHOR_GUIDE.md
-  - Organized Documentation section for different audiences
-  - Updated References section with pandoc_template repository links
-
-### Changed
-
-- Restructured AUTHOR_GUIDE.md with improved organization:
-  - Added Table of Contents for easy navigation
-  - Moved from basic "release guide" to comprehensive "authoring and user guide"
-  - Incorporated best practices from oehrlis/pandoc_template repository
-  - Enhanced with practical examples and code snippets
-- Updated README.md template section with advanced usage example
-- Enhanced documentation structure with clear separation for users, contributors, and developers
-
-### Documentation Sources
-
-All documentation enhancements incorporate content from the following sources in the [oehrlis/pandoc_template](https://github.com/oehrlis/pandoc_template) repository:
-
-- [README.md](https://github.com/oehrlis/pandoc_template/blob/master/README.md) - Template usage and configuration
-- [AUTHOR_GUIDE.md](https://github.com/oehrlis/pandoc_template/blob/master/AUTHOR_GUIDE.md) - Document structure and authoring
-- [examples/complex/README.md](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/README.md) - Complex document examples
-- [examples/complex/doc/4x00-Formatting_Examples.md](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/doc/4x00-Formatting_Examples.md) - Comprehensive formatting examples
-- [examples/complex/metadata.yml](https://github.com/oehrlis/pandoc_template/blob/master/examples/complex/metadata.yml) - Complete metadata example
-- [templates/oradba.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/oradba.tex) - OraDBA template source
-- [templates/techdoc.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/techdoc.tex) - Technical documentation template
-- [templates/trivadis.tex](https://github.com/oehrlis/pandoc_template/blob/master/templates/trivadis.tex) - Trivadis corporate template
-
-## [Unreleased] - 2024-01-19
-
-### Added
-
+- Implement `IMAGE_VARIANT` build argument in Dockerfile supporting four variants: `minimal`, `standard`, `mermaid`, `full`
+- Add `mermaid.lua` Lua filter for Mermaid diagram rendering via mermaid-cli (`mmdc`) and Chromium
+- Add `scripts/install_mermaid.sh` for reproducible Mermaid/Chromium/Node.js installation
+- Add `IMAGE_VARIANTS.md` documenting all variants, feature matrix, and usage examples
 - Add `lineno` package to TeX Live minimal installation
 - Add `\newcounter{none}` to LaTeX template for Pandoc table compatibility with caption package
 - Add custom environment definitions (noteblock, tipblock, warningblock, cautionblock, importantblock) mapped to awesomebox for pandoc-latex-environment filter
-- Add `DEVELOPMENT.md` - comprehensive local development guide covering architecture, build system, testing, troubleshooting, and coding standards
-- Add `.github/copilot-instructions.md` - detailed project documentation for GitHub Copilot context
-- Add GitHub API fallback mechanism in `install_pandoc.sh` to bypass rate limiting by using direct download URLs
-- Add `.cache/` and `.config/` to `.gitignore` for runtime artifacts
-- Add `.github/ISSUE_MERMAID_SUPPORT.md` - tracking issue for future Mermaid/Kroki implementation
 
 ### Changed
 
+- Restructure Dockerfile into two-stage build with conditional TeX Live (standard/full), conditional Mermaid/Chromium (mermaid/full), conditional fonts and templates
+- Replace inline Node.js/Chromium RUN block with `scripts/install_mermaid.sh` call
+- Update `scripts/install_mermaid.sh` Chromium dependency list for Debian bookworm (remove unavailable `libxss1`, add `libxkbcommon0`)
+- Set `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD`, `PUPPETEER_EXECUTABLE_PATH`, `CHROME_BIN` as global ENV vars (harmless for non-mermaid variants)
 - Add retry logic and timeouts to APT operations in Dockerfile for improved network reliability
-- Add automatic fallback to alternative Debian mirror (ftp.us.debian.org) if primary repository fails
-- Add BUILDKIT_INLINE_CACHE build argument for better multi-platform build performance
-- Restructured `.github/SETUP.md` to focus on CI/CD configuration, referencing `DEVELOPMENT.md` for local workflows
-- Updated `install_pandoc.sh` to use direct GitHub release URLs first, falling back to API only if needed (avoids rate limiting)
-- Migrated `build.sh`, `release.sh`, and `test.sh` scripts from root to `scripts/` directory
-- Updated `Makefile` to reference scripts in new `scripts/` directory location
-- Changed Git remote from SSH to HTTPS for firewall compatibility
-
-### Removed
-
-- **Mermaid support temporarily removed**: Removed `mermaid-cli`, `mermaid-filter`, Node.js, npm, Chromium, and related dependencies due to Docker sandbox incompatibility with non-root users
-- Removed Chromium and browser dependencies (saves ~300MB in image size)
-- Disabled Mermaid test in `scripts/test.sh`
 
 ### Fixed
 
 - Fix multi-platform Docker build issues with `--load` flag by automatically detecting and using single platform for local builds
 - Fix `build-multi` target to use `--push` instead of `--load` since Docker buildx doesn't support loading manifest lists
-- Fix mermaid-filter version from non-existent 1.4.8 to available 1.4.7
+- Fix `--cap-add=SYS_ADMIN` requirement documented for Mermaid/Chromium rendering
 - Remove deprecated `--listings` flag causing LaTeX errors, replaced with modern Pandoc syntax highlighting
-- Update metadata.yml to comment out deprecated listings configuration that caused "No counter 'none' defined" LaTeX error
-- Fix Pandoc installation failures due to GitHub API rate limiting (403 errors) by implementing direct download URL fallback
-
-### Deprecated
-
-- Mermaid diagram rendering via `mermaid-cli` - will be replaced with Kroki integration in future release
-
-### Documentation
-
-- Added comprehensive `DEVELOPMENT.md` covering local development workflows, architecture, testing, and troubleshooting
-- Updated `README.md` to remove Mermaid feature listing and add Diagram Support section with alternatives (PlantUML, Graphviz, TikZ)
-- Updated `.github/SETUP.md` to clarify separation between CI/CD setup and local development
-- Added `.github/copilot-instructions.md` for AI-assisted development context
-- Created `.github/ISSUE_MERMAID_SUPPORT.md` tracking future Mermaid/Kroki implementation
-
-### Security
-
-- Improved security posture by removing Chromium and Node.js dependencies (reduced attack surface)
-- Maintains non-root container execution without security compromises
-- Fix network connectivity issues during Docker build with retry mechanism and mirror fallback
 - Fix "No counter 'none' defined" LaTeX error for tables without captions by defining missing counter in template
 - Fix pandoc-latex-environment filter compatibility by adding awesomebox environment mappings
 
 ### Removed
+
+- Remove `Dockerfile.fix` (experimental scratch file, superseded by variant Dockerfile)
+- Remove orphan status/planning documents: `PHASE1_RESULTS.md`, `PHASE2_COMPLETE.md`, `PHASE2_IMPLEMENTATION.md`, `OPTIMIZATION_PLAN.md`, `TEST_RESULTS.md`
+- Remove superseded Mermaid debug docs: `MERMAID_CHROMIUM_FIX.md`, `MERMAID_CI_ALTERNATIVES.md`, `MERMAID_QUICK_TEST.md`, `MERMAID_STATUS.md`, `MERMAID_TEST_GUIDE.md`
+- Remove `mermaid-filter.err` error log artifact
+- Remove `mermaid-filter` npm package installation (replaced by `mermaid.lua` Lua filter)
 
 ## [4.0.0] -
 
