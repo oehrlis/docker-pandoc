@@ -1,261 +1,280 @@
 # Docker Image Variants
+<!-- markdownlint-disable MD013 -->
 
-This project provides multiple Docker image variants optimized for different use cases. Each variant includes different features and has different size characteristics.
+This project publishes four Docker image variants optimised for different use
+cases. All variants are built for `linux/amd64` and `linux/arm64`.
 
-## Available Variants
+## Docker Hub Tags
 
-### `pandoc:VERSION-minimal` (~250MB)
+| Tag | Variant | Description |
+|-----|---------|-------------|
+| `latest` | standard | Default — Pandoc + TeX Live + fonts + templates |
+| `VERSION` | standard | Pinned release, same content as `latest` |
+| `VERSION-minimal` | minimal | Pandoc only, no TeX, no Mermaid |
+| `VERSION-standard` | standard | Pandoc + TeX Live + fonts + templates |
+| `VERSION-mermaid` | mermaid | Pandoc + Mermaid/Chromium, no TeX |
+| `VERSION-full` | full | All features: TeX + Mermaid + fonts + templates |
 
-**What's included:**
-- Pandoc binary only
-- Basic system libraries
-- No TeX Live
-- No Mermaid/Chromium
-- No extra fonts
+> `latest` and `VERSION` always point to the **standard** variant.
 
-**Use cases:**
-- Markdown to HTML conversion
-- Markdown to JSON/other text formats
-- Document structure manipulation
-- Format conversions that don't require PDF or custom templates
-- CI/CD pipelines with minimal size requirements
+---
 
-**Example:**
+## Variant Details
+
+### `minimal` (~250 MB)
+
+**Includes:** Pandoc binary · basic system libraries
+
+**Does not include:** TeX Live · Mermaid/Chromium · extra fonts · templates
+
+**Use when:**
+- Converting Markdown → HTML, JSON, or other text formats
+- CI/CD pipelines where image size is critical
+- No PDF or template requirements
+
 ```bash
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:4.0.0-minimal \
+docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-minimal \
   input.md -o output.html
 ```
 
-### `pandoc:VERSION-standard` (~800MB-1GB) **[DEFAULT]**
+---
 
-**What's included:**
-- Pandoc binary
-- Full TeX Live (XeLaTeX, LaTeX packages)
-- MS Core Fonts, Open Sans, Montserrat
-- Custom LaTeX templates (OraDBA, TechDoc, Trivadis)
-- No Mermaid/Chromium
+### `standard` (~800 MB–1 GB) · **DEFAULT / `latest`**
 
-**Use cases:**
-- PDF generation from Markdown
-- Documents using custom LaTeX templates
+**Includes:** Pandoc · TeX Live (XeLaTeX + packages) · MS Core Fonts, Open Sans,
+Montserrat · OraDBA / TechDoc / Trivadis LaTeX templates · Pandoc Python filters
+(`pandoc-latex-environment`, `pandoc-latex-color`, `pandoc-include`)
+
+**Does not include:** Mermaid/Chromium
+
+**Use when:**
+- Generating PDFs from Markdown (most common use case)
+- Using custom LaTeX templates
 - Professional documents with custom fonts
-- Most common use cases
 - Production environments without diagram requirements
 
-**Example:**
 ```bash
-docker run --rm -v $PWD:/workdir:z oehrlis/pandoc:4.0.0-standard \
-  input.md -o output.pdf --pdf-engine=xelatex --template=oradba
+# PDF with custom template
+docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-standard \
+  input.md \
+  --metadata-file metadata.yml \
+  --pdf-engine=xelatex \
+  --template=oradba \
+  -o output.pdf
+
+# Or simply use latest (points to standard)
+docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:latest \
+  input.md --pdf-engine=xelatex -o output.pdf
 ```
 
-### `pandoc:VERSION-mermaid` (~900MB-1GB)
+---
 
-**What's included:**
-- Pandoc binary
-- Mermaid CLI + Chromium
-- Node.js runtime
-- Minimal fonts
-- No TeX Live
+### `mermaid` (~900 MB–1 GB)
 
-**Use cases:**
-- Markdown to HTML with Mermaid diagrams
-- Diagram rendering to PNG/SVG
-- Web-based documentation
-- HTML reports with charts/diagrams
-- When PDF generation is not needed
+**Includes:** Pandoc · Node.js · mermaid-cli (`mmdc`) · Chromium · `mermaid.lua`
+Lua filter
 
-**Example:**
+**Does not include:** TeX Live · custom templates
+
+**Use when:**
+- Rendering Mermaid diagrams in HTML output
+- Diagram-to-PNG/SVG workflows
+- Web-based documentation without PDF requirements
+
 ```bash
-docker run --rm --cap-add=SYS_ADMIN -v $PWD:/workdir:z \
-  oehrlis/pandoc:4.0.0-mermaid \
-  input.md -o output.html --lua-filter=/usr/local/share/pandoc/filters/mermaid.lua --standalone
+docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-mermaid \
+  input.md \
+  --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+  --standalone \
+  -o output.html
 ```
 
-### `pandoc:VERSION-full` (~1.3-1.5GB)
+> No `--cap-add=SYS_ADMIN` required — the Lua filter passes `--no-sandbox`
+> flags to Chromium via a JSON puppeteer config.
 
-**What's included:**
-- Everything: Pandoc + TeX Live + Mermaid + Chromium
-- All fonts and templates
-- All features from other variants
+---
 
-**Use cases:**
-- Complex documents with diagrams AND PDF output
+### `full` (~1.3–1.5 GB)
+
+**Includes:** Everything — Pandoc · TeX Live · Mermaid/Chromium · all fonts ·
+all templates · Python filters
+
+**Use when:**
+- Documents need both **PDF output** and **Mermaid diagrams**
 - Complete documentation pipelines
-- When you need both diagram rendering and PDF generation
 - Development and testing environments
-- Maximum flexibility
 
-**Example:**
 ```bash
-docker run --rm --cap-add=SYS_ADMIN -v $PWD:/workdir:z \
-  oehrlis/pandoc:4.0.0-full \
-  input.md -o output.pdf --pdf-engine=xelatex --template=oradba \
-  --lua-filter=/usr/local/share/pandoc/filters/mermaid.lua
+docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-full \
+  input.md \
+  --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+  --pdf-engine=xelatex \
+  --template=oradba \
+  -o output.pdf
 ```
 
-## Variant Comparison
+---
+
+## Feature Matrix
 
 | Feature | minimal | standard | mermaid | full |
-|---------|---------|----------|---------|------|
-| **Size** | ~250MB | ~800MB-1GB | ~900MB-1GB | ~1.3-1.5GB |
-| Pandoc | ✅ | ✅ | ✅ | ✅ |
-| TeX Live | ❌ | ✅ | ❌ | ✅ |
-| PDF Generation | ❌ | ✅ | ❌ | ✅ |
-| Custom Templates | ❌ | ✅ | ❌ | ✅ |
-| MS Core Fonts | ❌ | ✅ | ❌ | ✅ |
-| Custom Fonts | ❌ | ✅ | ❌ | ✅ |
-| Mermaid Diagrams | ❌ | ❌ | ✅ | ✅ |
+|---------|:-------:|:--------:|:-------:|:----:|
+| **Approx. size** | ~250 MB | ~800 MB–1 GB | ~900 MB–1 GB | ~1.3–1.5 GB |
+| Pandoc binary | ✅ | ✅ | ✅ | ✅ |
+| TeX Live / XeLaTeX | ❌ | ✅ | ❌ | ✅ |
+| PDF generation | ❌ | ✅ | ❌ | ✅ |
+| LaTeX templates | ❌ | ✅ | ❌ | ✅ |
+| MS Core / custom fonts | ❌ | ✅ | ❌ | ✅ |
+| Python filters | ❌ | ✅ | ❌ | ✅ |
+| Mermaid CLI (`mmdc`) | ❌ | ❌ | ✅ | ✅ |
 | Chromium | ❌ | ❌ | ✅ | ✅ |
 | Node.js | ❌ | ❌ | ✅ | ✅ |
+| `mermaid.lua` filter | ✅ | ✅ | ✅ | ✅ |
+
+> `mermaid.lua` is present in all variants. In `minimal` and `standard` it
+> gracefully skips rendering when `mmdc` is absent (falls back to code block).
+
+---
+
+## Mermaid Filter Options
+
+The `mermaid.lua` Lua filter accepts these environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MERMAID_IMAGE_WIDTH` | `80%` | Image width as % of line width |
+| `MERMAID_IMAGE_MAX_HEIGHT` | `75%` | Max height as % of page height (keepaspectratio) |
+| `MERMAID_OUTPUT_DIR` | `build/mermaid` | Directory for rendered PNGs |
+| `MERMAID_CLI_BIN` | `mmdc` | Path to mermaid-cli binary |
+| `MERMAID_SKIP_RENDERING` | _(unset)_ | Set to `true` to skip rendering (pass-through) |
+
+**Caption support** — add a `caption` attribute to the fenced code block:
+
+````markdown
+```{.mermaid caption="Figure 1: System Architecture"}
+flowchart TD
+    A[Client] --> B[API] --> C[Database]
+```
+````
+
+In PDF output this becomes a `\figure` environment with `\caption{}` (included
+in the list of figures if `lof: true` is set in metadata).
+
+---
 
 ## Building Variants
 
-### Build all variants locally (single platform)
+### Local development (single platform, no push)
+
 ```bash
-# Builds for current architecture only (fast, for testing)
-./scripts/build-variants.sh
+# Single variant
+make build                  # default: standard
+make build VARIANT=full
+
+# All four variants
+make build-all
 ```
 
-### Build all variants for multiple platforms
+### Release build (all variants, local, VERSION tags)
+
 ```bash
-# Builds for linux/amd64 and linux/arm64, pushes to registry
-MULTI_PLATFORM=true ./scripts/build-variants.sh
+make build-release          # tags: 4.1.0-minimal/standard/mermaid/full
+                            #       4.1.0 → standard
+                            #       latest → standard
 ```
 
-### Build specific variant
-```bash
-# Single variant, single platform
-docker build --build-arg IMAGE_VARIANT=minimal -t oehrlis/pandoc:dev-minimal .
+### Multi-platform push to registry
 
-# Single variant, multi-platform
-docker buildx build --platform linux/amd64,linux/arm64 \
-  --build-arg IMAGE_VARIANT=minimal \
-  -t oehrlis/pandoc:4.0.0-minimal \
-  --push .
+```bash
+make build-multi            # builds linux/amd64 + linux/arm64, pushes all tags
 ```
 
-### Custom configuration
-```bash
-# Custom image name and version
-IMAGE_NAME=myrepo/pandoc VERSION=1.0.0 ./scripts/build-variants.sh
+### Via git tag (CI/CD release pipeline)
 
-# Multi-platform with custom platforms
-MULTI_PLATFORM=true PLATFORM="linux/amd64,linux/arm64,linux/arm/v7" ./scripts/build-variants.sh
+```bash
+make tag                    # creates annotated tag v4.1.0
+git push origin master && git push origin v4.1.0
+# → triggers .github/workflows/release.yml automatically
 ```
+
+---
 
 ## Choosing the Right Variant
 
-**Choose `minimal` if:**
-- You only need format conversions (MD → HTML, MD → JSON, etc.)
-- Size is critical (CI/CD, edge devices)
-- No PDF or template requirements
+```
+Need PDF output?
+├── Yes → Need Mermaid diagrams?
+│         ├── Yes → full
+│         └── No  → standard (or latest)
+└── No  → Need Mermaid diagrams?
+          ├── Yes → mermaid
+          └── No  → minimal
+```
 
-**Choose `standard` if:**
-- You need PDF generation
-- You use custom LaTeX templates
-- You need professional fonts
-- No diagram rendering required
-- **This is the recommended default for most users**
+---
 
-**Choose `mermaid` if:**
-- You need diagram rendering
-- HTML output is sufficient
-- You don't need PDF generation
-- Working on web-based documentation
-
-**Choose `full` if:**
-- You need both PDFs and diagrams
-- Maximum flexibility is required
-- Development/testing environment
-- Size is not a concern
-- You want "everything included"
-
-## CI/CD Recommendations
+## CI/CD Examples
 
 ### GitHub Actions
+
 ```yaml
-# Use minimal for simple conversions
-- uses: docker://oehrlis/pandoc:4.0.0-minimal
-  
-# Use standard for PDF generation
-- uses: docker://oehrlis/pandoc:4.0.0-standard
-  
-# Use mermaid with alternative rendering methods (avoid --cap-add)
-- uses: docker://oehrlis/pandoc:4.0.0-mermaid
-  env:
-    MERMAID_SKIP_RENDERING: "true"  # Pre-render or use alternatives
+# PDF generation — use standard (or latest)
+- name: Build PDF
+  run: |
+    docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:latest \
+      input.md --pdf-engine=xelatex -o output.pdf
+
+# Mermaid + PDF — use full
+- name: Build PDF with diagrams
+  run: |
+    docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-full \
+      input.md \
+      --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+      --pdf-engine=xelatex -o output.pdf
+
+# HTML with diagrams — use mermaid
+- name: Build HTML with diagrams
+  run: |
+    docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-mermaid \
+      input.md \
+      --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
+      --standalone -o output.html
+
+# Skip Mermaid rendering in CI (no mmdc available)
+- name: Build HTML (skip diagrams)
+  run: |
+    docker run --rm \
+      -e MERMAID_SKIP_RENDERING=true \
+      -v "$PWD:/workdir:z" oehrlis/pandoc:latest \
+      input.md --standalone -o output.html
 ```
 
 ### Docker Compose
+
 ```yaml
 services:
   pandoc-standard:
-    image: oehrlis/pandoc:4.0.0-standard
+    image: oehrlis/pandoc:latest
     volumes:
       - ./docs:/workdir
-    
+
   pandoc-full:
-    image: oehrlis/pandoc:4.0.0-full
-    cap_add:
-      - SYS_ADMIN  # Required for Chromium
+    image: oehrlis/pandoc:4.1.0-full
+    # No cap_add needed — mermaid.lua uses --no-sandbox via puppeteer JSON config
     volumes:
       - ./docs:/workdir
+    environment:
+      MERMAID_IMAGE_WIDTH: "80%"
+      MERMAID_IMAGE_MAX_HEIGHT: "75%"
 ```
 
-## Migration Guide
+---
 
-### From `latest` to variants
+## Support
 
-If you're currently using `oehrlis/pandoc:latest`:
+Open an issue at <https://github.com/oehrlis/docker-pandoc/issues> and include:
 
-1. **Determine your needs:**
-   - PDF only → use `standard`
-   - Diagrams only → use `mermaid`
-   - Both → use `full`
-   - Neither → use `minimal`
-
-2. **Update your references:**
-   ```bash
-   # Old
-   docker run oehrlis/pandoc:latest ...
-   
-   # New
-   docker run oehrlis/pandoc:4.0.0-standard ...
-   ```
-
-3. **Test your workflows:**
-   - Verify all features work as expected
-   - Check CI/CD pipelines
-   - Validate output files
-
-## Size Optimization Trade-offs
-
-Each variant makes specific trade-offs:
-
-**minimal:**
-- ✅ Smallest size
-- ✅ Fastest downloads
-- ❌ Limited functionality
-
-**standard:**
-- ✅ Balanced size/features
-- ✅ Most common use case
-- ❌ No diagrams
-
-**mermaid:**
-- ✅ Diagram support
-- ✅ Reasonable size
-- ❌ No PDF
-
-**full:**
-- ✅ All features
-- ✅ Maximum flexibility
-- ❌ Largest size
-
-## Support and Issues
-
-If you encounter issues with specific variants, please open an issue on GitHub with:
-- Variant name and version
-- Command you're running
-- Expected vs actual behavior
-- Error messages (if any)
+- Variant name and version tag
+- Full `docker run` command
+- Expected vs. actual behaviour
+- Error output
