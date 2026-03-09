@@ -91,7 +91,8 @@ build_variant() {
     
     # Show size if loaded locally
     if [ "${PUSH}" != "true" ]; then
-      local size=$(docker images "${tag}" --format "{{.Size}}" 2>/dev/null || echo "unknown")
+      local size
+      size=$(docker images "${tag}" --format "{{.Size}}" 2>/dev/null || echo "unknown")
       log_detail "Actual size: ${size}"
     fi
   else
