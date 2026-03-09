@@ -672,7 +672,6 @@ $endif$
 % 'default' option sets the default
 % font family to Source Sans Pro, not \sfdefault.
 %
-\makeatletter
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   $if(fontfamily)$
   $else$
@@ -683,25 +682,9 @@ $endif$
   $if(mainfont)$
   $else$
   \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\usepackage{lmodern}}
-  \IfFileExists{sourcecodepro.sty}{%
-    \usepackage{sourcecodepro}%
-    % XeLaTeX specific adjustments for straight quotes: https://tex.stackexchange.com/a/354887
-    \ifxetex
-      \defaultfontfeatures[\ttfamily]%
-        { Numbers   = \sourcecodepro@figurestyle,
-          Scale     = \SourceCodePro@scale,
-          Extension = .otf }%
-      \setmonofont
-        [ UprightFont    = *-\sourcecodepro@regstyle,
-          ItalicFont     = *-\sourcecodepro@regstyle It,
-          BoldFont       = *-\sourcecodepro@boldstyle,
-          BoldItalicFont = *-\sourcecodepro@boldstyle It ]
-        {SourceCodePro}%
-    \fi
-  }{}
+  \IfFileExists{sourcecodepro.sty}{\usepackage{sourcecodepro}}{}
   $endif$
 \fi
-\makeatother
 
 %
 % heading color

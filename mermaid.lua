@@ -72,40 +72,45 @@ local function render_mermaid(code, output_path)
   f:write(code)
   f:close()
   
-  -- Ensure puppeteerrc config exists in working directory
-  -- mermaid-cli will automatically load .puppeteerrc.cjs from the current directory
-  local puppeteerrc = ".puppeteerrc.cjs"
-  local f = io.open(puppeteerrc, "w")
-  if f then
-    f:write("module.exports = {\n")
-    f:write("  executablePath: '/usr/bin/chromium',\n")
-    f:write("  args: [\n")
-    f:write("    '--no-sandbox',\n")
-    f:write("    '--disable-setuid-sandbox',\n")
-    f:write("    '--disable-dev-shm-usage',\n")
-    f:write("    '--disable-gpu',\n")
-    f:write("    '--disable-extensions',\n")
-    f:write("    '--disable-crash-reporter',\n")
-    f:write("    '--disable-breakpad'\n")
-    f:write("  ]\n")
-    f:write("};\n")
-    f:close()
+  -- Write Puppeteer JSON config for mermaid-cli
+  -- mmdc --puppeteerConfigFile expects JSON (not CJS); place next to the PNG
+  local puppeteer_cfg = output_path:gsub("%.png$", "-puppeteer.json")
+  local fc = io.open(puppeteer_cfg, "w")
+  if fc then
+    fc:write('{\n')
+    fc:write('  "executablePath": "/usr/bin/chromium",\n')
+    fc:write('  "args": [\n')
+    fc:write('    "--no-sandbox",\n')
+    fc:write('    "--disable-setuid-sandbox",\n')
+    fc:write('    "--disable-dev-shm-usage",\n')
+    fc:write('    "--disable-gpu",\n')
+    fc:write('    "--disable-extensions",\n')
+    fc:write('    "--disable-crash-reporter",\n')
+    fc:write('    "--disable-breakpad"\n')
+    fc:write('  ]\n')
+    fc:write('}\n')
+    fc:close()
   end
-  
-  -- Set environment variables for Puppeteer and render using mmdc
-  -- Use --quiet to reduce output noise
-  -- Use -b transparent for transparent background
-  -- Use -s 2 for 2x scale (better quality)
+
+  -- Render using mmdc
+  -- -b transparent        : transparent PNG background
+  -- -s 2                  : 2x scale for better quality
+  -- --puppeteerConfigFile  : pass no-sandbox flags + system Chromium path
+  -- --quiet               : suppress progress output
   local cmd = string.format(
-    "PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium CHROME_PATH=/usr/bin/chromium %s -i %q -o %q -b transparent -s 2 --quiet 2>&1",
-    MMDC_BIN, temp_mmd, output_path
+    "PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium"
+      .. " CHROME_PATH=/usr/bin/chromium"
+      .. " %s -i %q -o %q -b transparent -s 2"
+      .. " --puppeteerConfigFile %q --quiet 2>&1",
+    MMDC_BIN, temp_mmd, output_path, puppeteer_cfg
   )
-  
+
   local success = os.execute(cmd)
-  
-  -- Clean up temp file
+
+  -- Clean up temp files
   os.remove(temp_mmd)
-  
+  os.remove(puppeteer_cfg)
+
   return success == 0 or success == true
 end
 
