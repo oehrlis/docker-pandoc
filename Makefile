@@ -87,22 +87,47 @@ build-all: ## Build all four variants locally
 		grep -E "(REPOSITORY|dev-)" || true
 
 .PHONY: build-release
-build-release: ## Build all variants with VERSION tag locally (no push)
+build-release: ## Build all variants locally with VERSION tags (no push)
+	@echo "==> Building release $(VERSION) — tag strategy:"
+	@echo "    VERSION-VARIANT  all four variants"
+	@echo "    VERSION          → standard"
+	@echo "    latest           → standard"
 	@for v in minimal standard mermaid full; do \
 		echo "==> Building $(IMAGE_NAME):$(VERSION)-$$v"; \
+		extra=""; \
+		if [ "$$v" = "standard" ]; then \
+			extra="-t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest"; \
+		fi; \
 		docker buildx build --build-arg IMAGE_VARIANT=$$v \
-			-t $(IMAGE_NAME):$(VERSION)-$$v --load . || exit 1; \
+			-t $(IMAGE_NAME):$(VERSION)-$$v $$extra --load . || exit 1; \
 	done
-	@echo "==> All release variants built: $(VERSION)"
+	@echo "==> Done. Images:"
+	@docker images $(IMAGE_NAME) --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | \
+		grep -E "(REPOSITORY|$(VERSION)|latest)" || true
 
 .PHONY: build-multi
 build-multi: ## Build all variants multi-platform and push to registry
 	@echo "==> Multi-platform build and push: $(PLATFORMS)"
+	@echo "    Tag strategy:"
+	@echo "    VERSION-VARIANT  all four variants"
+	@echo "    VERSION          → standard"
+	@echo "    latest           → standard"
 	@docker buildx create --use --name $(BUILDER) 2>/dev/null || \
 		docker buildx use $(BUILDER)
-	MULTI_PLATFORM=true IMAGE_NAME=$(IMAGE_NAME) VERSION=$(VERSION) \
-		$(SCRIPT_DIR)/build-variants.sh
-	@echo "==> Multi-platform push complete"
+	@for v in minimal standard mermaid full; do \
+		echo "==> Pushing $(IMAGE_NAME):$(VERSION)-$$v ($(PLATFORMS))"; \
+		extra=""; \
+		if [ "$$v" = "standard" ]; then \
+			extra="--tag $(IMAGE_NAME):$(VERSION) --tag $(IMAGE_NAME):latest"; \
+		fi; \
+		docker buildx build \
+			--platform $(PLATFORMS) \
+			--build-arg IMAGE_VARIANT=$$v \
+			--tag $(IMAGE_NAME):$(VERSION)-$$v \
+			$$extra \
+			--push . || exit 1; \
+	done
+	@echo "==> Multi-platform push complete: $(VERSION)"
 
 # ------------------------------------------------------------------------------
 # Test targets
