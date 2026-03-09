@@ -62,7 +62,8 @@ jobs:
 
       - name: Lint markdown files
         run: |
-          markdownlint README.md CHANGELOG.md scripts/README.md examples/*.md
+          markdownlint README.md CHANGELOG.md scripts/README.md \
+            sample/sample.md sample/sample-mermaid.md
 
   docker-lint:
     name: Docker Lint (Hadolint)
@@ -76,22 +77,3 @@ jobs:
         with:
           dockerfile: Dockerfile
           config: .hadolint.yaml
-
-  validate-examples:
-    name: Validate Markdown Examples
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install markdownlint-cli
-        run: npm install -g markdownlint-cli
-
-      - name: Validate example markdown files
-        run: |
-          markdownlint examples/test-mermaid.md

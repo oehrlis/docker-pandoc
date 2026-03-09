@@ -252,14 +252,14 @@ generate_mermaid_test() {
   fi
 
   log_detail "Mermaid PDF Test"
-  docker run --rm --cap-add=SYS_ADMIN \
+  docker run --rm \
     -v "${PWD}:/workdir:z" "${image_tag}" \
-    examples/test-mermaid.md \
-    -o examples/test-output.pdf \
+    sample/sample-mermaid.md \
+    -o sample/sample-mermaid-test.pdf \
     --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
     --pdf-engine=xelatex \
     --toc
-  log_detail "Test complete. Check examples/test-output.pdf"
+  log_detail "Test complete. Check sample/sample-mermaid-test.pdf"
 }
 
 # ------------------------------------------------------------------------------

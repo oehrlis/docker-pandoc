@@ -39,61 +39,69 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push multi-platform image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          build-args: |
-            SLIM_TEX=1
-            PRUNE_MS_FONTS=1
-          tags: |
-            ${{ env.DOCKER_REPO }}:${{ env.VERSION }}
-            ${{ env.DOCKER_REPO }}:latest
-            ${{ env.DOCKER_REPO }}:texlive-slim
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Pull built image for testing
+      - name: Build and push all variants (multi-platform)
         run: |
-          docker pull ${{ env.DOCKER_REPO }}:${{ env.VERSION }}
+          VERSION="${{ steps.get_version.outputs.version }}"
+          for variant in minimal standard mermaid full; do
+            echo "==> Building variant: ${variant}"
+            extra_tags=""
+            if [ "${variant}" = "standard" ]; then
+              extra_tags="--tag ${{ env.DOCKER_REPO }}:${VERSION} --tag ${{ env.DOCKER_REPO }}:latest"
+            fi
+            docker buildx build \
+              --platform linux/amd64,linux/arm64 \
+              --build-arg IMAGE_VARIANT=${variant} \
+              --tag ${{ env.DOCKER_REPO }}:${VERSION}-${variant} \
+              ${extra_tags} \
+              --push \
+              --cache-from type=gha \
+              --cache-to type=gha,mode=max \
+              .
+          done
+
+      - name: Pull standard image for sample generation
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          docker pull ${{ env.DOCKER_REPO }}:${VERSION}-standard
+          docker pull ${{ env.DOCKER_REPO }}:${VERSION}-full
 
       - name: Build sample documents
         run: |
-          # Build PDF sample
-          docker run --rm -v $PWD:/workdir:z ${{ env.DOCKER_REPO }}:${{ env.VERSION }} \
+          VERSION="${{ steps.get_version.outputs.version }}"
+          STD="${{ env.DOCKER_REPO }}:${VERSION}-standard"
+          FULL="${{ env.DOCKER_REPO }}:${VERSION}-full"
+
+          # Build PDF/DOCX/PPTX samples (standard variant)
+          docker run --rm -v "$PWD:/workdir:z" "${STD}" \
             --metadata-file sample/metadata.yml --filter pandoc-latex-environment \
             --resource-path=sample --pdf-engine=xelatex \
             --listings -o sample/sample-release.pdf sample/sample.md
 
-          # Build DOCX sample
-          docker run --rm -v $PWD:/workdir:z ${{ env.DOCKER_REPO }}:${{ env.VERSION }} \
+          docker run --rm -v "$PWD:/workdir:z" "${STD}" \
             --metadata-file sample/metadata.yml --resource-path=sample \
             --listings -o sample/sample-release.docx sample/sample.md
 
-          # Build PPTX sample
-          docker run --rm -v $PWD:/workdir:z ${{ env.DOCKER_REPO }}:${{ env.VERSION }} \
+          docker run --rm -v "$PWD:/workdir:z" "${STD}" \
             --metadata-file sample/metadata.yml --resource-path=sample \
             --listings -o sample/sample-release.pptx sample/sample.md
 
-          # Build mermaid example
-          docker run --rm -v $PWD:/workdir:z ${{ env.DOCKER_REPO }}:${{ env.VERSION }} \
-            examples/test-mermaid.md \
-            -o examples/test-mermaid-release.pdf \
-            --filter mermaid-filter \
+          # Build mermaid sample (full variant)
+          docker run --rm -v "$PWD:/workdir:z" "${FULL}" \
+            sample/sample-mermaid.md \
+            -o sample/sample-mermaid-release.pdf \
+            --lua-filter /usr/local/share/pandoc/filters/mermaid.lua \
             --pdf-engine=xelatex \
             --toc
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: Release ${{ env.VERSION }}
+          name: Release ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
           files: |
             sample/sample-release.pdf
             sample/sample-release.docx
             sample/sample-release.pptx
-            examples/test-mermaid-release.pdf
+            sample/sample-mermaid-release.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

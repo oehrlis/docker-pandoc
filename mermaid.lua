@@ -20,6 +20,8 @@
 local MERMAID_DIR = os.getenv("MERMAID_OUTPUT_DIR") or "build/mermaid"
 local MMDC_BIN = os.getenv("MERMAID_CLI_BIN") or "mmdc"
 local SKIP_RENDERING = os.getenv("MERMAID_SKIP_RENDERING") == "true"
+local MERMAID_WIDTH      = os.getenv("MERMAID_IMAGE_WIDTH")      or "80%"
+local MERMAID_MAX_HEIGHT = os.getenv("MERMAID_IMAGE_MAX_HEIGHT") or "75%"
 
 -- Helper function to create directory if it doesn't exist
 local function ensure_dir(dir)
@@ -121,8 +123,9 @@ function CodeBlock(block)
     return nil
   end
   
-  -- Get the Mermaid source code
-  local code = block.text
+  -- Get the Mermaid source code and optional caption
+  local code    = block.text
+  local caption = block.attributes["caption"]
   
   -- Compute hash for deterministic filename
   local hash = sha256(code)
@@ -148,9 +151,32 @@ function CodeBlock(block)
     io.stderr:write("Using cached Mermaid diagram: " .. hash .. ".png\n")
   end
   
-  -- Return image element instead of code block
+  -- Return image element instead of code block.
+  -- For LaTeX/PDF: emit raw \includegraphics with keepaspectratio so tall
+  -- diagrams (e.g. sequence diagrams) are bounded by both width and height.
+  -- For all other formats: use a standard pandoc Image with width attribute.
+  if FORMAT == "latex" or FORMAT == "pdf" then
+    local w_pct = tonumber(MERMAID_WIDTH:match("(%d+)%%"))      or 80
+    local h_pct = tonumber(MERMAID_MAX_HEIGHT:match("(%d+)%%")) or 75
+    local graphics = string.format(
+      "\\includegraphics[width=%g\\linewidth,height=%g\\textheight,keepaspectratio]{%s}",
+      w_pct / 100, h_pct / 100, output_path
+    )
+    local latex
+    if caption then
+      latex = string.format(
+        "\\begin{figure}[htbp]\\centering\n%s\n\\caption{%s}\n\\end{figure}",
+        graphics, caption
+      )
+    else
+      latex = "\\begin{center}" .. graphics .. "\\end{center}"
+    end
+    return pandoc.RawBlock("latex", latex)
+  end
+  -- Non-LaTeX formats: pandoc renders a captioned Image as a figure automatically
+  local cap = caption and pandoc.read(caption).blocks[1].content or {}
   return pandoc.Para({
-    pandoc.Image({}, output_path, "", {})
+    pandoc.Image(cap, output_path, caption or "", pandoc.Attr("", {}, {{"width", MERMAID_WIDTH}}))
   })
 end
 

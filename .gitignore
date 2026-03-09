@@ -284,9 +284,8 @@ sample/sample-test.pptx
 sample/sample-release.pdf
 sample/sample-release.docx
 sample/sample-release.pptx
-examples/test-mermaid-test.pdf
-examples/test-mermaid-release.pdf
-examples/test-output.pdf
+sample/sample-mermaid-test.pdf
+sample/sample-mermaid-release.pdf
 build/
 
 # Temporary files

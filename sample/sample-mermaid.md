@@ -2,7 +2,7 @@
 
 ## Flowchart Example
 
-```mermaid
+```{.mermaid caption="Figure 1: System Flow"}
 flowchart TD
     A[Start] --> B{Decision}
     B -->|Yes| C[Process]
@@ -13,7 +13,7 @@ flowchart TD
 
 ## Sequence Diagram Example
 
-```mermaid
+```{.mermaid caption="Figure 2: Sequence Diagram"}
 sequenceDiagram
     participant User
     participant Pandoc
