@@ -164,38 +164,60 @@ in the list of figures if `lof: true` is set in metadata).
 
 ## Building Variants
 
-### Local development (single platform, no push)
+### Development workflow (local, single platform)
 
 ```bash
-# Single variant
-make build                  # default: standard
-make build VARIANT=full
+# Build a single variant for local testing
+make build                   # default: standard → oehrlis/pandoc:dev-standard
+make build VARIANT=full      # → oehrlis/pandoc:dev-full
 
-# All four variants
-make build-all
+# Build all four variants at once
+make build-all               # → dev-minimal, dev-standard, dev-mermaid, dev-full
+
+# Test a locally built variant
+make test                    # default: standard
+make test VARIANT=full
+make test-all
 ```
 
-### Release build (all variants, local, VERSION tags)
+### Release workflow (full sequence)
 
 ```bash
-make build-release          # tags: 4.1.0-minimal/standard/mermaid/full
-                            #       4.1.0 → standard
-                            #       latest → standard
+# 1. Bump version and commit
+make version-bump-patch      # 4.1.0 → 4.1.1 (or -minor / -major)
+
+# 2. Create annotated git tag
+make tag                     # → v4.1.1
+
+# 3. Push commits and tag to GitHub
+git push origin master && git push origin v4.1.1
+
+# 4. Build all variants locally with release tags
+make build-release
+# Produces:
+#   oehrlis/pandoc:4.1.1-minimal
+#   oehrlis/pandoc:4.1.1-standard
+#   oehrlis/pandoc:4.1.1-mermaid
+#   oehrlis/pandoc:4.1.1-full
+#   oehrlis/pandoc:4.1.1   → standard
+#   oehrlis/pandoc:latest  → standard
+
+# 5. Build multi-platform and push to Docker Hub
+make build-multi             # linux/amd64 + linux/arm64, pushes all tags above
 ```
 
-### Multi-platform push to registry
+> **Patch shortcut:** `make release` combines steps 1 + 2, then continue from step 3.
 
-```bash
-make build-multi            # builds linux/amd64 + linux/arm64, pushes all tags
-```
+### Tag strategy summary
 
-### Via git tag (CI/CD release pipeline)
-
-```bash
-make tag                    # creates annotated tag v4.1.0
-git push origin master && git push origin v4.1.0
-# → triggers .github/workflows/release.yml automatically
-```
+| Tag | Points to |
+| --- | --------- |
+| `latest` | standard variant |
+| `VERSION` | standard variant |
+| `VERSION-minimal` | minimal variant |
+| `VERSION-standard` | standard variant |
+| `VERSION-mermaid` | mermaid variant |
+| `VERSION-full` | full variant |
 
 ---
 
