@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-03-10
+
 ### Added
 
 - Add `latest-full` convenience tag for the `full` variant (analogous to `latest` → standard);
@@ -18,10 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Set `SLIM_TEX` default to `1` in Dockerfile — TeX tree slimming now on by default,
-  reducing standard/full image sizes by ~100–150 MB
+  reducing standard/full image sizes by ~100-150 MB
 - `mermaid.lua`: surface `mmdc` error details on render failure — first meaningful stderr
   line shown; improved fallback warning includes diagram type and `<br>` tip
-- `scripts/install_mermaid.sh`: reduce mermaid/full image size by ~60–80 MB:
+- `scripts/install_mermaid.sh`: reduce mermaid/full image size by ~60-80 MB:
   - Remove unused Vulkan/GPU shared libraries from Chromium (`libvk_swiftshader.so`,
     `libVkLayer_khronos_validation.so`, `libVkICD_mock_icd.so`, `libvulkan.so.1`,
     `chrome_crashpad_handler`)
@@ -33,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     node_modules cleanup (`*.map`, `*.ts`, `CHANGELOG*`, `LICENSE*`, `test/`,
     `__tests__/`, `docs/`)
 - `scripts/slim_tex_tree.sh`: add METAFONT source removal (~6 MB) and AFM cleanup
-  keeping only core fonts (~15–18 MB savings)
+  keeping only core fonts (~15-18 MB savings)
 
 ## [4.1.0] - 2026-03-09
 
