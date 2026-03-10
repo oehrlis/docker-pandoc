@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   updated `Makefile` (`build-release`, `build-multi`), `.github/workflows/release.yml`,
   and `IMAGE_VARIANTS.md` documentation
 
+### Fixed
+
+- Fix `mmdc: not found` error in `mermaid.lua`: `sh` invoked by `os.execute()`
+  does not include `/usr/local/bin` in PATH; changed default `MMDC_BIN` to
+  `/usr/local/bin/mmdc` and added `MERMAID_CLI_BIN=/usr/local/bin/mmdc` to
+  Dockerfile `ENV` for explicitness and overridability
+
 ### Changed
 
 - Set `SLIM_TEX` default to `1` in Dockerfile — TeX tree slimming now on by default,
