@@ -10,14 +10,14 @@
 #              Variants: minimal | standard | mermaid | full
 #
 # Variants...:
-#   minimal   Pandoc binary only, no TeX, no Mermaid (~250MB)
-#   standard  Pandoc + TeX Live + fonts + templates (~800MB-1GB) [DEFAULT]
-#   mermaid   Pandoc + Mermaid/Chromium, no TeX (~900MB-1GB)
-#   full      Pandoc + TeX Live + Mermaid + fonts + templates (~1.3-1.5GB)
+#   minimal   Pandoc binary only, no TeX, no Mermaid (~300MB)
+#   standard  Pandoc + TeX Live + fonts + templates (~600MB) [DEFAULT]
+#   mermaid   Pandoc + Mermaid/Chromium, no TeX (~1.1GB)
+#   full      Pandoc + TeX Live + Mermaid + fonts + templates (~1.4GB)
 #
 # Build Args.:
 #   IMAGE_VARIANT   minimal|standard|mermaid|full (default: standard)
-#   SLIM_TEX        0|1 - Slim TeX tree after install (default: 0)
+#   SLIM_TEX        0|1 - Slim TeX tree after install (default: 1)
 #   PANDOC_VERSION  Pandoc version to install (default: latest)
 #
 # Build......:
@@ -38,7 +38,7 @@
 FROM debian:bookworm-slim AS builder
 ARG TARGETARCH
 ARG IMAGE_VARIANT=standard
-ARG SLIM_TEX=0
+ARG SLIM_TEX=1
 ARG PANDOC_VERSION=latest
 ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
 

@@ -9,8 +9,10 @@
 # Revision...: 1.0.0
 # Purpose....: Install Node.js, mermaid-cli, and required dependencies for
 #              Mermaid diagram rendering in Docker containers
-# Notes......: Installs Node.js 20.x, Chromium, and configures Puppeteer for
-#              non-root container execution
+# Notes......: Installs Node.js (Debian bookworm), Chromium, and configures
+#              Puppeteer for non-root container execution.
+#              npm is removed after mermaid-cli install to save space.
+#              Vulkan/GPU libs removed from Chromium (headless/--disable-gpu).
 # Reference..: https://github.com/mermaid-js/mermaid-cli
 # License....: Apache License Version 2.0, January 2004 as shown
 #              at http://www.apache.org/licenses/
@@ -69,11 +71,11 @@ install_chromium_deps() {
 
   # Install Chromium and required libraries for headless browser
   # Note: libxss1 is not available in Debian bookworm; omitted intentionally
+  # Note: chromium-sandbox omitted — we use --no-sandbox via puppeteerConfigFile
+  # Note: fonts-noto-color-emoji omitted — mermaid diagrams do not use emoji
   apt-get install -y --no-install-recommends \
     chromium \
-    chromium-sandbox \
     fonts-liberation \
-    fonts-noto-color-emoji \
     libnss3 \
     libnspr4 \
     libatk1.0-0 \
@@ -104,10 +106,11 @@ install_mermaid_cli() {
 
   # Install mermaid-cli globally; use pinned version for reproducibility
   # The Lua filter (mermaid.lua) calls mmdc directly - no mermaid-filter npm pkg needed
+  # --omit=optional skips optional deps not required for headless rendering
   if [[ "${MERMAID_VERSION}" = "latest" ]]; then
-    npm install -g @mermaid-js/mermaid-cli
+    npm install -g --omit=optional @mermaid-js/mermaid-cli
   else
-    npm install -g "@mermaid-js/mermaid-cli@${MERMAID_VERSION}"
+    npm install -g --omit=optional "@mermaid-js/mermaid-cli@${MERMAID_VERSION}"
   fi
 
   # Verify installation
@@ -167,11 +170,33 @@ cleanup() {
   npm cache clean --force
   rm -rf /root/.npm /tmp/* /var/tmp/*
   
+  # Remove Vulkan/GPU files from Chromium — unused with --disable-gpu/--no-sandbox
+  rm -f /usr/lib/chromium/libvk_swiftshader.so \
+        /usr/lib/chromium/libVkLayer_khronos_validation.so \
+        /usr/lib/chromium/libVkICD_mock_icd.so \
+        /usr/lib/chromium/libvulkan.so.1 \
+        /usr/lib/chromium/chrome_crashpad_handler || true
+
+  # Remove npm — only needed during install, not at runtime
+  # Mark nodejs as manually installed so autoremove does not pull it out
+  apt-mark manual nodejs 2>/dev/null || true
+  apt-get remove -y npm 2>/dev/null || true
+  apt-get autoremove -y 2>/dev/null || true
+
+  # Remove mermaid-cli package TypeScript sources (dist is what runs)
+  rm -rf /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/src \
+         /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/dist-types || true
+
   # Remove unnecessary files from node_modules to save space
-  find /usr/local/lib/node_modules -name "*.md" -delete 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "test" -type d -exec rm -rf {} + 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "*.ts" -delete 2>/dev/null || true
-  
+  find /usr/local/lib/node_modules -name "*.md"       -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "*.map"      -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "*.ts"       -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "CHANGELOG*" -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "LICENSE*"   -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "test"       -type d -exec rm -rf {} + 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "__tests__"  -type d -exec rm -rf {} + 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "docs"       -type d -exec rm -rf {} + 2>/dev/null || true
+
   log_info "Cleanup completed"
 }
 
@@ -186,11 +211,6 @@ main() {
   install_mermaid_cli
   configure_puppeteer
   cleanup
-
-  # Additional cleanup to save space
-  npm cache clean --force || true
-  apt-get autoremove -y || true
-  apt-get autoclean || true
 
   log_info "Mermaid installation completed successfully"
 }

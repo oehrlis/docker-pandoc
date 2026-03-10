@@ -162,6 +162,21 @@ find "$TEXROOT" -type d -name "wadalab" -exec rm -rf {} + || true
 find "$TEXROOT" -type d -name "uhc" -exec rm -rf {} + || true
 find "$TEXROOT" -type d -name "arphic" -exec rm -rf {} + || true
 
+# --- 3b) Remove METAFONT source files (not needed at runtime) ------------------
+rm -rf "$TEXROOT/texmf-dist/fonts/source" || true
+
+# --- 3c) Remove AFM files for non-core fonts (only needed for Type1 font PDFs) -
+# Keep: cm (Computer Modern), lm (Latin Modern) — remove the rest
+if [ -d "$TEXROOT/texmf-dist/fonts/afm" ]; then
+  for dir in "$TEXROOT/texmf-dist/fonts/afm"/*/; do
+    base="$(basename "$dir")"
+    case "$base" in
+      cm|lm|ams|bsr) : ;; # keep core
+      *) rm -rf "$dir" || true ;;
+    esac
+  done
+fi
+
 # --- 4) Optional: prune some Microsoft fonts from system -----------------------
 if [ "${PRUNE_MS_FONTS:-0}" = "1" ]; then
   echo "Pruning selected MS core fonts …"

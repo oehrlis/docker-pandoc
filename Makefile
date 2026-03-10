@@ -60,6 +60,7 @@ help: ## Show available targets and release workflow
 	@echo "  VERSION-VARIANT   all four variants (minimal/standard/mermaid/full)"
 	@echo "  VERSION           → standard"
 	@echo "  latest            → standard"
+	@echo "  latest-full       → full"
 	@echo ""
 	@echo "Development / test workflow:"
 	@echo "  make build [VARIANT=x]        # build single dev-VARIANT locally"
@@ -100,11 +101,15 @@ build-release: ## Build all variants locally with VERSION tags (no push)
 	@echo "    VERSION-VARIANT  all four variants"
 	@echo "    VERSION          → standard"
 	@echo "    latest           → standard"
+	@echo "    latest-full      → full"
 	@for v in minimal standard mermaid full; do \
 		echo "==> Building $(IMAGE_NAME):$(VERSION)-$$v"; \
 		extra=""; \
 		if [ "$$v" = "standard" ]; then \
 			extra="-t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest"; \
+		fi; \
+		if [ "$$v" = "full" ]; then \
+			extra="-t $(IMAGE_NAME):latest-full"; \
 		fi; \
 		docker buildx build --build-arg IMAGE_VARIANT=$$v \
 			-t $(IMAGE_NAME):$(VERSION)-$$v $$extra --load . || exit 1; \
@@ -120,6 +125,7 @@ build-multi: ## Build all variants multi-platform and push to registry
 	@echo "    VERSION-VARIANT  all four variants"
 	@echo "    VERSION          → standard"
 	@echo "    latest           → standard"
+	@echo "    latest-full      → full"
 	@docker buildx create --use --name $(BUILDER) 2>/dev/null || \
 		docker buildx use $(BUILDER)
 	@for v in minimal standard mermaid full; do \
@@ -127,6 +133,9 @@ build-multi: ## Build all variants multi-platform and push to registry
 		extra=""; \
 		if [ "$$v" = "standard" ]; then \
 			extra="--tag $(IMAGE_NAME):$(VERSION) --tag $(IMAGE_NAME):latest"; \
+		fi; \
+		if [ "$$v" = "full" ]; then \
+			extra="--tag $(IMAGE_NAME):latest-full"; \
 		fi; \
 		docker buildx build \
 			--platform $(PLATFORMS) \

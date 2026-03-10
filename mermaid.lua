@@ -98,20 +98,38 @@ local function render_mermaid(code, output_path)
   -- -b transparent        : transparent PNG background
   -- -s 2                  : 2x scale for better quality
   -- --puppeteerConfigFile  : pass no-sandbox flags + system Chromium path
-  -- --quiet               : suppress progress output
+  -- --quiet               : suppress progress output; stderr captured to err file
+  local err_file = output_path:gsub("%.png$", "-err.txt")
   local cmd = string.format(
     "PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium"
       .. " CHROME_PATH=/usr/bin/chromium"
       .. " %s -i %q -o %q -b transparent -s 2"
-      .. " --puppeteerConfigFile %q --quiet 2>&1",
-    MMDC_BIN, temp_mmd, output_path, puppeteer_cfg
+      .. " --puppeteerConfigFile %q --quiet >%q 2>&1",
+    MMDC_BIN, temp_mmd, output_path, puppeteer_cfg, err_file
   )
 
   local success = os.execute(cmd)
 
+  -- On failure, surface the mmdc error for diagnosis
+  if success ~= 0 and success ~= true then
+    local ef = io.open(err_file, "r")
+    if ef then
+      local err_out = ef:read("*a")
+      ef:close()
+      -- Show first meaningful error line, skip empty/puppeteer noise
+      for line in err_out:gmatch("[^\n]+") do
+        if line:match("%S") and not line:match("^%[") then
+          io.stderr:write("    mmdc: " .. line .. "\n")
+          break
+        end
+      end
+    end
+  end
+
   -- Clean up temp files
   os.remove(temp_mmd)
   os.remove(puppeteer_cfg)
+  os.remove(err_file)
 
   return success == 0 or success == true
 end
@@ -142,9 +160,12 @@ function CodeBlock(block)
   
   -- Render diagram if it doesn't exist
   if not file_exists(output_path) then
-    io.stderr:write("Rendering Mermaid diagram: " .. hash .. ".png\n")
+    local first_line = code:match("^([^\n]*)")
+    io.stderr:write("Rendering Mermaid diagram: " .. hash .. ".png (" .. first_line .. ")\n")
     if not render_mermaid(code, output_path) then
-      io.stderr:write("Warning: Failed to render Mermaid diagram\n")
+      io.stderr:write("Warning: Failed to render Mermaid diagram — falling back to code block\n")
+      io.stderr:write("  Diagram type: " .. first_line .. "\n")
+      io.stderr:write("  Tip: check for <br/> (use <br> instead), special chars, or unsupported syntax\n")
       return block  -- fallback to original code block
     end
   else

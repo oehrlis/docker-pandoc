@@ -10,18 +10,20 @@ cases. All variants are built for `linux/amd64` and `linux/arm64`.
 |--------------------|----------|-------------------------------------------------|
 | `latest`           | standard | Default — Pandoc + TeX Live + fonts + templates |
 | `VERSION`          | standard | Pinned release, same content as `latest`        |
+| `latest-full`      | full     | Full variant convenience tag                    |
 | `VERSION-minimal`  | minimal  | Pandoc only, no TeX, no Mermaid                 |
 | `VERSION-standard` | standard | Pandoc + TeX Live + fonts + templates           |
 | `VERSION-mermaid`  | mermaid  | Pandoc + Mermaid/Chromium, no TeX               |
 | `VERSION-full`     | full     | All features: TeX + Mermaid + fonts + templates |
 
 > `latest` and `VERSION` always point to the **standard** variant.
+> `latest-full` always points to the **full** variant.
 
 ---
 
 ## Variant Details
 
-### `minimal` (~250 MB)
+### `minimal` (~300 MB)
 
 **Includes:** Pandoc binary · basic system libraries
 
@@ -40,7 +42,7 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-minimal \
 
 ---
 
-### `standard` (~800 MB-1 GB) · **DEFAULT / `latest`**
+### `standard` (~600 MB) · **DEFAULT / `latest`**
 
 **Includes:** Pandoc · TeX Live (XeLaTeX + packages) · MS Core Fonts, Open Sans,
 Montserrat · OraDBA / TechDoc / Trivadis LaTeX templates · Pandoc Python filters
@@ -71,7 +73,7 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:latest \
 
 ---
 
-### `mermaid` (~900 MB-1 GB)
+### `mermaid` (~1.1 GB)
 
 **Includes:** Pandoc · Node.js · mermaid-cli (`mmdc`) · Chromium · `mermaid.lua`
 Lua filter
@@ -97,7 +99,7 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-mermaid \
 
 ---
 
-### `full` (~1.3-1.5 GB)
+### `full` (~1.4 GB)
 
 **Includes:** Everything — Pandoc · TeX Live · Mermaid/Chromium · all fonts ·
 all templates · Python filters
@@ -123,7 +125,7 @@ docker run --rm -v "$PWD:/workdir:z" oehrlis/pandoc:4.1.0-full \
 
 | Feature                | minimal |   standard   |   mermaid    |    full     |
 |------------------------|---------|--------------|--------------|-------------|
-| **Approx. size**       | ~250 MB | ~800 MB-1 GB | ~900 MB-1 GB | ~1.3-1.5 GB |
+| **Approx. size**       | ~300 MB |   ~600 MB    |   ~1.1 GB    |   ~1.4 GB   |
 | Pandoc binary          |    ✅   |      ✅      |      ✅      |      ✅     |
 | TeX Live / XeLaTeX     |    ❌   |      ✅      |      ❌      |      ✅     |
 | PDF generation         |    ❌   |      ✅      |      ❌      |      ✅     |

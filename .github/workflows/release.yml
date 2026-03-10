@@ -47,6 +47,8 @@ jobs:
             extra_tags=""
             if [ "${variant}" = "standard" ]; then
               extra_tags="--tag ${{ env.DOCKER_REPO }}:${VERSION} --tag ${{ env.DOCKER_REPO }}:latest"
+            elif [ "${variant}" = "full" ]; then
+              extra_tags="--tag ${{ env.DOCKER_REPO }}:latest-full"
             fi
             docker buildx build \
               --platform linux/amd64,linux/arm64 \
