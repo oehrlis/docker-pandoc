@@ -183,9 +183,12 @@ cleanup() {
   apt-get remove -y npm 2>/dev/null || true
   apt-get autoremove -y 2>/dev/null || true
 
-  # Remove mermaid-cli package TypeScript sources (dist is what runs)
-  rm -rf /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/src \
-         /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/dist-types || true
+  # Remove mermaid-cli TypeScript type definitions (dist-types/ not needed at runtime)
+  # NOTE: do NOT remove src/ — /usr/local/bin/mmdc is a symlink to src/cli.js
+  rm -rf /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/dist-types || true
+  # Remove only TypeScript source files inside src/ (keep the compiled .js files)
+  find /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/src \
+       -name "*.ts" ! -name "*.d.ts" -delete 2>/dev/null || true
 
   # Remove unnecessary files from node_modules to save space
   find /usr/local/lib/node_modules -name "*.md"       -delete 2>/dev/null || true
