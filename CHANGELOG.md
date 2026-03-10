@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.1] - 2026-03-10
+
+### Fixed
+
+- Fix broken `mmdc` symlink: `npm install -g` creates `/usr/local/bin/mmdc` as a
+  symlink to `src/cli.js`; the 4.2.0 cleanup incorrectly removed the entire `src/`
+  directory, leaving a dangling symlink. Now only `dist-types/` and raw `.ts` source
+  files inside `src/` are removed — compiled `.js` files are preserved
+- Fix `mmdc: not found` when invoked from Pandoc Lua filter: `sh` launched by
+  `os.execute()` does not include `/usr/local/bin` in PATH; default `MMDC_BIN` changed
+  to `/usr/local/bin/mmdc` in `mermaid.lua`; added `MERMAID_CLI_BIN=/usr/local/bin/mmdc`
+  to Dockerfile `ENV` for explicitness and overridability
+
 ## [4.2.0] - 2026-03-10
 
 ### Added
@@ -16,13 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `latest-full` convenience tag for the `full` variant (analogous to `latest` → standard);
   updated `Makefile` (`build-release`, `build-multi`), `.github/workflows/release.yml`,
   and `IMAGE_VARIANTS.md` documentation
-
-### Fixed
-
-- Fix `mmdc: not found` error in `mermaid.lua`: `sh` invoked by `os.execute()`
-  does not include `/usr/local/bin` in PATH; changed default `MMDC_BIN` to
-  `/usr/local/bin/mmdc` and added `MERMAID_CLI_BIN=/usr/local/bin/mmdc` to
-  Dockerfile `ENV` for explicitness and overridability
 
 ### Changed
 
@@ -38,8 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Remove `fonts-noto-color-emoji` (not used in Mermaid diagrams, ~10 MB)
   - Remove `chromium-sandbox` from deps (unused — `--no-sandbox` via puppeteer config)
   - Add `--omit=optional` to `npm install` for mermaid-cli
-  - Remove mermaid-cli TypeScript sources (`src/`, `dist-types/`) and extended
-    node_modules cleanup (`*.map`, `*.ts`, `CHANGELOG*`, `LICENSE*`, `test/`,
+  - Extended node_modules cleanup (`*.map`, `*.ts`, `CHANGELOG*`, `LICENSE*`, `test/`,
     `__tests__/`, `docs/`)
 - `scripts/slim_tex_tree.sh`: add METAFONT source removal (~6 MB) and AFM cleanup
   keeping only core fonts (~15-18 MB savings)
