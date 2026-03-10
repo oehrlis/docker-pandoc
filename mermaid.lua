@@ -18,7 +18,7 @@
 
 -- Configuration
 local MERMAID_DIR = os.getenv("MERMAID_OUTPUT_DIR") or "build/mermaid"
-local MMDC_BIN = os.getenv("MERMAID_CLI_BIN") or "mmdc"
+local MMDC_BIN = os.getenv("MERMAID_CLI_BIN") or "/usr/local/bin/mmdc"
 local SKIP_RENDERING = os.getenv("MERMAID_SKIP_RENDERING") == "true"
 local MERMAID_WIDTH      = os.getenv("MERMAID_IMAGE_WIDTH")      or "80%"
 local MERMAID_MAX_HEIGHT = os.getenv("MERMAID_IMAGE_MAX_HEIGHT") or "75%"

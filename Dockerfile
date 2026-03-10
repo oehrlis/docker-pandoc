@@ -117,7 +117,8 @@ ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     WORKDIR="/workdir" \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
-    CHROME_BIN=/usr/bin/chromium
+    CHROME_BIN=/usr/bin/chromium \
+    MERMAID_CLI_BIN=/usr/local/bin/mmdc
 
 # --- Copy runtime artifacts from builder --------------------------------------
 COPY --from=builder /usr/local/bin/pandoc         /usr/local/bin/pandoc
