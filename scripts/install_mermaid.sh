@@ -169,13 +169,13 @@ cleanup() {
   rm -rf /var/lib/apt/lists/*
   npm cache clean --force
   rm -rf /root/.npm /tmp/* /var/tmp/*
-  
+
   # Remove Vulkan/GPU files from Chromium — unused with --disable-gpu/--no-sandbox
   rm -f /usr/lib/chromium/libvk_swiftshader.so \
-        /usr/lib/chromium/libVkLayer_khronos_validation.so \
-        /usr/lib/chromium/libVkICD_mock_icd.so \
-        /usr/lib/chromium/libvulkan.so.1 \
-        /usr/lib/chromium/chrome_crashpad_handler || true
+    /usr/lib/chromium/libVkLayer_khronos_validation.so \
+    /usr/lib/chromium/libVkICD_mock_icd.so \
+    /usr/lib/chromium/libvulkan.so.1 \
+    /usr/lib/chromium/chrome_crashpad_handler || true
 
   # Remove npm — only needed during install, not at runtime
   # Mark nodejs as manually installed so autoremove does not pull it out
@@ -188,17 +188,17 @@ cleanup() {
   rm -rf /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/dist-types || true
   # Remove only TypeScript source files inside src/ (keep the compiled .js files)
   find /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/src \
-       -name "*.ts" ! -name "*.d.ts" -delete 2>/dev/null || true
+    -name "*.ts" ! -name "*.d.ts" -delete 2>/dev/null || true
 
   # Remove unnecessary files from node_modules to save space
-  find /usr/local/lib/node_modules -name "*.md"       -delete 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "*.map"      -delete 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "*.ts"       -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "*.md" -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "*.map" -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "*.ts" -delete 2>/dev/null || true
   find /usr/local/lib/node_modules -name "CHANGELOG*" -delete 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "LICENSE*"   -delete 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "test"       -type d -exec rm -rf {} + 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "__tests__"  -type d -exec rm -rf {} + 2>/dev/null || true
-  find /usr/local/lib/node_modules -name "docs"       -type d -exec rm -rf {} + 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "LICENSE*" -delete 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "test" -type d -exec rm -rf {} + 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "__tests__" -type d -exec rm -rf {} + 2>/dev/null || true
+  find /usr/local/lib/node_modules -name "docs" -type d -exec rm -rf {} + 2>/dev/null || true
 
   log_info "Cleanup completed"
 }

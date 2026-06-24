@@ -37,9 +37,9 @@ PUSH="${PUSH:-false}"
 # Determine platform(s) to build for
 if [ "${MULTI_PLATFORM}" = "true" ]; then
   PLATFORM="${PLATFORM:-linux/amd64,linux/arm64}"
-  PUSH="true"  # Multi-platform requires --push
+  PUSH="true" # Multi-platform requires --push
 else
-  PLATFORM="${PLATFORM:-linux/arm64}"  # Default to current platform
+  PLATFORM="${PLATFORM:-linux/arm64}" # Default to current platform
 fi
 
 # ------------------------------------------------------------------------------
@@ -68,27 +68,27 @@ build_variant() {
   local variant="$1"
   local size_desc="$2"
   local tag="${IMAGE_NAME}:${VERSION}-${variant}"
-  
+
   log_info "Building ${variant} variant"
   log_detail "Tag: ${tag}"
   log_detail "Expected size: ${size_desc}"
   log_detail "Platform: ${PLATFORM}"
-  
+
   local build_args=(
     "--platform" "${PLATFORM}"
     "--build-arg" "IMAGE_VARIANT=${variant}"
     "-t" "${tag}"
   )
-  
+
   if [ "${PUSH}" = "true" ]; then
     build_args+=("--push")
   else
     build_args+=("--load")
   fi
-  
-  if docker build "${build_args[@]}" . ; then
+
+  if docker build "${build_args[@]}" .; then
     log_info "✓ Successfully built ${variant} variant"
-    
+
     # Show size if loaded locally
     if [ "${PUSH}" != "true" ]; then
       local size
@@ -98,7 +98,7 @@ build_variant() {
   else
     err "Failed to build ${variant} variant"
   fi
-  
+
   echo ""
 }
 
@@ -112,27 +112,27 @@ main() {
   log_detail "Platform: ${PLATFORM}"
   log_detail "Push: ${PUSH}"
   echo ""
-  
+
   # Build each variant
   build_variant "minimal" "~250MB" \
     "Pandoc only, no TeX, no Mermaid"
-  
+
   build_variant "standard" "~800MB-1GB" \
     "Pandoc + TeX Live (default)"
-  
+
   build_variant "mermaid" "~900MB-1GB" \
     "Pandoc + Mermaid, no TeX"
-  
+
   build_variant "full" "~1.3-1.5GB" \
     "Pandoc + TeX + Mermaid"
-  
+
   # Summary
   log_info "Build Summary"
   if [ "${PUSH}" != "true" ]; then
-    docker images "${IMAGE_NAME}" --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | \
+    docker images "${IMAGE_NAME}" --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" |
       grep -E "(REPOSITORY|${VERSION})" || true
   fi
-  
+
   log_info "All variants built successfully!"
   echo ""
   log_info "Usage examples:"

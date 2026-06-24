@@ -171,7 +171,7 @@ if [ -d "$TEXROOT/texmf-dist/fonts/afm" ]; then
   for dir in "$TEXROOT/texmf-dist/fonts/afm"/*/; do
     base="$(basename "$dir")"
     case "$base" in
-      cm|lm|ams|bsr) : ;; # keep core
+      cm | lm | ams | bsr) : ;; # keep core
       *) rm -rf "$dir" || true ;;
     esac
   done
