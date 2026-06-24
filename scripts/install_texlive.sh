@@ -48,7 +48,7 @@ PKGS="adjustbox afterpage amsmath amssymb array awesomebox babel background
       footnotebackref fvextra geometry graphicx hyperref iftex inputenc
       lineno listings lmodern longtable lua-ul luacolor luatexja-fontspec
       luatexja-preset mathspec mdframed microtype multirow natbib pagecolor
-      parskip pgfpages ragged2e scrlayer-scrpage sectsty selnolig setspace
+      parskip pdflscape pgfpages ragged2e scrlayer-scrpage sectsty selnolig setspace
       soul sourcecodepro sourcesanspro subcaption svg tabularx textcomp tikz
       titling unicode-math ulem upquote xcolor needspace zref xeCJK xurl
       fontawesome5 polyglossia"
