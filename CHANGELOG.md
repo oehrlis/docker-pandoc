@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- OraDBA templates now sourced from the `oradba-brand` submodule at `shared/brand`
+  (pinned to tag `v1.0.0`) via `COPY`, replacing the `curl | tar` network download
+  of `oehrlis/pandoc_template` at build time. CI checks out submodules recursively.
+  Part of G2 repo-entflechtung Phase 1. NOTE: local `oradba.tex`/`oradba.docx`/
+  `pandoc_reference.pptx` are kept as overrides - they carry Accenture colours and
+  diverge from the OraDBA-coloured templates in `oradba-brand`; needs a conscious
+  alignment decision and a full image build test before merge.
+
 ## [4.2.2] - 2026-06-24
 
 ### Added

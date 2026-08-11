@@ -1,0 +1,3 @@
+[submodule "shared/brand"]
+	path = shared/brand
+	url = git@github.com:oehrlis/oradba-brand.git

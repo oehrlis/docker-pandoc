@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: Run Shellcheck
         uses: ludeeus/action-shellcheck@master
@@ -34,6 +36,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: Install shfmt
         run: |
@@ -51,6 +55,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -71,6 +77,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: Run Hadolint
         uses: hadolint/hadolint-action@v3.1.0
