@@ -112,7 +112,6 @@ ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     PANDOC_DATA="/opt/pandoc-data/pandoc" \
     PANDOC_TEMPLATES="/opt/pandoc-data/pandoc/templates" \
     PANDOC_THEMES="/opt/pandoc-data/pandoc/themes" \
-    GITHUB_URL="https://github.com/oehrlis/pandoc_template/archive/refs/heads/master.tar.gz" \
     ORADBA="/oradba" \
     WORKDIR="/workdir" \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
@@ -203,16 +202,19 @@ RUN set -eux; \
     echo "==> Minimal font setup for '${IMAGE_VARIANT}' variant"; \
   fi
 
-# --- Install OraDBA templates from GitHub (standard and full variants only) ---
+# --- Install OraDBA templates from oradba-brand submodule (standard/full only) -
+# Templates are sourced from shared/brand (git submodule oehrlis/oradba-brand
+# pinned to v1.0.0, commit ca3b677). No network download at build time.
+COPY shared/brand/oradba/templates/ /tmp/brand-templates/
+COPY themes/                         /tmp/brand-themes/
 RUN set -eux; \
   mkdir -p "${WORKDIR}"; \
   if [ "${IMAGE_VARIANT}" = "standard" ] || [ "${IMAGE_VARIANT}" = "full" ]; then \
-    echo "==> Installing OraDBA Templates from GitHub"; \
-    mkdir -p "${ORADBA}" "${XDG_DATA_HOME}" \
+    echo "==> Installing OraDBA Templates from oradba-brand submodule (v1.0.0)"; \
+    mkdir -p "${ORADBA}/templates" "${ORADBA}/themes" "${XDG_DATA_HOME}" \
              "${PANDOC_DATA}" "${PANDOC_TEMPLATES}" "${PANDOC_THEMES}"; \
-    curl -Lf "${GITHUB_URL}" | tar zxv --strip-components=1 -C "${ORADBA}"; \
-    rm -rf "${ORADBA}/examples" "${ORADBA}/.gitignore" \
-           "${ORADBA}/LICENSE" "${ORADBA}/README.md"; \
+    cp -r /tmp/brand-templates/. "${ORADBA}/templates/"; \
+    cp -r /tmp/brand-themes/.    "${ORADBA}/themes/"; \
     ln -sf "${ORADBA}/templates/oradba.tex" "${ORADBA}/templates/oradba.latex"; \
     for i in "${ORADBA}"/templates/*; do \
       ln -sf "$i" "${PANDOC_TEMPLATES}/$(basename "$i")"; \
@@ -227,9 +229,13 @@ RUN set -eux; \
     ln -sf "${ORADBA}/templates/oradba.docx" "${PANDOC_DATA}/reference.docx"; \
   else \
     echo "==> Skipping templates for '${IMAGE_VARIANT}' variant"; \
-  fi
+  fi; \
+  rm -rf /tmp/brand-templates /tmp/brand-themes
 
 # --- Copy local template overrides (standard and full variants only) ----------
+# Overrides take precedence over oradba-brand templates where files differ.
+# oradba.tex and oradba.docx carry Accenture color customizations; these are
+# kept until the upstream oradba-brand templates are aligned.
 COPY templates/ /tmp/pandoc-templates-override/
 RUN set -eux; \
   if [ "${IMAGE_VARIANT}" = "standard" ] || [ "${IMAGE_VARIANT}" = "full" ]; then \
