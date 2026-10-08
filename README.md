@@ -8,7 +8,7 @@
 
 <!-- markdownlint-disable MD013 -->
 Docker image for the universal document converter [pandoc](https://pandoc.org) with full PDF conversion support and custom LaTeX templates. Includes a minimal [TexLive](https://www.tug.org/texlive/) installation optimized for document conversion. Source available at [oehrlis/docker-pandoc](https://github.com/oehrlis/docker-pandoc).
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
 ## Features
 
@@ -18,15 +18,15 @@ Docker image for the universal document converter [pandoc](https://pandoc.org) w
 - **Fonts** - MS Core Fonts, Open Sans, Montserrat
 - **Multi-arch** - Supports both linux/amd64 and linux/arm64 platforms
 
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
 ## Run
 
 <!-- markdownlint-disable MD013 -->
 The pre build image is available via [Dockerhub](https://hub.docker.com/r/oehrlis/pandoc/). The installation and use is straightforward. Install [Docker](https://www.docker.com/get-started) and pull the image.
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
 ```bash
 docker pull oehrlis/pandoc
@@ -34,9 +34,9 @@ docker pull oehrlis/pandoc
 
 <!-- markdownlint-disable MD013 -->
 Either you copy the files into the container, which is obviously not really handy, or you mount your local document folder as volume and run it.
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
 ```bash
 docker run --rm -v $PWD:/workdir:z oehrlis/pandoc <OPTIONS>
@@ -234,9 +234,9 @@ dot -Tpng diagram.dot -o diagram.png
 
 <!-- markdownlint-disable MD013 -->
 If you plan to alter or extend this Docker image you could get the corresponding files from [GitHub](https://github.com/oehrlis/docker-pandoc) and build the image manually.
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
-<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-restore -->
 
 ```bash
 git clone git@github.com:oehrlis/docker-pandoc.git
