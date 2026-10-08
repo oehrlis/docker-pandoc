@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `make tag` and `make release` now push commit and tag to origin automatically;
+  set `NO_PUSH=1` to keep local and print the push commands instead.
+- Replaced closing `markdownlint-enable` markers in `README.md` with
+  `markdownlint-restore` (8 occurrences across 4 disable/enable pairs).
+
 - OraDBA templates now sourced from the `oradba-brand` submodule at `shared/brand`
   (pinned to tag `v1.0.0`) via `COPY`, replacing the `curl | tar` network download
   of `oehrlis/pandoc_template` at build time. CI checks out submodules recursively.

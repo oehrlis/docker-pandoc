@@ -266,7 +266,7 @@ version-bump-major: ## Bump major (X.0.0) → commit
 # Tag / Release
 # ------------------------------------------------------------------------------
 .PHONY: tag
-tag: ## Create annotated git tag from VERSION (guards: clean tree + committed)
+tag: ## Create annotated git tag from VERSION, push commit+tag (NO_PUSH=1 to keep local)
 	@if [[ -z "$(GIT)" ]]; then echo "Error: git not found"; exit 1; fi; \
 	version="$$(cat VERSION)"; \
 	tag="v$$version"; \
@@ -284,16 +284,24 @@ tag: ## Create annotated git tag from VERSION (guards: clean tree + committed)
 	fi; \
 	$(GIT) tag -a "$$tag" -m "Release $$tag"; \
 	echo "==> Created tag $$tag"; \
-	echo "    Next: git push origin master && git push origin $$tag"
+	if [ -n "$(NO_PUSH)" ]; then \
+		echo "    NO_PUSH set - not pushed. A tag not pushed does not exist remotely."; \
+		branch="$$( $(GIT) rev-parse --abbrev-ref HEAD )"; \
+		echo "    To push: git push origin $$branch && git push origin $$tag"; \
+		exit 0; \
+	fi; \
+	branch="$$( $(GIT) rev-parse --abbrev-ref HEAD )"; \
+	$(GIT) push origin "$$branch" && $(GIT) push origin "$$tag" \
+		&& echo "==> Pushed: $$branch + $$tag" \
+		|| { echo "Error: push failed - tag is LOCAL ONLY. Run: git push origin $$branch && git push origin $$tag" >&2; exit 1; }
 
 .PHONY: release
-release: ## Full patch release: bump patch → commit → tag
+release: ## Full patch release: bump patch → commit → tag → push
 	@echo "==> Starting patch release from v$(VERSION)..."
 	@$(MAKE) --no-print-directory version-bump-patch
 	@$(MAKE) --no-print-directory tag
 	@version="$$(cat VERSION)"; \
-	echo "==> Release v$$version complete!"; \
-	echo "    Next: git push origin master && git push origin v$$version"
+	echo "==> Release v$$version complete."
 
 # ------------------------------------------------------------------------------
 # Utility
