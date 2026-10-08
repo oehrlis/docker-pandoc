@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Dockerfile copies) is byte-identical between both tags, so the image is unchanged.
 
 - OraDBA templates now sourced from the `oradba-brand` submodule at `shared/brand`
-  (pinned to tag `v1.0.0`) via `COPY`, replacing the `curl | tar` network download
+  (pinned to a tag, now `v2.2.0`) via `COPY`, replacing the `curl | tar` network download
   of `oehrlis/pandoc_template` at build time. CI checks out submodules recursively.
   Part of G2 repo-entflechtung Phase 1. NOTE: local `oradba.tex`/`oradba.docx`/
   `pandoc_reference.pptx` are kept as overrides - they carry Accenture colours and
