@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   set `NO_PUSH=1` to keep local and print the push commands instead.
 - Replaced closing `markdownlint-enable` markers in `README.md` with
   `markdownlint-restore` (8 occurrences across 4 disable/enable pairs).
+- Bumped the `shared/brand` submodule from oradba-brand `v2.0.0` to `v2.2.0`: its
+  own docs no longer carry closing `markdownlint-enable` markers, and the generator
+  scripts moved to accenture-brand. `oradba/templates/` (the only path the
+  Dockerfile copies) is byte-identical between both tags, so the image is unchanged.
 
 - OraDBA templates now sourced from the `oradba-brand` submodule at `shared/brand`
   (pinned to tag `v1.0.0`) via `COPY`, replacing the `curl | tar` network download
